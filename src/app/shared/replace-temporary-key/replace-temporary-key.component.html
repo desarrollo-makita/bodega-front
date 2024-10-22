@@ -1,0 +1,67 @@
+<h2 mat-dialog-title class="dialog-title">
+    Cambiar clave provisoria
+    <button mat-icon-button class="close-button" (click)="onClose()">
+      <mat-icon >close</mat-icon>
+    </button>
+  </h2>
+  
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label class="color-text">Clave provisoria</mat-label>
+      <input matInput (input)="onInputChange($event)" [(ngModel)]="passwordTemporal" class="color-text">
+    </mat-form-field>
+    
+    <mat-icon matSuffix *ngIf="showCheckVerify"   class="icon-checked">check_circle</mat-icon>
+
+    
+    <mat-form-field>
+      <mat-label class="color-text" >Nueva Clave</mat-label>
+      <input matInput [disabled]="!showCheckVerify" (input)="onPasswordInput($event.target.value)" class="color-text">
+    </mat-form-field>
+    <mat-icon matSuffix *ngIf="showInfoClave"   class="icon-checked">check_circle</mat-icon>
+    
+    <mat-form-field>
+      <mat-label class="color-text">Repetir Clave</mat-label>
+      <input matInput [disabled]="!showInfoClave" (input)="confirmarCLave($event.target.value)">
+    </mat-form-field>
+    <mat-icon matSuffix *ngIf="showVeryfiPassword"   class="icon-checked">check_circle</mat-icon>
+    <mat-card class="password-requirements" *ngIf="showCheckVerify">
+        <mat-card-content>
+          <h3><strong>Requisitos de la Contraseña</strong></h3>
+          <ul class="password-criteria">
+            <li [ngClass]="{'valid': hasUpperCase, 'invalid': !hasUpperCase}">
+              Debe contener una mayúscula
+            </li>
+            <li [ngClass]="{'valid': hasMinLength, 'invalid': !hasMinLength}">
+              Contener minimo 8 caracteres
+            </li>
+            <li [ngClass]="{'valid': hasSpecialCharacter, 'invalid': !hasSpecialCharacter}">
+              Debe contener un carácter especial
+            </li>
+            <li [ngClass]="{'valid': hasNumber, 'invalid': !hasNumber}">
+              Debe contener un número
+            </li>
+            <li [ngClass]="{'valid': showVeryfiPassword, 'invalid': !showVeryfiPassword}">
+              Las claves coinciden
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions>
+    <button mat-stroked-button 
+      [disabled]="!showVeryfiPassword"  
+      class="submit-button"
+      [ngClass]="{'enabled': showVeryfiPassword, 'disabled': !showVeryfiPassword}"  
+      (click)="enviaCambioClave()">Enviar</button>
+  </mat-dialog-actions>
+  <br>
+  <br>
+  <div  *ngIf="showMensajeFinal" class="alert alert-success" role="alert">
+    Cambio de clave exitoso!!
+  </div>
+  <div *ngIf="showMensajeFinalError" class="alert alert-danger" role="alert">
+    Error al cambiar la clave!
+  </div>
+  

@@ -1,0 +1,60 @@
+.form-group label {
+    font-weight: bold;
+}
+
+.text-danger {
+    color: #dc3545;
+    font-weight: bold;
+  }
+
+  .alert-success {
+    background-color: rgba(0, 144, 158, 0.8);
+  }
+
+  .alert-danger{
+    background-color: rgba(235, 35, 35, 0.8);
+  }
+
+  input.form-control {
+    border: 2px solid #00909E; /* Aumenta el grosor del borde y cambia el color */
+    border-radius: 4px; /* Aplica un ligero redondeo a las esquinas */
+    font-size: 16px; /* Aumenta el tamaño de la fuente para mejor legibilidad */
+    background-color: #f0f8ff; /* Cambia el color de fondo */
+    color: #333; /* Cambia el color del texto */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Añade un ligero efecto de sombra */
+  }
+  
+  input.form-control:focus {
+    border-color: #006f77; /* Cambia el color del borde al enfocar */
+    box-shadow: 0 0 8px rgba(0, 144, 158, 0.6); /* Añade un efecto de sombra al enfocar */
+    outline: none; /* Remueve el borde azul predeterminado del navegador */
+  }
+  
+  select.form-control {
+    border: 2px solid #00909E; /* Cambia el color y grosor del borde */
+    border-radius: 4px; /* Aplica un ligero redondeo a las esquinas */
+    font-size: 16px; /* Aumenta el tamaño de la fuente */
+    background-color: #f0f8ff; /* Cambia el color de fondo */
+    color: #333; /* Cambia el color del texto */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Añade un ligero efecto de sombra */
+  }
+  
+  /* Estilos cuando el selector está enfocado */
+  select.form-control:focus {
+    border-color: #006f77; /* Cambia el color del borde al enfocar */
+    background-color: #e0f7fa; /* Cambia el color de fondo al enfocar */
+    box-shadow: 0 0 8px rgba(0, 144, 158, 0.6); /* Añade un efecto de sombra al enfocar */
+    outline: none; /* Remueve el borde azul predeterminado del navegador */
+  }
+  
+  .form-group label {
+    font-weight: 400; /* Hace que el texto sea más grueso */
+    margin-bottom: 5px; /* Añade un espaciado inferior */
+    color: #00909E; /* Cambia el color del texto del label */
+  }
+
+    .title{
+      color: #00909E;
+      font-weight: 400;
+    }
+  

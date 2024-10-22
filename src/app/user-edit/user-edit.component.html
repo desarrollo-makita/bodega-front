@@ -1,0 +1,432 @@
+<div class="main-content" *ngIf="showTableEdit">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="header">
+            <h4 class="title">Editar usuario</h4>
+            <p class="category">{{ fecha }}</p>
+          </div>
+          <div class="content table-responsive table-full-width">
+            <table class="table table-hover table-striped">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Apellido Paterno</th>
+                  <th>Apellido Materno</th>
+                  <th>Email</th>
+                  <th>Área</th>
+                  <th>Rol</th>
+                  
+                  <th>Estado</th>
+                  <th>Nombre de Usuario</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>{{ user.Nombre }}</td>
+                  <td>{{ user.ApellidoPaterno }}</td>
+                  <td>{{ user.ApellidoMaterno}}</td>
+                  <td>{{ user.Email }}</td>
+                  <td>{{ user.Area }}</td>
+                  <td>{{ user.Rol }}</td>
+                  <td>{{ user.Estado }}</td>
+                  <td>{{ user.NombreUsuario }}</td>
+                  <td>
+                    <a (click)="editUser(user)" title="Editar Usuario">
+                      <i class="fa-solid fa-user-pen"></i>
+                    </a>
+
+                    <!-- Botón de Eliminar -->
+                    <a
+                      (click)="deleteUser(user)"
+                      title="Eliminar Usuario"
+                      style="margin-left: 30%"
+                    >
+                      <i class="fa-regular fa-trash-can"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div *ngIf="isLoading" id="loader">
+              <img src="../../assets/img/loader-preview.svg" alt="loading" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+      ¡Usuario Eliminado con éxito!
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      ¡Error, Usuario no Eliminado!
+    </div>
+  </div>
+</div>
+<div class="main-content" *ngIf="showFormUpdate">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-18">
+        <div class="card">
+          <div class="header">
+            <h4 class="title"><strong>Editar Usuario</strong></h4>
+          </div>
+          <div class="content">
+            <form [formGroup]="userFormEdit" (ngSubmit)="onEditSubmit()">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="empresa">Empresa</label>
+                    <input
+                      id="empresa"
+                      type="text"
+                      class="form-control"
+                      disabled
+                      placeholder="Makita"
+                      value="Makita"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="usuario">Usuario</label>
+                    <input
+                      type="text"
+                      id="usuario"
+                      class="form-control"
+                      placeholder="Usuario"
+                      formControlName="usuario"
+                      readonly
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      placeholder="ejemplo@makita.cl"
+                      formControlName="email"
+                      autocomplete="email"
+                    />
+                    <div
+                      *ngIf="
+                        userFormEdit.get('email').invalid &&
+                        userFormEdit.get('email').touched
+                      "
+                      class="text-danger"
+                    >
+                      Ingrese Email valido.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input
+                      id="nombre"
+                      type="text"
+                      class="form-control"
+                      placeholder="Nombre"
+                      value=""
+                      formControlName="nombre"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="apellidoPaterno">Apellido Paterno</label>
+                    <input
+                      id="apellidoPaterno"
+                      type="text"
+                      class="form-control"
+                      placeholder="Apellido paterno"
+                      value=""
+                      formControlName="apellidoPaterno"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="apellidoMaterno">Apellido Materno</label>
+                    <input
+                      id="apellidoMaterno"
+                      type="text"
+                      class="form-control"
+                      placeholder="Apellido materno"
+                      value=""
+                      formControlName="apellidoMaterno"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="fechaInicio">Fecha de Creación</label>
+                    <input
+                      type="date"
+                      id="fechaInicio"
+                      class="form-control"
+                      disabled
+                      placeholder="Fecha de Inicio"
+                      formControlName="fechaInicio"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="header">
+                <div class="row">
+                  <h4 class="title"><strong>Permisos</strong></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="role">Rol</label>
+                    <select
+                      id="role"
+                      class="form-control"
+                      formControlName="role"
+                    >
+                      <option value="Administrador">Administrador</option>
+                      <option value="Consulta">Consulta</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="area">Area</label>
+                    <select
+                      id="area"
+                      class="form-control"
+                      formControlName="area"
+                      (change)="onAreaChange($event)"
+                    >
+                      <option *ngFor="let area of areas" [value]="area.Nombre">{{ area.Nombre }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="header">
+                <div class="row">
+                  <h4 class="title"><strong>Actividad</strong></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="checkbox col-md-4">
+                  <div class="form-group">
+                    <div *ngIf="actividadList && selectedActividades">
+                      <div *ngFor="let actividad of actividadList" class="form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          id="{{ actividad.nombreActividad }}"
+                          [attr.data-codigo]="actividad.codigoActividad"
+                          (change)="onCheckboxChange($event, actividad)"
+                          [checked]="isActividadSelected(actividad)"
+                         
+                        />
+                        <label
+                          class="form-check-label"
+                          style="font-weight: 500;"
+                          for="{{ actividad.nombreActividad }}"
+                        >
+                          {{ actividad.nombreActividad | titlecase }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="checkbox col-md-4">
+                  <div class="form-group">
+                    <input
+                      id="usuarioActivo"
+                      type="checkbox"
+                      formControlName="usuarioActivo"
+                    />
+                    <label for="usuarioActivo"> Activo </label>
+                  </div>
+                </div>
+              </div>
+              <div class="header">
+                <div class="row">
+                  <h4 class="title"><strong>Cambio Clave</strong></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <div class="negrita col-md-3">
+                    <mat-slide-toggle (change)="onToggleChange($event)"
+                      >Cambio Clave</mat-slide-toggle
+                    >
+                  </div>
+
+                  <div class="col-md-1" *ngIf="showCambioClave">
+                    <label for="claveActual">Clave Actual</label>
+                  </div>
+                  <div class="col-md-3" *ngIf="showCambioClave">
+                    <input
+                      id="claveActual"
+                      name="claveActual"
+                      type="text"
+                      class="form-control"
+                      (blur)="onBlur($event)"
+                    />
+                  </div>
+                  <div class="col-md-2" *ngIf="showCambioClave">
+                    <!-- Ícono para mostrar si la clave es válida o no -->
+                    <mat-icon *ngIf="showOk" style="color: #00909e"
+                      >check_circle</mat-icon
+                    >
+                    <mat-icon *ngIf="showError" color="warn">cancel</mat-icon>
+                  </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="showCambioClave">
+                <div class="form-group">
+                  <div class="col-md-3"></div>
+                  <div class="col-md-1">
+                    <label for="password">Nueva Clave</label>
+                  </div>
+                  <div class="col-md-3">
+                    <input
+                      [type]="showPassword ? 'text' : 'password'"
+                      (input)="onPasswordInput($event.target.value)"
+                      class="form-control"
+                      formControlName="password"
+                    />
+
+                    <!-- Contenedor para la barra de progreso de fortaleza de la contraseña -->
+                    <div class="password-strength-indicator">
+                      <span [ngClass]="strengthClass">{{
+                        passwordStrength
+                      }}</span>
+                    </div>
+                    <div class="progress">
+                      <div
+                        class="progress-bar"
+                        [ngClass]="progressBarClass"
+                        role="progressbar"
+                        [style.width]="progressBarWidth + '%'"
+                        aria-valuenow="progressBarWidth"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <ul class="password-criteria">
+                      <li [class.valid]="hasUpperCase">
+                        Debe contener al menos una <strong>mayúscula</strong>
+                      </li>
+                      <li [class.valid]="hasSpecialCharacter">
+                        Debe contener al menos un
+                        <strong>carácter especial</strong>
+                      </li>
+                      <li [class.valid]="hasNumber">
+                        Debe contener al menos un <strong>número</strong>
+                      </li>
+                      <li [class.valid]="hasMinLength">
+                        Debe tener al menos <strong>8 caracteres</strong>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="showCambioClave">
+                <div class="col-md-3"></div>
+                <div class="form-group">
+                  <div class="col-md-1">
+                    <label for="confirmarClave">Confirmar Clave</label>
+                  </div>
+                  <div class="col-md-3">
+                    <input
+                      id="confirmarClave"
+                      type="password"
+                      class="form-control"
+                      [disabled]="!showConfirmaClave"
+                      (input)="confirmarClave($event.target.value)"
+                    />
+                  </div>
+                  <div class="col-md-2" *ngIf="showCambioClave">
+                    <div
+                      class="d-flex align-items-center justify-content-start"
+                      style="gap: 10px"
+                    >
+                      <!-- Ícono para mostrar si la clave es válida o no -->
+                      <mat-icon
+                        *ngIf="showConfirmarClave"
+                        style="color: #00909e"
+                        >check_circle</mat-icon
+                      >
+                      <mat-icon *ngIf="showErrorClave" style="color: #ff0000"
+                        >cancel</mat-icon
+                      >
+
+                      <!-- Texto al lado del ícono -->
+                      <span
+                        *ngIf="showConfirmarClave"
+                        style="
+                          color: #00909e;
+                          font-weight: bold;
+                          font-size: 12px;
+                        "
+                        >Clave válida</span
+                      >
+                      <span
+                        *ngIf="showErrorClave"
+                        style="
+                          color: #ff0000;
+                          font-weight: bold;
+                          font-size: 12px;
+                        "
+                        >Las claves no coinciden</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="btn btn-info btn-fill pull-right"
+                [disabled]="userFormEdit.invalid"
+              >
+                Editar
+              </button>
+              <br />
+              <br />
+
+              <hr />
+              <div
+                *ngIf="successMessage"
+                class="alert alert-success mt-3"
+                role="alert"
+              >
+                ¡Usuario editado con éxito!
+              </div>
+
+              <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                ¡Error, Usuario no editado!
+              </div>
+
+              <hr />
+              <div class="clearfix"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

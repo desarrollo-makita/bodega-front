@@ -1,0 +1,10 @@
+/* Estilo por defecto */
+a {
+    color: #000; /* Color por defecto */
+  }
+  
+  /* Estilo para el enlace activo */
+  a.active {
+    color: #00909E; /* Color cuando está activo */
+    font-weight: bold;
+  }

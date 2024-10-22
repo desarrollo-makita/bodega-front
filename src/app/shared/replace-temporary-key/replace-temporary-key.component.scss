@@ -1,0 +1,141 @@
+/* Asegurar que el título del diálogo sea el referente para el botón de cierre */
+.dialog-title {
+  position: relative;
+  display: flex;
+  justify-content: center;  /* Centra el título */
+  align-items: center;
+}
+
+/* Estilos para el botón de cerrar (X) */
+.close-button {
+  position: absolute;
+  bottom: 1em;
+  left: 3em;
+  color: #00909E; /* Color de la "X" */
+}
+
+.close-button:hover {
+  color: #FF4A55; /* Cambia de color al pasar el mouse */
+}
+
+/* Estilos para centrar el botón Enviar */
+.mat-dialog-actions {
+  display: flex;               /* Habilita el modelo de flexbox */
+  justify-content: center;      /* Centra el botón horizontalmente */
+}
+
+/* Estilos para el botón Enviar */
+.mat-stroked-button.submit-button {
+  color: #00909E; /* Color de texto inicial */
+  border-color: #00909E; /* Color del borde inicial */
+  transition: all 0.3s; /* Transición suave */
+}
+
+.mat-stroked-button.submit-button.enabled {
+  color: #00909E; /* Color de texto cuando está habilitado */
+  border-color: #00909E; /* Color del borde cuando está habilitado */
+}
+
+.mat-stroked-button.submit-button.disabled {
+  color: gray; /* Color de texto cuando está deshabilitado */
+  border-color: gray; /* Color del borde cuando está deshabilitado */
+}
+
+.mat-stroked-button.submit-button.enabled:hover {
+  background-color: #00909E; /* Color de fondo al pasar el mouse */
+  color: white; /* Cambiar el color del texto al blanco */
+  transform: scale(1.05); /* Efecto de aumento al pasar el mouse */
+}
+
+/* Estilos generales del contenedor del diálogo */
+.mat-dialog-container {
+  padding: 24px;
+  border-radius: 12px !important;
+  box-sizing: border-box;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Sombra más prominente */
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco con transparencia */
+}
+
+.password-requirements {
+  margin-top: 16px; /* Espaciado superior */
+  background-color: #ccdcde;
+  border: 1px solid #00909E; /* Borde del card */
+  border-radius: 8px; /* Bordes redondeados */
+}
+
+.password-requirements h3 {
+  margin: 0; /* Sin margen */
+  color: #00909E; /* Color del título */
+}
+
+.password-requirements ul {
+  list-style-type: none; /* Sin viñetas */
+  padding: 0; /* Sin padding */
+  margin: 0; /* Sin margen */
+}
+
+.password-requirements li {
+  margin: 4px 0; /* Espaciado entre elementos de la lista */
+  color: #333; /* Color del texto */
+}
+
+.icon-checked {
+  color: #00909E;
+  margin-left: 25px;
+}
+
+.password-criteria {
+  list-style: none; /* Elimina los puntos predeterminados del navegador */
+  padding-left: 0; /* Elimina el relleno izquierdo por defecto */
+}
+
+.password-criteria li {
+  position: relative;
+  padding-left: 20px; /* Espacio para el punto antes del texto */
+  margin-bottom: 5px; /* Espacio entre los elementos */
+  color: red; /* Color inicial del texto */
+}
+
+.password-criteria li::before {
+  content: '•'; /* Punto antes del texto */
+  color: red; /* Color del punto cuando el criterio no es válido */
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 16px; /* Tamaño del punto */
+  line-height: 1;
+}
+
+.password-criteria li.valid::before {
+  color: #00909E; /* Cambia el color del punto cuando el criterio es válido */
+}
+
+.password-criteria li.valid {
+  color: #00909E; /* Cambia el color del texto cuando el criterio es válido */
+}
+
+.password-criteria li.invalid::before {
+  color: red; /* Mantiene el color rojo del punto si no es válido */
+}
+
+.password-criteria li.invalid {
+  color: red; /* Mantiene el texto en rojo si no es válido */
+}
+
+.color-text{
+  color: #00909E;
+}
+
+.alert-success {
+  border-radius: 4px !important;
+  background-color: #00909e !important;
+  color: #fff !important;
+  text-align: center;
+}
+
+.alert-danger{
+  border-radius: 4px !important;
+  background-color: #FF4A55 !important;
+  color: #fff !important;
+  text-align: center;
+}

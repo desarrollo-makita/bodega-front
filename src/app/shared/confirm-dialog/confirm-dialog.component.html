@@ -1,0 +1,11 @@
+<mat-dialog-content>
+  <div class="dialog-content">
+    <h2>Eliminar</h2>
+    <p>¿Estás seguro que deseas eliminar a <strong>{{data.user}}</strong>?</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button class="cancel-button" (click)="onNoClick()">No</button>
+  <button mat-raised-button class="confirm-button" [mat-dialog-close]="true" cdkFocusInitial>Sí</button>
+</mat-dialog-actions>
+  

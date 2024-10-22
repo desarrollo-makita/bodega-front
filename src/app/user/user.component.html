@@ -1,0 +1,262 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="header">
+            <h4 class="title"><strong>Agregar Usuario</strong></h4>
+          </div>
+          <div class="content">
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="empresa">Empresa</label>
+                    <input
+                      id="empresa"
+                      type="text"
+                      class="form-control"
+                      disabled
+                      placeholder="Makita"
+                      value="Makita"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="usuario">Usuario</label>
+                    <input
+                      type="text"
+                      id="usuario"
+                      class="form-control"
+                      placeholder="Usuario"
+                      formControlName="usuario"
+                      readonly
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      placeholder="ejemplo@makita.cl"
+                      formControlName="email"
+                      autocomplete="email"
+                      disabled
+                    />
+                    
+                    <div
+                      *ngIf="
+                        userForm.get('email').invalid &&
+                        userForm.get('email').touched
+                      "
+                      class="text-danger"
+                    >
+                      Ingrese Email valido.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input
+                      id="nombre"
+                      type="text"
+                      class="form-control"
+                      placeholder="Nombre"
+                      value=""
+                      formControlName="nombre"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="apellidoPaterno">Apellido Paterno</label>
+                    <input
+                      id="apellidoPaterno"
+                      type="text"
+                      class="form-control"
+                      placeholder="Apellido paterno"
+                      value=""
+                      formControlName="apellidoPaterno"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="apellidoMaterno">Apellido Materno</label>
+                    <input
+                      id="apellidoMaterno"
+                      type="text"
+                      class="form-control"
+                      placeholder="Apellido materno"
+                      value=""
+                      formControlName="apellidoMaterno"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="fechaInicio">Fecha de Ingreso</label>
+                    <input
+                      type="date"
+                      id="fechaInicio"
+                      class="form-control"
+                      disabled
+                      placeholder="Fecha de Inicio"
+                      formControlName="fechaInicio"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="header">
+                <div class="row">
+                  <h4 class="title"><strong>Permisos</strong></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="role">Rol</label>
+                    <select
+                      id="role"
+                      class="form-control"
+                      formControlName="role"
+                      (change)="onRoleChange($event)"
+                    >
+                      <option value="Administrador">Administrador</option>
+                      <option value="Consulta">Consulta</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="area">Area</label>
+                    <select
+                      id="area"
+                      class="form-control"
+                      formControlName="area"
+                      (change)="onAreaChange($event)"
+                    >
+                      <option *ngFor="let area of areas" [value]="area.Nombre">{{ area.Nombre }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="header">
+                <div class="row">
+                  <h4 class="title"><strong>Actividad</strong></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="checkbox col-md-4">
+                  <div class="form-group">
+                    <div *ngFor="let actividad of actividadList" class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="{{ actividad.nombreActividad }}"
+                        [attr.data-codigo]="actividad.codigoActividad"
+                        (change)="onCheckboxChange($event, actividad)"
+                      />
+                      <label
+                        class="form-check-label"
+                        style="font-weight: 500;"
+                        for="{{ actividad.nombreActividad }}"
+                      >
+                        {{ actividad.nombreActividad | titlecase }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <app-password-strength
+                (passwordValid)="isPasswordValid = $event"
+                formControlName="password"
+              ></app-password-strength>
+
+              <div class="row">
+                <div class="checkbox col-md-4">
+                  <div class="form-group" style="padding-top: 25%">
+                    <input
+                      id="usuarioActivo"
+                      type="checkbox"
+                      formControlName="usuarioActivo"
+                    />
+                    <label for="usuarioActivo"> Activo </label>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="isLoading" id="loader">
+                <img src="../../assets/img/loader-preview.svg" alt="loading" />
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-info btn-fill pull-right"
+                [disabled]="userForm.invalid"
+              >
+                Guardar
+              </button>
+              <br />
+              <br />
+
+              <hr />
+              <div
+                *ngIf="successMessage"
+                class="alert alert-success mt-3"
+                role="alert"
+              >
+                ¡Usuario creado con éxito!
+              </div>
+              <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                ¡Error Usuario no creado!
+              </div>
+              <div
+                *ngIf="warningMessage"
+                class="alert alert-danger"
+                role="alert"
+              >
+                ¡El Usuario {{ emailRespuesta }} ya se encuentra ingresado!
+              </div>
+              <div class="clearfix"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-user">
+          <div class="image">
+            <img src="../../assets/img/caluga-makita.jpg" alt="..." />
+          </div>
+          <div class="content">
+            <div class="author">
+              <a href="#">
+                <img
+                  class="avatar border-gray"
+                  src="../../assets/img/perfilg.PNG"
+                  alt="..."
+                />
+
+                <h4 style="color: #00909e; font-weight: 500;">
+                  {{ capitalizeWords(apellidoPaterno) }} {{ capitalizeWords(apellidoMaterno) }}<br />
+                  <small style="color: #00909e;font-weight: 500;">{{ capitalizeWords(nombre) }}</small>
+                </h4>
+              </a>
+            </div>
+            <p class="description text-center">{{ vigencia }}</p>
+            <br />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

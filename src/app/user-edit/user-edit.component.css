@@ -1,0 +1,246 @@
+.form-group label {
+  font-weight: bold;
+}
+
+.text-danger {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.alert-success {
+  background-color: rgba(0, 144, 158, 0.8);
+}
+
+.alert-danger {
+  background-color: rgba(235, 35, 35, 0.8);
+}
+
+.negrita {
+  font-weight: bold;
+}
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: #00909E;
+}
+
+/* Estilo del encabezado de la tabla */
+.table thead th {
+  background-color: #00909E; /* Fondo de color de la empresa */
+  color: white; /* Texto en blanco para contraste */
+  text-align: center; /* Alineación centrada del texto */
+}
+
+/* Estilo de las filas de la tabla */
+.table tbody tr {
+  transition: background-color 0.3s; /* Efecto de transición para el fondo */
+}
+
+.table tbody tr:hover {
+  background-color: #b0d9db; /* Color más claro al pasar el cursor por encima */
+}
+
+/* Estilo de las celdas de la tabla */
+.table tbody td {
+  color: #00909E; /* Texto de color de la empresa */
+  text-align: center; /* Alineación centrada del texto */
+}
+
+/* Estilo de los iconos */
+.table tbody td a i {
+  color: #00909E; /* Color de los iconos */
+  cursor: pointer; /* Cambiar el cursor al pasar sobre los iconos */
+  transition: color 0.3s; /* Efecto de transición para el color */
+}
+
+.table tbody td a i:hover {
+  color: #006f7b; /* Color más oscuro al pasar el cursor por encima */
+}
+
+/* Estilo del loader */
+#loader {
+  text-align: center; /* Centrar el loader */
+  margin-top: 10px; /* Espacio superior */
+}
+
+
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #00909E;
+}
+
+input.form-control {
+  border: 2px solid #00909E; /* Aumenta el grosor del borde y cambia el color */
+  border-radius: 4px; /* Aplica un ligero redondeo a las esquinas */
+  font-size: 16px; /* Aumenta el tamaño de la fuente para mejor legibilidad */
+  background-color: #f0f8ff; /* Cambia el color de fondo */
+  color: #333; /* Cambia el color del texto */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Añade un ligero efecto de sombra */
+}
+
+input.form-control:focus {
+  border-color: #006f77; /* Cambia el color del borde al enfocar */
+  box-shadow: 0 0 8px rgba(0, 144, 158, 0.6); /* Añade un efecto de sombra al enfocar */
+  outline: none; /* Remueve el borde azul predeterminado del navegador */
+}
+
+select.form-control {
+  border: 2px solid #00909E; /* Cambia el color y grosor del borde */
+  border-radius: 4px; /* Aplica un ligero redondeo a las esquinas */
+  font-size: 16px; /* Aumenta el tamaño de la fuente */
+  background-color: #f0f8ff; /* Cambia el color de fondo */
+  color: #333; /* Cambia el color del texto */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Añade un ligero efecto de sombra */
+}
+
+/* Estilos cuando el selector está enfocado */
+select.form-control:focus {
+  border-color: #006f77; /* Cambia el color del borde al enfocar */
+  background-color: #e0f7fa; /* Cambia el color de fondo al enfocar */
+  box-shadow: 0 0 8px rgba(0, 144, 158, 0.6); /* Añade un efecto de sombra al enfocar */
+  outline: none; /* Remueve el borde azul predeterminado del navegador */
+}
+
+.form-group label {
+  font-weight: bold; /* Hace que el texto sea más grueso */
+  margin-bottom: 5px; /* Añade un espaciado inferior */
+  color: #00909E; /* Cambia el color del texto del label */
+}
+
+/* Estilo del encabezado de la tabla */
+.table thead th {
+  background-color: #00909E; /* Fondo de color de la empresa */
+  color: white; /* Texto en blanco para contraste */
+  text-align: center; /* Alineación centrada del texto */
+}
+
+/* Estilo del encabezado de la tabla */
+.table thead tr th {
+  background-color: #00909E; /* Fondo de color de la empresa */
+  color: white; /* Texto en blanco para contraste */
+  text-align: center; /* Alineación centrada del texto */
+  font-weight: bold; /*Negrita*/
+}
+
+/* Estilo de las filas de la tabla */
+.table tbody tr {
+  transition: background-color 0.3s; /* Efecto de transición para el fondo */
+}
+
+.table tbody tr:hover {
+  background-color: #b0d9db; /* Color más claro al pasar el cursor por encima */
+}
+
+/* Estilo de las celdas de la tabla */
+.table tbody td {
+  color: #00909E; /* Texto de color de la empresa */
+  text-align: center; /* Alineación centrada del texto */
+}
+
+/* Estilo de los iconos */
+.table tbody td a i {
+  color: #00909E; /* Color de los iconos */
+  cursor: pointer; /* Cambiar el cursor al pasar sobre los iconos */
+  transition: color 0.3s; /* Efecto de transición para el color */
+}
+
+.table tbody td a i:hover {
+  color: #006f7b; /* Color más oscuro al pasar el cursor por encima */
+}
+
+/* Estilo del loader */
+#loader {
+  text-align: center; /* Centrar el loader */
+  margin-top: 10px; /* Espacio superior */
+}
+
+
+/* Estilops de nueva Clave : */
+.password-criteria {
+  list-style: none; /* Elimina los puntos predeterminados del navegador */
+  padding-left: 0; /* Elimina el relleno izquierdo por defecto */
+}
+
+.password-criteria li {
+  position: relative;
+  padding-left: 20px; /* Espacio para el punto antes del texto */
+  margin-bottom: 5px; /* Espacio entre los elementos */
+}
+
+.password-criteria li::before {
+  content: '•'; /* Punto antes del texto */
+  color: red; /* Color del punto, puedes ajustarlo según tus preferencias */
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 16px; /* Tamaño del punto, puedes ajustarlo según tus preferencias */
+  line-height: 1;
+}
+
+.password-criteria li.valid::before {
+  color: #00909E; /* Cambia el color del punto cuando el criterio es válido */
+}
+
+.password-criteria li.invalid::before {
+  color: red; /* Cambia el color del punto cuando el criterio no es válido */
+}
+
+.password-criteria {
+  list-style-type: none;
+  padding: 0;
+  font-size: 12px; /* Ajuste de tamaño para ser más compacto */
+}
+
+.password-criteria li {
+  color: red;
+  margin-bottom: 5px;
+}
+
+.password-criteria li.valid {
+  color: #00909E;
+  font-weight: bold;
+}
+
+
+  .progress {
+    height: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px #0000001a;
+}
+
+
+/* Color para las barras de progreso */
+.bg-danger {
+  background-color: #dc3545 !important; /* Rojo */
+}
+
+.bg-warning {
+  background-color: #ffc107 !important; /* Amarillo */
+}
+
+.bg-success {
+  background-color: #28a745 !important; /* Verde */
+}
+
+.password-strength-indicator {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.password-strength-indicator .weak {
+  color: red;
+}
+
+.password-strength-indicator .medium {
+  color: orange;
+}
+
+.password-strength-indicator .strong {
+  color: #00909E;
+}
+
+.progress-bar {
+  transition: width 0.3s ease, background-color 0.3s ease; /* Suaviza el cambio en el ancho y color */
+  
+}

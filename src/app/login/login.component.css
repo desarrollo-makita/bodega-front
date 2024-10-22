@@ -1,0 +1,89 @@
+/* Estilo para la imagen del logo */
+.logo-image {
+  max-width: 150px;
+  background-color: transparent; /* Fondo sea transparente */
+}
+
+/* Estilo para la altura completa de la vista y el fondo de la página */
+.vh-100 {
+  height: 100vh;
+  background-image: url('../../assets/img/fondoMakita.jpg'); /* Ruta de la imagen */
+  background-size: cover; /* Asegura que la imagen cubra todo el fondo */
+  background-position: center; /* Centra la imagen */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa; /* Color de fondo blanco, si la imagen no se carga */
+}
+
+/* Estilo para la tarjeta */
+.custom-card {
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco con transparencia */
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem; /* Añade padding interno a la tarjeta */
+}
+
+/* Estilo para el campo de entrada */
+.custom-input {
+  background-color: #f0f0f0; /* Fondo gris claro */
+  border: none;
+  border-radius: 5px;
+  color: #00909E; /* Color principal */
+  width: calc(100% - 5rem); /* Ajusta el ancho para dejar espacio a los márgenes laterales */
+  padding: 2.75rem 1rem; /* Agrega algo de padding interno */
+  margin: 5%; /* Centra el input horizontalmente */
+  font-weight: bold;
+}
+
+/* Estilo para el placeholder del campo de entrada */
+.custom-input::placeholder {
+  color: rgba(0, 144, 158, 0.7); /* Color principal transparente */
+}
+
+/* Estilo para el botón personalizado */
+.custom-button {
+  background-color: #00909E; /* Color principal */
+  border: none;
+  border-radius: 5px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s;
+  width: auto; /* Cambia el ancho a automático para ajustar al contenido */
+  max-width: 200px; /* Establece un ancho máximo si es necesario */
+  margin: 0 auto; /* Centra el botón horizontalmente */
+  color:#f0f0f0
+}
+
+/* Estilo para el botón en estado hover */
+.custom-button:hover {
+  background-color: #EC3537; /* Color rojo */
+}
+
+.alert-danger {
+  background-color: #EC3537;
+}
+
+/* Estilo para el campo de entrada en estado de foco */
+.form-floating>.form-control:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 0.25rem rgba(0, 144, 158, 0.25);
+  font-weight: bold;
+}
+
+/* Estilo para las etiquetas de los checkboxes */
+.form-check-label {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilo para el texto primario */
+.text-primary {
+  color: #00909E !important; /* Color principal */
+}
+
+.link-primary{
+  color: #00909E !important; /* Color principal */
+}

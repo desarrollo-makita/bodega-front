@@ -1,0 +1,22 @@
+
+<div class="sidebar-wrapper">
+    <div class="logo">
+        <a href="http://www.makita.cl" class="simple-text">
+            <div class="logo-img">
+                <img src="/assets/img/imagen-blanca2.png"/>
+            </div>
+           
+        </a>
+    </div>
+    <ul class="nav responsive-nav">
+    
+        <li routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: false }"  *ngFor="let menuItem of menuItems" class="{{menuItem.class}} " (click)="sendData(menuItem)">
+            <a  [routerLink]="[menuItem.Ruta]">
+                <i class="{{menuItem.Icono}}"></i>
+                <p>{{menuItem.Nombre}}</p>
+            </a>
+        </li>
+    </ul>
+    
+</div>
+
