@@ -113,6 +113,7 @@ export class UserComponent implements OnInit {
 
   setUsuario(): void {
     const nombre = this.userForm.get("nombre").value;
+    console.log("nombre :v" , nombre)
     const apellidoPaterno = this.userForm.get("apellidoPaterno").value;
     const apellidoMaterno = this.userForm.get("apellidoMaterno").value;
 
@@ -121,6 +122,8 @@ export class UserComponent implements OnInit {
       const primeraLetraNombre = nombre.trim().charAt(0).toLowerCase();
       const primerApellido = apellidoPaterno.trim().split(" ")[0].toLowerCase();
       let usuario = `${primeraLetraNombre}${primerApellido}`;
+
+      console.log("usuariooooo :" , usuario);
 
       // Llamar al servicio para verificar si el username existe
       this.userService.usernameExists(usuario).subscribe((exists) => {

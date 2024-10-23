@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
       this.loginService.login(usuario, clave).subscribe({
         next: response => {
          
-          
+          console.log("response : " , response)
           // Guarda el token en el localStorage
           sessionStorage.setItem('menu', JSON.stringify(response.data.menu));
           
@@ -75,7 +75,9 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/informes']);
             }else if(response.data.Rol === 'Administrador'){
               this.router.navigate(['/user']);
-              return;
+              
+            }else if(response.data.Rol === 'Operario'){
+              this.errorMessage = 'Usuario sin permiso para ingresar al mantenedor';
             }
           }
         },
