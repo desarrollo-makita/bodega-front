@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
 })
 export class AreaService {
 
-  private allUserUrl = "http://172.16.2.170:3024/api/get-all-areas";
-  private deleteAreaUrl = "http://172.16.2.170:3024/api/delete-area";
-  private insertAreaUrl = "http://172.16.2.170:3024/api/insertar-nueva-area";
+  private allUserUrl = "http://172.16.1.112:3024/api/get-all-areas";
+  private deleteAreaUrl = "http://172.16.1.112:3024/api/delete-area";
+  private insertAreaUrl = "http://172.16.1.112:3024/api/insertar-nueva-area";
 
 
   constructor(private http: HttpClient) {}

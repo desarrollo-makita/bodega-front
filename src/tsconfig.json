@@ -17,7 +17,8 @@
     "allowJs":true,
     "typeRoots": [
       "../node_modules/@types"
-    ]
+    ],
+    "esModuleInterop": true, // Agrega esta línea
   },
   "exclude": [
     "test.ts",

@@ -1,0 +1,74 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Bitacora de Ubicaciones</h4>
+                    </div>
+                    <div class="content">
+                        <form (ngSubmit)="onSubmit()" #form="ngForm">
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label for="fecha">Seleccione una fecha:</label>
+                                    <!-- Añadimos #fechaInput para obtener el estado del campo -->
+                                    <input type="date" id="fecha" class="form-control" [(ngModel)]="fecha" 
+                                           name="fecha" required #fechaInput="ngModel">
+                                    <!-- Mensaje de error si el campo no es válido -->
+                                    <div *ngIf="fechaInput.invalid && fechaInput.touched" class="text-danger">
+                                        La fecha es obligatoria.
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="margin-top: 2%;">
+                                    <!-- El botón está deshabilitado si el campo fecha es inválido -->
+                                    <button class="btn btn-primary custom-btn ml-auto" type="submit"
+                                            [disabled]="fechaInput.invalid">Buscar</button>
+                                </div>
+                            
+                            </div>
+                            <div *ngIf="message" class="text-danger mt-3">
+                                {{ message }}
+                            </div>
+                            <div *ngIf="isLoading" id="loader">
+                                <img src="../../assets/img/loader-preview.svg" alt="loading" />
+                              </div>
+                            <div *ngIf="showTable" class="row">
+                                <!-- Columna de la tabla de áreas -->
+                                <div class="col-md-12">
+                                    <div class="table-responsive table-full-width">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Usuario</th>
+                                                    <th>Item</th>
+                                                    <th>Fecha cambio</th>
+                                                    <th>Tipo item</th>
+                                                    <th>Ubicacion Anterior</th>
+                                                    <th>Ubicacion Actual</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let row of bitacoraUbicacionesList">
+                                                    <td>{{row.id}}</td>
+                                                    <td>{{row.Usuario}}</td>
+                                                    <td>{{row.Item}}</td>
+                                                    <td>{{formatDate(row.FechaCambio)}}</td>
+                                                    <td>{{row.TipoItem}}</td>
+                                                    <td>{{row.UbicacionAntigua}}</td>
+                                                    <td>{{row.NuevaUbicacion}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

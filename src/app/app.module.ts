@@ -30,6 +30,7 @@ import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.c
 import { PasswordStrengthComponent } from './util/password-strength/password-strength.component';
 import { PasswordRecoveryDialogComponent } from './shared/password-recovery-dialog/password-recovery-dialog.component';
 import { ReplaceTemporaryKeyComponent } from './shared/replace-temporary-key/replace-temporary-key.component';
+import { BitacoraUbicacionesComponent } from './bitacora-ubicaciones/bitacora-ubicaciones.component';
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { ReplaceTemporaryKeyComponent } from './shared/replace-temporary-key/rep
     PasswordStrengthComponent,
     PasswordRecoveryDialogComponent,
     ReplaceTemporaryKeyComponent,
+    BitacoraUbicacionesComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

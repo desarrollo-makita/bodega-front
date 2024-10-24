@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
       this.loginService.login(usuario, clave).subscribe({
         next: response => {
          
-          console.log("response : " , response)
+         
           // Guarda el token en el localStorage
           sessionStorage.setItem('menu', JSON.stringify(response.data.menu));
           
