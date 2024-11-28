@@ -39,25 +39,26 @@
                                         <table class="table table-hover table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Id</th>
+                                                   
                                                     <th>Usuario</th>
                                                     <th>Item</th>
                                                     <th>Fecha cambio</th>
                                                     <th>Tipo item</th>
                                                     <th>Ubicacion Anterior</th>
                                                     <th>Ubicacion Actual</th>
+                                                    <th>Operacion</th>
 
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let row of bitacoraUbicacionesList">
-                                                    <td>{{row.id}}</td>
                                                     <td>{{row.Usuario}}</td>
                                                     <td>{{row.Item}}</td>
                                                     <td>{{formatDate(row.FechaCambio)}}</td>
                                                     <td>{{row.TipoItem}}</td>
                                                     <td>{{row.UbicacionAntigua}}</td>
                                                     <td>{{row.NuevaUbicacion}}</td>
+                                                    <td>{{row.Operacion}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

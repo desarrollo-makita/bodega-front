@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BitacoraUbicacionesService } from 'app/services/bitacora-services/bitacora-ubicaciones.service';
-import moment from 'moment';
+import * as moment from 'moment';
+import 'moment-timezone';
 
 @Component({
   selector: 'app-bitacora-ubicaciones',
@@ -57,7 +58,9 @@ export class BitacoraUbicacionesComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return moment(date).format('DD/MM/YYYY HH:mm');
+    console.log("verificando Fecha : " , date);
+    return moment.utc(date).tz('America/Santiago').format('DD/MM/YYYY HH:mm:ss');
+    
   }
 
 }
