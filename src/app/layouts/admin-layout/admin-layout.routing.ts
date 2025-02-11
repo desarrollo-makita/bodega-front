@@ -5,6 +5,7 @@ import { UserComponent } from '../../user/user.component';
 import { UserEditComponent } from 'app/user-edit/user-edit.component';
 import { AreaMantenedorComponent } from 'app/area-mantenedor/area-mantenedor.component';
 import { BitacoraUbicacionesComponent } from 'app/bitacora-ubicaciones/bitacora-ubicaciones.component';
+import { InventarioComponent } from 'app/inventario/inventario/inventario.component';
 
 
 
@@ -14,7 +15,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'rol-mantenedor', component: AreaMantenedorComponent },
     { path: 'user/user-edit', component: UserEditComponent },
     { path: 'bitacora-ubicaciones', component: BitacoraUbicacionesComponent },
+    { path: 'inventario', component: InventarioComponent },
 
-
-   
 ];

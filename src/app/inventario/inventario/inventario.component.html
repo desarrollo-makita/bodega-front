@@ -1,0 +1,74 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Avance de Inventario</h4>
+                    </div>
+                    <div class="content">
+                        <form (ngSubmit)="onSubmit()" #form="ngForm">
+                            
+                            <div class="row">
+                                <div class="form-group col-md-1">
+                                    <label for="periodo">Periodo</label>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="mes">Mes</label>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="mes">Tipo Item</label>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="mes">Local</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-1">
+                                    <p class="custom-text">{{ selectedPeriodo }}</p>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <select class="form-control custom-select" id="mes" [(ngModel)]="selectedMes" name="mes" required (change)="onChange()"
+                                    [title]="selectedMes ? getMesTooltip(selectedMes) : 'Selecciona un mes'">
+                                    <option *ngFor="let mes of meses" [value]="mes.codigo">
+                                        {{ mes.nombre }}
+                                    </option>
+                                </select>
+                                </div>
+                                
+                                <div class="form-group col-md-2">
+                                    <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()"
+                                        [title]="selectedTipoItem ? getTipoItemTooltip(selectedTipoItem) : 'Selecciona un tipo de ítem'">
+                                        <option *ngFor="let tipo of tiposItems" [value]="tipo.codigo">
+                                            {{ tipo.descripcion }}
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                             
+                                <div class="form-group col-md-2">
+                                    <select class="form-control custom-select" id="local" [(ngModel)]="selectedLocal" name="local" required (change)="onChange()"
+                                    [title]="selectedLocal ? getLocalTooltip(selectedLocal) : 'Selecciona un local'">
+                                        <option *ngFor="let local of locales" [value]="local.codigo">
+                                            {{ local.descripcion }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-5">
+                                    <button type="submit" class="btn btn-primary btn-sm custom-btn"  [disabled]="!formValido()">
+                                        Buscar&nbsp;&nbsp; <i class="fas fa-search ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

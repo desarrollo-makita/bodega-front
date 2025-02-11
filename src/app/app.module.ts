@@ -31,6 +31,7 @@ import { PasswordStrengthComponent } from './util/password-strength/password-str
 import { PasswordRecoveryDialogComponent } from './shared/password-recovery-dialog/password-recovery-dialog.component';
 import { ReplaceTemporaryKeyComponent } from './shared/replace-temporary-key/replace-temporary-key.component';
 import { BitacoraUbicacionesComponent } from './bitacora-ubicaciones/bitacora-ubicaciones.component';
+import { InventarioComponent } from './inventario/inventario/inventario.component';
 
 @NgModule({
   imports: [
@@ -63,6 +64,7 @@ import { BitacoraUbicacionesComponent } from './bitacora-ubicaciones/bitacora-ub
     PasswordRecoveryDialogComponent,
     ReplaceTemporaryKeyComponent,
     BitacoraUbicacionesComponent,
+    InventarioComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

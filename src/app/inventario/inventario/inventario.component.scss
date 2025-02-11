@@ -1,0 +1,83 @@
+
+
+/* Estilo del encabezado */
+.title {
+  color: #00909E;
+  font-weight: 400;
+}
+
+.custom-btn {
+  background-color: #00909E;
+  border: none;
+  border-radius: 30px;
+  padding: 10px;
+  margin-left: 10%;
+  margin-top: -3%;
+}
+
+.custom-btn:hover {
+  background-color: #006f7b; /* Un tono más oscuro de #00909E */
+}
+
+.btn-primary {
+  color: #fff;
+}
+
+/* Estilos de los select y input */
+.custom-select {
+  border: 1px solid #00909E;
+  border-radius: 30px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  font-size: 1.5rem;
+  color: #00909E;
+  width: 100%; /* Hacemos que los select ocupen todo el ancho */
+  margin-top: -7%;
+ 
+}
+
+.custom-select:focus {
+  border-color: #006f7b;
+  box-shadow: 0 0 5px rgba(0, 111, 123, 0.5);
+  outline: none;
+}
+
+.custom-select option {
+  background-color: #ffffff;
+  color: #00909E;
+  padding: 10px;
+  border-radius: none;
+  transition: background-color 0.3s ease;
+}
+
+.custom-select option:hover {
+  background-color: #b0d9db;
+}
+
+
+/* Para el botón "Buscar" */
+.custom-btn {
+  width: 30%; /* Hacer que el botón ocupe todo el ancho */
+
+}
+
+.custom-text {
+  color: #00909E;
+  font-weight: 400;
+}
+
+/* Eliminar el espacio entre las filas */
+.row {
+  margin-bottom: 0; /* Eliminar el espacio entre las filas */
+}
+
+/* Reducir la separación entre los grupos de formulario */
+.form-group {
+  margin-bottom: 0; /* Ajusta este valor para el espacio entre los campos */
+}
+
+.custom-btn i {
+  margin-right: 5px; /* Espacio entre el icono y el texto */
+  font-size: 18px; /* Ajustar tamaño del icono */
+}

@@ -51,15 +51,21 @@ export class NavbarComponent implements OnInit{
 
     updateTitle(title: string) {
         if (title === '/user') {
-          this.title = 'Usuarios';
-          this.showIcons = true;
+            this.title = 'Usuarios';
+            this.showIcons = true;
         } else if (title === '/informes') {
-          this.title = 'Informes';
-          this.showIcons = false;
+            this.title = 'Informes';
+            this.showIcons = false;
         } else if (title === '/rol-mantenedor') {
-          this.title = 'Mantenedor de Area';
-          this.showIcons = false;
-        }
+            this.title = 'Mantenedor de Area';
+            this.showIcons = false;
+        } else if (title === '/inventario') {
+            this.title = 'Inventario';
+            this.showIcons = false;
+         } else if (title === '/bitacora-ubicaciones') {
+            this.title = 'Bitacora Ubicaciones';
+            this.showIcons = false;
+          }
       }
 
     

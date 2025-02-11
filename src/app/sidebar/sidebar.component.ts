@@ -26,16 +26,19 @@ declare interface RouteInfo {
 export class SidebarComponent implements OnInit {
   menuItems: any[];
 
-  constructor(private dataSharingService: MyDataService , private router: Router) { }
+  constructor(
+    private dataSharingService: MyDataService , 
+    private router: Router) { }
 
   ngOnInit() {
 
     const arregloRecuperado = sessionStorage.getItem('menu');
     this.menuItems = JSON.parse(arregloRecuperado);
-    
+    console.log("mneuItem", this.menuItems);
   }
 
   sendData(menuItem) {
+    console.log("mneuItem", menuItem);
     this.dataSharingService.setStringData(menuItem);
   }
 }

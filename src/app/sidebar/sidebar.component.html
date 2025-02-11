@@ -10,7 +10,8 @@
     </div>
     <ul class="nav responsive-nav">
     
-        <li routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: false }"  *ngFor="let menuItem of menuItems" class="{{menuItem.class}} " (click)="sendData(menuItem)">
+        <li routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: false }"  
+        *ngFor="let menuItem of menuItems" class="{{menuItem.class}} " (click)="sendData(menuItem)">
             <a  [routerLink]="[menuItem.Ruta]">
                 <i class="{{menuItem.Icono}}"></i>
                 <p>{{menuItem.Nombre}}</p>
