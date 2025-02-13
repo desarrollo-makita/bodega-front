@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ActividadService{
-  private allActivityUrl = "http://172.16.1.206:3024/api/get-all-actividades";
+  private allActivityUrl = "http://172.16.1.234:3024/api/get-all-actividades";
 
   constructor(private http: HttpClient) {}
 
