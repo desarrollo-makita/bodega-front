@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { InventarioService } from 'app/services/inventario/inventario.service';
 
 @Component({
   selector: 'app-inventario',
@@ -7,12 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InventarioComponent implements OnInit {
 
-
-  // Variables para almacenar los valores seleccionados
+  // Variables del formulario
   selectedMes: string;
   selectedPeriodo: string;
   selectedTipoItem: string;
   selectedLocal: string;
+
+  mensaje: string = ''; // Mensaje para el usuario
+  inventarioData: any = [];
+  isLoading: boolean = false;
+  showTable:boolean= false;
 
   meses = [
     { nombre: 'Enero', codigo: '01' },
@@ -29,10 +34,6 @@ export class InventarioComponent implements OnInit {
     { nombre: 'Diciembre', codigo: '12' }
   ];
 
-  // Año actual
-
-
-  // Tipos de Item
   tiposItems = [
     { descripcion: '01-Herramientas', codigo: '01' },
     { descripcion: '02-Kit', codigo: '02' },
@@ -40,26 +41,69 @@ export class InventarioComponent implements OnInit {
     { descripcion: '04-Repuestos', codigo: '04' }
   ];
 
-  // Locales
   locales = [
     { descripcion: 'Casa Matriz ENEA', codigo: '01' },
-    { descripcion: 'NO USAR Ex-Copiapo 365 Stgo Centro', codigo: '02' },
     { descripcion: 'Serv. Tecnico Temuco', codigo: '03' },
     { descripcion: 'Centro de Servicios Antofagasta', codigo: '04' },
     { descripcion: 'Centro de Servicios Copiapo', codigo: '05' }
   ];
 
-  constructor() { }
+  
+  constructor(private invetarioServices: InventarioService) {}
 
   ngOnInit(): void {
-
-    this.selectedPeriodo = new Date().getFullYear().toString(); 
+    this.selectedPeriodo = new Date().getFullYear().toString();
     this.selectedMes = (new Date().getMonth() + 1).toString().padStart(2, '0');
-
   }
-  
+
   onSubmit() {
-    console.log('Formulario Inventario');  
+    const data = {
+      periodo: this.selectedPeriodo,
+      mes: this.selectedMes,
+      tipoItem: this.selectedTipoItem,
+      local: this.selectedLocal
+    };
+    this.isLoading = true;
+    this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor:', response);
+        this.isLoading = true;
+        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+          this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
+          this.inventarioData = [];
+          this.resetFormulario();
+          this.showTable = false;
+        } else {
+          this.mensaje = ""; // Limpiar mensaje si hay datos
+          this.inventarioData = response.data.recordset;
+          this.showTable = true;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en la consulta:', error);
+        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+      },
+      complete: () => {
+        /*setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);*/
+        this.isLoading = false;
+      },
+    });
+  }
+
+  mostrarMensaje(texto: string) {
+    this.mensaje = texto;
+    setTimeout(() => {
+      this.mensaje = "";
+    }, 2000); // Ocultar mensaje después de 2 segundos
+  }
+
+  resetFormulario() {   
+    this.selectedTipoItem = "";
+    this.selectedLocal = "";
+    this.inventarioData = [];
   }
 
   formValido(): boolean {
@@ -70,20 +114,19 @@ export class InventarioComponent implements OnInit {
     console.log('Mes seleccionado:', this.selectedMes);
     console.log('Tipo de ítem seleccionado:', this.selectedTipoItem);
     console.log('Local seleccionado:', this.selectedLocal);
-    console.log('selectedPeriodo:', this.selectedPeriodo);
+    console.log('Periodo seleccionado:', this.selectedPeriodo);
   }
-  
+
   getMesTooltip(codigo: string): string {
     const mesEncontrado = this.meses.find(mes => mes.codigo === codigo);
     return mesEncontrado ? mesEncontrado.nombre : '';
   }
 
-
   getTipoItemTooltip(codigo: string): string {
     const tipo = this.tiposItems.find(item => item.codigo === codigo);
     return tipo ? tipo.descripcion : '';
   }
-  
+
   getLocalTooltip(codigo: string): string {
     const localEncontrado = this.locales.find(local => local.codigo === codigo);
     return localEncontrado ? localEncontrado.descripcion : '';

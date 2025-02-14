@@ -39,7 +39,7 @@
                                 <div class="form-group col-md-2">
                                     <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()"
                                         [title]="selectedTipoItem ? getTipoItemTooltip(selectedTipoItem) : 'Selecciona un tipo de ítem'">
-                                        <option *ngFor="let tipo of tiposItems" [value]="tipo.codigo">
+                                        <option *ngFor="let tipo of tiposItems" [value]="tipo.descripcion">
                                             {{ tipo.descripcion }}
                                         </option>
                                     </select>
@@ -62,9 +62,111 @@
                                 </div>
                             </div>
                             <br>
-                            <div class="row">
-                                
+                            <div *ngIf="showTable" class="row">
+                                <!-- Columna de la tabla de áreas -->
+                                <div class="col-md-12">
+                                    <div class="table-responsive table-full-width">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Empresa</th>
+                                                    <th>Año</th>
+                                                    <th>Mes</th>
+                                                    <th>Local</th>
+                                                    <th>Nombre Local</th>
+                                                    <th>Nombre Bodega</th>
+                                                    <th>Key Item</th>
+                                                    <th>Tipo Item</th>
+                                                    <th>Item</th>
+                                                    <th>Descripcion</th>
+                                                    <th>Obsoleto</th>
+                                                    <th>Vigencia</th>
+                                                    <th>Tipo Producto</th>
+                                                    <th>Categoria</th>
+                                                    <th>Saldo Stock</th>
+                                                    <th>Conteo</th>
+                                                    <th>Diferencia</th>
+                                                    <th>Reconteo 01</th>
+                                                    <th>Diferencia 01</th>
+                                                    <th>Reconteo 02</th>
+                                                    <th>Diferencia 02</th>
+                                                    <th>Reconteo 03</th>
+                                                    <th>Diferencia 03</th>
+                                                    <th>Reconteo 04</th>
+                                                    <th>Diferencia 04</th>
+                                                    <th>Reconteo 05</th>
+                                                    <th>Diferencia 05</th>
+                                                    <th>Reconteo 06</th>
+                                                    <th>Diferencia 06</th>
+                                                    <th>Costo</th>
+                                                    <th>Costo Total</th>
+                                                    <th>Precio</th>
+                                                    <th>Estado</th>
+                                                    <th>Observacion</th>
+                                                    <th>Ubicacion</th>
+                                                    <th>Fecha Creacion</th>
+                                                    <th>Estado Proceso</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let row of inventarioData">
+                                                    <td>{{ row.Empresa }}</td>
+                                                    <td>{{ row.Ano }}</td>
+                                                    <td>{{ row.Mes }}</td>
+                                                    <td>{{ row.local }}</td>
+                                                    <td>{{ row.NombreLocal }}</td>
+                                                    <td>{{ row.NombreBodega }}</td>
+                                                    <td>{{ row.KeyItem }}</td>
+                                                    <td>{{ row.TipoItem }}</td>
+                                                    <td>{{ row.Item }}</td>
+                                                    <td>{{ row.Descripcion }}</td>
+                                                    <td>{{ row.Obsoleto }}</td>
+                                                    <td>{{ row.Vigencia }}</td>
+                                                    <td>{{ row.TipoProducto }}</td>
+                                                    <td>{{ row.Categoria }}</td>
+                                                    <td>{{ row.SaldoStock }}</td>
+                                                    <td>{{ row.Conteo }}</td>
+                                                    <td>{{ row.Diferencia }}</td>
+                                                    <td>{{ row.Reconteo01 }}</td>
+                                                    <td>{{ row.Diferencia01 }}</td>
+                                                    <td>{{ row.Reconteo02 }}</td>
+                                                    <td>{{ row.Diferencia02 }}</td>
+                                                    <td>{{ row.Reconteo03 }}</td>
+                                                    <td>{{ row.Diferencia03 }}</td>
+                                                    <td>{{ row.Reconteo04 }}</td>
+                                                    <td>{{ row.Diferencia04 }}</td>
+                                                    <td>{{ row.Reconteo05 }}</td>
+                                                    <td>{{ row.Diferencia05 }}</td>
+                                                    <td>{{ row.Reconteo06 }}</td>
+                                                    <td>{{ row.Diferencia06 }}</td>
+                                                    <td>{{ row.Costo }}</td>
+                                                    <td>{{ row.CostoTotal }}</td>
+                                                    <td>{{ row.Precio }}</td>
+                                                    <td>{{ row.Estado }}</td>
+                                                    <td>{{ row.Observacion }}</td>
+                                                    <td>{{ row.Ubicacion }}</td>
+                                                    <td>{{ row.FechaCreacion }}</td>
+                                                    <td>{{ row.EstadoProceso }}</td>
+                                                </tr>
+                                            </tbody>
+                                            
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
+                            
+                            <div *ngIf="mensaje" class="alert alert-warning">
+                                {{ mensaje }}
+                            </div>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <div *ngIf="isLoading" id="loader">
+                            <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+                            </div>
+                            
                         </form>
                     </div>
                 </div>

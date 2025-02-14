@@ -26,7 +26,7 @@
 /* Estilos de los select y input */
 .custom-select {
   border: 1px solid #00909E;
-  border-radius: 30px;
+ // border-radius: 30px;
   padding: 10px 20px;
   transition: all 0.3s ease;
   background-color: #ffffff;
@@ -81,3 +81,55 @@
   margin-right: 5px; /* Espacio entre el icono y el texto */
   font-size: 18px; /* Ajustar tamaño del icono */
 }
+
+.table {
+  /* Ajustar el tamaño de la tabla según el contenido */
+  margin: 0 auto; /* Centrar la tabla */
+  table-layout: auto; /* Distribuir las columnas según el contenido */
+  border-collapse: collapse; /* Eliminar espacios entre las celdas */
+
+  width:auto; /* Ajustar el tamaño de la tabla según el contenido */
+  margin: 0 0 0 1em; /* Centrar la tabla */
+  table-layout: auto; /* Distribuir las columnas según el contenido */
+  border-collapse:  collapse; /* Eliminar espacios entre las celdas */;
+}
+
+
+  /* Estilo del encabezado */
+  .table thead th {
+    background-color: #00909E; /* Fondo de color de la empresa */
+    color: white; /* Texto en blanco para contraste */
+    text-align: center; /* Alineación centrada del texto */
+    padding: 8px; /* Espaciado interno */
+    white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+  }
+
+
+   /* Estilo de las filas de la tabla */
+   .table tbody tr {
+    transition: background-color 0.3s; /* Efecto de transición para el fondo */
+  }
+
+   /* Hover sobre las filas */
+   .table tbody tr:hover {
+    background-color: #b0d9db; /* Color más claro al pasar el cursor por encima */
+  }
+
+
+   /* Estilo de las celdas */
+   .table tbody td {
+    
+    color: #00909E; /* Texto de color de la empresa */
+    text-align: center; /* Alineación centrada del texto */
+    padding: 8px; /* Espaciado interno */
+    text-overflow: ellipsis; /* Agregar puntos suspensivos si el contenido es demasiado largo */
+    
+  }
+
+    /* Limitar el ancho de las columnas */
+    .table tbody td {
+      
+      max-width: auto; /* Limitar el ancho de las columnas */
+      overflow: hidden; /* Ocultar el contenido que desborde */
+      text-overflow: ellipsis; /* Agregar puntos suspensivos si el contenido es demasiado largo */
+    }  
