@@ -1,0 +1,63 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Asignar Capturador</h4>
+                    </div>
+                    <div class="content">
+                        <form (ngSubmit)="onSubmit()" #form="ngForm">
+                            <div class="row">
+                                <div class="form-group col-md-1">
+                                    <label for="periodo" style="font-weight: bold;">Periodo</label>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="mes" style="font-weight: bold;">Mes</label>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="usuario" style="font-weight: bold;">Usuario</label>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="capturador" style="font-weight: bold;">Capturador</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-1">
+                                    <p class="custom-text">{{ selectedPeriodo }}</p>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <select class="form-control custom-select" id="mes" [(ngModel)]="selectedMes" name="mes" required (change)="onChange()"
+                                        [title]="selectedMes ? getMesTooltip(selectedMes) : 'Selecciona un mes'">
+                                        <option *ngFor="let mes of meses" [value]="mes.codigo">
+                                            {{ mes.nombre }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <select class="form-control custom-select" id="usuarios" [(ngModel)]="selectedUsuario" name="usuarios" required (change)="onChange()"
+                                        [title]="selectedUsuario ? getUsuariosTooltip(selectedUsuario) : 'Selecciona un usuario'">
+                                        <option *ngFor="let tipo of usuarios" [value]="tipo.nombre">
+                                            {{ tipo.nombre }}
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group col-md-2">
+                                    
+                                </div>
+                                
+                             
+                                <div class="form-group col-md-2">
+                                    
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                      
+  

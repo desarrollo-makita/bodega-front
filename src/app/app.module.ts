@@ -33,6 +33,7 @@ import { ReplaceTemporaryKeyComponent } from './shared/replace-temporary-key/rep
 import { BitacoraUbicacionesComponent } from './bitacora-ubicaciones/bitacora-ubicaciones.component';
 import { InventarioComponent } from './inventario/inventario/inventario.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AsignarCapturadorComponent } from './asignar-capturador/asignar-capturador.component';
 
 @NgModule({
   imports: [
@@ -69,6 +70,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ReplaceTemporaryKeyComponent,
     BitacoraUbicacionesComponent,
     InventarioComponent,
+    AsignarCapturadorComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
