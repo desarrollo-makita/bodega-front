@@ -19,6 +19,9 @@ export class InventarioComponent implements OnInit {
   isLoading: boolean = false;
   showTable:boolean= false;
 
+  p: number = 1; // Página actual
+  itemsPerPage: number = 10; // Elementos por página
+  
   meses = [
     { nombre: 'Enero', codigo: '01' },
     { nombre: 'Febrero', codigo: '02' },
@@ -85,9 +88,7 @@ export class InventarioComponent implements OnInit {
         this.mostrarMensaje("Ocurrió un error al obtener los datos.");
       },
       complete: () => {
-        /*setTimeout(() => {
-          this.isLoading = false;
-        }, 2000);*/
+    
         this.isLoading = false;
       },
     });
@@ -132,4 +133,8 @@ export class InventarioComponent implements OnInit {
     return localEncontrado ? localEncontrado.descripcion : '';
   }
 
+  actualizarPaginacion() {
+    console.log("Nueva cantidad de elementos por página:", this.itemsPerPage);
+    this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
+  }
 }

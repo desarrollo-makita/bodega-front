@@ -32,6 +32,7 @@ import { PasswordRecoveryDialogComponent } from './shared/password-recovery-dial
 import { ReplaceTemporaryKeyComponent } from './shared/replace-temporary-key/replace-temporary-key.component';
 import { BitacoraUbicacionesComponent } from './bitacora-ubicaciones/bitacora-ubicaciones.component';
 import { InventarioComponent } from './inventario/inventario/inventario.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   imports: [
@@ -51,6 +52,9 @@ import { InventarioComponent } from './inventario/inventario/inventario.componen
     MatFormFieldModule,  // Para usar mat-form-field
     MatInputModule,      // Para usar matInput
     MatCardModule,       // Para usar mat-card
+    NgxPaginationModule,
+
+    
   ],
   declarations: [
     AppComponent,

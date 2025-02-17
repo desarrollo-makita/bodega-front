@@ -99,7 +99,7 @@
   .table thead th {
     background-color: #00909E; /* Fondo de color de la empresa */
     color: white; /* Texto en blanco para contraste */
-    text-align: center; /* Alineación centrada del texto */
+    text-align: start; /* Alineación centrada del texto */
     padding: 8px; /* Espaciado interno */
     white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
   }
@@ -120,7 +120,7 @@
    .table tbody td {
     
     color: #00909E; /* Texto de color de la empresa */
-    text-align: center; /* Alineación centrada del texto */
+    text-align: start; /* Alineación centrada del texto */
     padding: 8px; /* Espaciado interno */
     text-overflow: ellipsis; /* Agregar puntos suspensivos si el contenido es demasiado largo */
     
@@ -133,3 +133,39 @@
       overflow: hidden; /* Ocultar el contenido que desborde */
       text-overflow: ellipsis; /* Agregar puntos suspensivos si el contenido es demasiado largo */
     }  
+
+    .pagination-controls-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    
+    .ngx-pagination {
+      display: flex;
+      list-style: none;
+    }
+    
+    .ngx-pagination li {
+      margin: 0 5px;
+    }
+    
+    .ngx-pagination a {
+      text-decoration: none;
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      color: #008686;
+    }
+    
+    .ngx-pagination .current {
+      background-color: #008686;
+      color: white;
+    }
+    
