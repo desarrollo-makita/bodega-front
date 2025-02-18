@@ -59,6 +59,7 @@ export class AsignarCapturadorComponent {
   }
 
   onSubmit() {
+    
     this.borrarMensaje();
     this.isLoading = true;
     const asignacion = {

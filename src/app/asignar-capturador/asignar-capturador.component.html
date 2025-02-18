@@ -65,7 +65,7 @@
                                     </select>
                                 </div>
                                 <div class="text-center mt-3">
-                                    <button class="btn btn-primary btn-lg shadow-lg px-4 button-class" [disabled]="!formValido()">
+                                    <button class="btn btn-primary btn-lg shadow-lg px-4 button-class" [disabled]="!formValido() || isLoading">
                                         <i class="fas fa-link"></i> Asignar
                                     </button>
                                 </div>
