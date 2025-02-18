@@ -7,8 +7,10 @@ import { Observable } from 'rxjs';
 })
 export class InventarioService {
   
-  private apiUrl = 'http://172.16.1.206:3024/api/consultar-inventario'; // Reemplázalo con tu URL real
-  private asignarUrl = 'http://172.16.1.234:3024/api/asignar-capturador'; // Reemplázalo con tu URL real
+  private apiUrl = 'http://172.16.1.206:3024/api/consultar-inventario';
+  private asignarUrl = 'http://172.16.1.234:3024/api/asignar-capturador'; 
+  private getAssignmentUrl = 'http://172.16.1.234:3024/api/consultar-asignacion';
+  private deleteAsignacionUrl = 'http://172.16.1.234:3024/api/delete-asignacion';
 
   constructor(private http: HttpClient) {}
 
@@ -26,4 +28,14 @@ export class InventarioService {
   asignarCapturador(data: any): Observable<any> {
     return this.http.post(this.asignarUrl, data);
   }
+
+  obtenerAsignaciones(): Observable<any> {
+    return this.http.get<any>(this.getAssignmentUrl);
+  }
+
+  eliminarAsignacion(capturador: string): Observable<any> {
+    const params = new HttpParams().set('capturador', capturador);
+    return this.http.delete<any>(this.deleteAsignacionUrl, { params });
+  }
+  
 }

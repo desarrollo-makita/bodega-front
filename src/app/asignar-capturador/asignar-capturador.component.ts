@@ -16,6 +16,8 @@ export class AsignarCapturadorComponent {
   selectedProducto: string;
   mensaje: string = ''; // Mensaje para el usuario
   tipoMensaje: string = ''; // Tipo de mensaje para el usuario
+
+  asignaciones: any[] = [];
   
   isLoading: boolean = false;
   capturadores: { nombre: string }[] = Array.from({ length: 30 }, (_, i) => ({ nombre: `Honeywell-${(i + 1).toString().padStart(2, '0')}` }));
@@ -47,12 +49,13 @@ export class AsignarCapturadorComponent {
     { nombre: 'ACCESORIOS' },
     { nombre: 'REPUESTOS' }
   ];
-  
+ 
   constructor(private inventarioService : InventarioService) {}
 
   ngOnInit(): void {
     this.selectedPeriodo = new Date().getFullYear().toString();
     this.selectedMes = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    this.cargarAsignaciones();
   }
 
   onSubmit() {
@@ -87,7 +90,9 @@ export class AsignarCapturadorComponent {
           this.mensaje = '¡Asignación realizada con éxito!';
           this.tipoMensaje = 'success';// Muestra el loader al menos 1 segundo
           this.isLoading = false;
+          this.cargarAsignaciones();
           this.resetFormulario();
+          
         }, 1000); 
        
        
@@ -138,4 +143,62 @@ export class AsignarCapturadorComponent {
     return !!(this.selectedMes && this.selectedPeriodo && this.selectedUsuario && this.selectedCapturador && this.selectedProducto);
   }
 
+
+  cargarAsignaciones() {
+   
+    this.inventarioService.obtenerAsignaciones().subscribe({
+      next: (response) => {
+        console.log('Respuesta obtenerAsignaciones  - servidor:', response);
+        this.asignaciones = response.data;
+        
+      },
+      error: (error) => {
+ 
+
+        setTimeout(() => {
+          this.mensaje = `Error  ${JSON.stringify( error.error.error)}`;
+          this.tipoMensaje = 'error';
+        
+          this.resetFormulario();
+        }, 1000); 
+       
+      },
+      complete: () => {
+        console.log('Proceso exitoso');
+        setTimeout(() => {
+          this.borrarMensaje();
+        },1000);
+ 
+       
+      },
+    });
+  }
+
+   // Función para eliminar asignación
+  eliminarAsignacion(asignacion: any): void {
+    this.isLoading = true;
+    this.inventarioService.eliminarAsignacion(asignacion).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor:', response);
+      },
+      error: (error) => {
+        setTimeout(() => {
+          this.mensaje = `Error  ${JSON.stringify( error.error.error)}`;
+          this.tipoMensaje = 'error';
+      
+        }, 1000); 
+        
+      },
+      complete: () => {
+        
+        setTimeout(() => {
+          this.mensaje = '¡Asignación eliminada con éxito!';
+          this.tipoMensaje = 'success';// Muestra el loader al menos 1 segundo
+          this.isLoading = false;
+          this.cargarAsignaciones();
+          
+        }, 1000); 
+      },
+    });
+  }
 }

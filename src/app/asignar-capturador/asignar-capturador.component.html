@@ -64,7 +64,6 @@
                                         </option>
                                     </select>
                                 </div>
-
                                 <div class="text-center mt-3">
                                     <button class="btn btn-primary btn-lg shadow-lg px-4 button-class" [disabled]="!formValido()">
                                         <i class="fas fa-link"></i> Asignar
@@ -72,18 +71,42 @@
                                 </div>
                                 <br>
                                 <br>
-                                <br>
-                                <br>
-                                <br>
-                                <br>
                             </div>
+                            
+                        </form>
+                        <div class="table-responsive mt-4" *ngIf="asignaciones.length > 0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Usuario</th>
+                                        <th scope="col">Capturador</th>
+                                        <th scope="col">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let asignacion of asignaciones" class="fade-in">
+                                        <td>{{ asignacion.Usuario }}</td>
+                                        <td>{{ asignacion.Capturador }}</td>
+                                        <td>
+                                            <!-- Icono de basurero con el texto emergente "Eliminar usuario" -->
+                                            <button 
+                                                class="btn btn-link" 
+                                                (click)="eliminarAsignacion(asignacion.Capturador)" 
+                                                title="Eliminar usuario">
+                                                <i class="fas fa-trash-alt" style="color: #ff6347;"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <div *ngIf="isLoading" id="loader">
                                 <img src="../../assets/img/loader-preview.svg" alt="loading" />
                             </div>
+                          
                             <div *ngIf="mensaje" [ngClass]="{'alert-success': tipoMensaje === 'success', 'alert-danger': tipoMensaje === 'error'}" class="alert">
                                 {{ mensaje }}
                               </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
