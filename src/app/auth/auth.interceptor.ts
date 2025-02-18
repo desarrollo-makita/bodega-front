@@ -51,6 +51,10 @@ export class AuthInterceptor implements HttpInterceptor {
         console.log('No encontrado - Error 404');
       
         break;
+      case 409:
+        console.log('Violacion clave única - Error 409');
+      
+        break;
       case 500:
         console.log('Error en el servidor - Error 500');
       

@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 export class InventarioService {
   
   private apiUrl = 'http://172.16.1.206:3024/api/consultar-inventario'; // Reemplázalo con tu URL real
+  private asignarUrl = 'http://172.16.1.234:3024/api/asignar-capturador'; // Reemplázalo con tu URL real
 
   constructor(private http: HttpClient) {}
 
@@ -19,5 +20,10 @@ export class InventarioService {
       .set('local', local);
 
     return this.http.get<any>(this.apiUrl, { params });
+  }
+
+
+  asignarCapturador(data: any): Observable<any> {
+    return this.http.post(this.asignarUrl, data);
   }
 }

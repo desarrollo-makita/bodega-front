@@ -21,6 +21,9 @@
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
                                     <label for="capturador" style="font-weight: bold;">Capturador</label>
                                 </div>
+                                <div class="form-group col-md-2" style="margin-left: 1%;">
+                                    <label for="capturador" style="font-weight: bold;">Tipo Producto</label>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-1">
@@ -44,14 +47,42 @@
                                 </div>
                                 
                                 <div class="form-group col-md-2">
-                                    
+                                    <select class="form-control custom-select" id="capturador" [(ngModel)]="selectedCapturador" name="capturador" required (change)="onChange()"
+                                        [title]="selectedCapturador ? getCapturadorTooltip(selectedCapturador) : 'Selecciona un capturador'">
+                                        <option *ngFor="let tipo of capturadores" [value]="tipo.nombre">
+                                            {{ tipo.nombre }}
+                                        </option>
+                                    </select>
                                 </div>
                                 
                              
                                 <div class="form-group col-md-2">
-                                    
+                                    <select class="form-control custom-select" id="producto" [(ngModel)]="selectedProducto" name="producto" required (change)="onChange()"
+                                        [title]="selectedProducto ? getProductoTooltip(selectedProducto) : 'Selecciona un producto'">
+                                        <option *ngFor="let tipo of productos" [value]="tipo.nombre">
+                                            {{ tipo.nombre }}
+                                        </option>
+                                    </select>
                                 </div>
+
+                                <div class="text-center mt-3">
+                                    <button class="btn btn-primary btn-lg shadow-lg px-4 button-class" [disabled]="!formValido()">
+                                        <i class="fas fa-link"></i> Asignar
+                                    </button>
+                                </div>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
                             </div>
+                            <div *ngIf="isLoading" id="loader">
+                                <img src="../../assets/img/loader-preview.svg" alt="loading" />
+                            </div>
+                            <div *ngIf="mensaje" [ngClass]="{'alert-success': tipoMensaje === 'success', 'alert-danger': tipoMensaje === 'error'}" class="alert">
+                                {{ mensaje }}
+                              </div>
                         </form>
                     </div>
                 </div>

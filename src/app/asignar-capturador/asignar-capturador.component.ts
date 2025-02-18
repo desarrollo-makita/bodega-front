@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { InventarioService } from 'app/services/inventario/inventario.service';
 
 @Component({
   selector: 'app-asignar-capturador',
@@ -8,12 +9,16 @@ import { Component } from '@angular/core';
 export class AsignarCapturadorComponent {
   
   // Variables del formulario
-  selectedMes: string;
   selectedPeriodo: string;
-  selectedCapturador: string;
+  selectedMes: string;
   selectedUsuario: string;
-
-  capturadores: string[] = Array.from({ length: 31 }, (_, i) => `Honeywell-${(i + 1).toString().padStart(2, '0')}`);
+  selectedCapturador: string;
+  selectedProducto: string;
+  mensaje: string = ''; // Mensaje para el usuario
+  tipoMensaje: string = ''; // Tipo de mensaje para el usuario
+  
+  isLoading: boolean = false;
+  capturadores: { nombre: string }[] = Array.from({ length: 30 }, (_, i) => ({ nombre: `Honeywell-${(i + 1).toString().padStart(2, '0')}` }));
   
   meses = [
     { nombre: 'Enero', codigo: '01' },
@@ -36,27 +41,69 @@ export class AsignarCapturadorComponent {
     { nombre: 'Marcos Yañez'},
     { nombre: 'Luis Sanchez'},
   ];
-
-
   
-  periodo: string = "2025";
-
-  usuarioSeleccionado!: string;
-  capturadorSeleccionado!: string;
-  mesSeleccionado!: string;
-
-  constructor() {}
+  productos= [
+    { nombre: 'HERRAMIENTAS' },
+    { nombre: 'ACCESORIOS' },
+    { nombre: 'REPUESTOS' }
+  ];
+  
+  constructor(private inventarioService : InventarioService) {}
 
   ngOnInit(): void {
     this.selectedPeriodo = new Date().getFullYear().toString();
     this.selectedMes = (new Date().getMonth() + 1).toString().padStart(2, '0');
   }
 
-  onSubmit() {}
-  
-  onChange() {
-    console.log('Mes seleccionado:', this.selectedMes);
+  onSubmit() {
+    this.borrarMensaje();
+    this.isLoading = true;
+    const asignacion = {
+      periodo: this.selectedPeriodo,
+      mes: this.selectedMes,
+      usuario: this.selectedUsuario,
+      capturador: this.selectedCapturador,
+      producto: this.selectedProducto
+    };
+
+    this.inventarioService.asignarCapturador(asignacion).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor:', response);
+      },
+      error: (error) => {
+ 
+
+        setTimeout(() => {
+          this.mensaje = `Error  ${JSON.stringify( error.error.error)}`;
+          this.tipoMensaje = 'error';
+          this.isLoading = false;
+          this.resetFormulario();
+        }, 1000); 
+       
+      },
+      complete: () => {
+      
+        setTimeout(() => {
+          this.mensaje = '¡Asignación realizada con éxito!';
+          this.tipoMensaje = 'success';// Muestra el loader al menos 1 segundo
+          this.isLoading = false;
+          this.resetFormulario();
+        }, 1000); 
+       
+       
+      },
+    });
   }
+
+  borrarMensaje() {
+ 
+      this.mensaje = ''; // Limpiar el mensaje
+      this.tipoMensaje = ''; // Limpiar el tipo de mensaje
+    
+  }
+
+  
+  onChange() {}
 
   getMesTooltip(codigo: string): string {
     const mesEncontrado = this.meses.find(mes => mes.codigo === codigo);
@@ -66,6 +113,29 @@ export class AsignarCapturadorComponent {
   getUsuariosTooltip(codigo: string): string {
     const users = this.usuarios.find(item => item.nombre === codigo);
     return users ? users.nombre : '';
+  }
+
+  getCapturadorTooltip(codigo: string): string {
+    const capturador = this.capturadores.find(item => item.nombre === codigo);
+    return capturador ? capturador.nombre : '';
+  }
+
+  getProductoTooltip(codigo: string): string {
+    const producto = this.productos.find(item => item.nombre === codigo);
+    return producto ? producto.nombre : '';
+  }
+
+
+  resetFormulario() {   
+    this.selectedUsuario = null;
+    this.selectedCapturador = null;
+    this.selectedProducto = null;
+   
+              
+  }
+
+  formValido(): boolean {
+    return !!(this.selectedMes && this.selectedPeriodo && this.selectedUsuario && this.selectedCapturador && this.selectedProducto);
   }
 
 }

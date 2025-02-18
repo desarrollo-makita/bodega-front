@@ -66,6 +66,11 @@ export class NavbarComponent implements OnInit{
             this.title = 'Bitacora Ubicaciones';
             this.showIcons = false;
           }
+
+          else if (title === '/asignar-capturador') {
+            this.title = 'Asignar Capturador';
+            this.showIcons = false;
+          }
       }
 
     
