@@ -16,7 +16,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'rol-mantenedor', component: AreaMantenedorComponent },
     { path: 'user/user-edit', component: UserEditComponent },
     { path: 'bitacora-ubicaciones', component: BitacoraUbicacionesComponent },
+    { path: 'inventario', component: InventarioComponent },
     { path: 'asignar-capturador', component: AsignarCapturadorComponent },
-     // { path: 'inventario', component: InventarioComponent },
+  
 
 ];
