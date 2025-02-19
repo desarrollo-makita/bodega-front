@@ -8,9 +8,9 @@ import { Observable } from 'rxjs';
 export class InventarioService {
   
   private apiUrl = 'http://172.16.1.206:3024/api/consultar-inventario';
-  private asignarUrl = 'http://172.16.1.234:3024/api/asignar-capturador'; 
-  private getAssignmentUrl = 'http://172.16.1.234:3024/api/consultar-asignacion';
-  private deleteAsignacionUrl = 'http://172.16.1.234:3024/api/delete-asignacion';
+  private asignarUrl = 'http://172.16.1.206:3024/api/asignar-capturador'; 
+  private getAssignmentUrl = 'http://172.16.1.206:3024/api/consultar-asignacion';
+  private deleteAsignacionUrl = 'http://172.16.1.206:3024/api/delete-asignacion';
 
   constructor(private http: HttpClient) {}
 
