@@ -169,3 +169,15 @@
       color: white;
     }
     
+
+    .grafico-container {
+      display: flex;
+      justify-content: space-between; /* Esto separa los gráficos */
+      gap: 20px; /* Opcional: agrega un espacio entre los gráficos */
+  }
+  
+  .grafico {
+      width: 32%; /* El 100% dividido entre 3 gráficos para darles el mismo tamaño */
+      height: 300px; /* Establece la altura común para todos */
+  }
+  

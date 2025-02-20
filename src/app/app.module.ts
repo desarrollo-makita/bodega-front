@@ -34,6 +34,7 @@ import { BitacoraUbicacionesComponent } from './bitacora-ubicaciones/bitacora-ub
 import { InventarioComponent } from './inventario/inventario/inventario.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AsignarCapturadorComponent } from './asignar-capturador/asignar-capturador.component';
+import { GraficoTortaComponent } from './grafico-torta/grafico-torta.component';
 
 @NgModule({
   imports: [
@@ -71,6 +72,7 @@ import { AsignarCapturadorComponent } from './asignar-capturador/asignar-captura
     BitacoraUbicacionesComponent,
     InventarioComponent,
     AsignarCapturadorComponent,
+    GraficoTortaComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
