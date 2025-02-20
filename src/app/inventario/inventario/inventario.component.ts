@@ -24,6 +24,7 @@ export class InventarioComponent implements OnInit {
 
   saldoTotal : number = 0;
   conteoTotal : number = 0;
+  titulo: string=''
   
   meses = [
     { nombre: 'Enero', codigo: '01' },
@@ -103,7 +104,7 @@ export class InventarioComponent implements OnInit {
     // Sumamos los valores de "SaldoStock" y "Conteo" de cada fila
     this.saldoTotal = this.inventarioData.reduce((total, row) => total + row.SaldoStock, 0);
     this.conteoTotal = this.inventarioData.reduce((total, row) => total + row.Conteo, 0);
-
+    this.titulo = this.selectedTipoItem;        
     console.log("Inventario : " , this.saldoTotal , this.conteoTotal);  
   }
   mostrarMensaje(texto: string) {

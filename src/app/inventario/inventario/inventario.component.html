@@ -168,8 +168,10 @@
                                       <div class="pagination-container">
                                           <pagination-controls (pageChange)="p = $event"></pagination-controls>
                                       </div>
+                                      <br>
+                                      <br>
                                       <div>
-                                        <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal"></app-grafico-torta>
+                                        <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo"></app-grafico-torta>
                                       </div>
                                     </div>
                                 </div>
