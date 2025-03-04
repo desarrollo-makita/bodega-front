@@ -20,7 +20,7 @@ export class AsignarCapturadorComponent {
   asignaciones: any[] = [];
   
   isLoading: boolean = false;
-  capturadores: { nombre: string }[] = Array.from({ length: 30 }, (_, i) => ({ nombre: `Honeywell-${(i + 1).toString().padStart(2, '0')}` }));
+  capturadores: { nombre: string }[] = Array.from({ length: 45 }, (_, i) => ({ nombre: `Honeywell-${(i + 1).toString().padStart(2, '0')}` }));
   
   meses = [
     { nombre: 'Enero', codigo: '01' },
@@ -38,16 +38,60 @@ export class AsignarCapturadorComponent {
   ];
 
   usuarios = [
-    { nombre: 'Jorge Herrera'},
-    { nombre: 'Beatriz Muñoz'},
-    { nombre: 'Marcos Yañez'},
-    { nombre: 'Luis Sanchez'},
-  ];
-  
+    { nombre: 'Adid Medina' },
+    { nombre: 'Adrian Ahumada' },
+    { nombre: 'Alan Salas' },
+    { nombre: 'Alvaro Cardenas' },
+    { nombre: 'Alvaro Embry' },
+    { nombre: 'Alvaro Jara' },
+    { nombre: 'Amanda Quiroga' },
+    { nombre: 'Ana Gonzalez' },
+    { nombre: 'Ana Villacorta' },
+    { nombre: 'Andres Riquelme' },
+    { nombre: 'Bastian Ampuero' },
+    { nombre: 'Bastian Olivares' },
+    { nombre: 'Carla Garrido' },
+    { nombre: 'Carlos Cabrera' },
+    { nombre: 'Carolina Cifuentes' },
+    { nombre: 'Cesar Pereira' },
+    { nombre: 'Cesar Sequea' },
+    { nombre: 'Claudia Ferrada' },
+    { nombre: 'David Leiva' },
+    { nombre: 'Diego Uribe' },
+    { nombre: 'Dylan Torres' },
+    { nombre: 'Erick Ramirez' },
+    { nombre: 'Eduardo Miranda' },
+    { nombre: 'Fabian Molina' },
+    { nombre: 'Felipe Aravena' },
+    { nombre: 'Felipe Valenzuela' },
+    { nombre: 'Franco Ibarra' },
+    { nombre: 'Galo Azocar' },
+    { nombre: 'Gonzalo Montt' },
+    { nombre: 'Guillermo Pinto' },
+    { nombre: 'Isadora Maggio' },
+    { nombre: 'Jaime Gonzalez' },
+    { nombre: 'Javiera Badilla' },
+    { nombre: 'Joaquin Montenegro' },
+    { nombre: 'Jorge Guerra' },
+    { nombre: 'Jose Castillo' },
+    { nombre: 'Jose Vasquez' },
+    { nombre: 'Juan Toro' },
+    { nombre: 'Juan Valenzuela' },
+    { nombre: 'Leslie Coñoman' },
+    { nombre: 'Marisela Jara' },
+    { nombre: 'Matias Benavides' },
+    { nombre: 'Miguel Garau' },
+    { nombre: 'Nelson Romero' },
+    { nombre: 'Pablo Quimen' },
+    { nombre: 'Patricio Ramirez' },
+    { nombre: 'Roberto Salgado' },
+    { nombre: 'Roxana Lagos' }
+];
+
   productos= [
-    { nombre: 'HERRAMIENTAS' },
-    { nombre: 'ACCESORIOS' },
-    { nombre: 'REPUESTOS' }
+    { nombre: '01-HERRAMIENTAS' },
+    { nombre: '03-ACCESORIOS' },
+    { nombre: '04-REPUESTOS' }
   ];
  
   constructor(private inventarioService : InventarioService) {}

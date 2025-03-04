@@ -11,6 +11,8 @@ export class InventarioService {
   private asignarUrl = 'http://172.16.1.206:3024/api/asignar-capturador'; 
   private getAssignmentUrl = 'http://172.16.1.206:3024/api/consultar-asignacion';
   private deleteAsignacionUrl = 'http://172.16.1.206:3024/api/delete-asignacion';
+  private iniciarInventarioUrl  = 'http://172.16.1.234:3024/api/validar-inicio-inventario';
+  private obtenerBodegaUrl  = 'http://172.16.1.234:3024/api/consultar-grupo-bodega';
 
   constructor(private http: HttpClient) {}
 
@@ -36,6 +38,15 @@ export class InventarioService {
   eliminarAsignacion(capturador: string): Observable<any> {
     const params = new HttpParams().set('capturador', capturador);
     return this.http.delete<any>(this.deleteAsignacionUrl, { params });
+  }
+
+  validarInicioInventario(periodo: number, mes: number): Observable<any> {
+    const url = `${this.iniciarInventarioUrl}/${periodo}/${mes}`;
+    return this.http.get<any>(url);
+  }
+  
+  obtenerBodegas(): Observable<any> {
+    return this.http.get<any>(this.obtenerBodegaUrl);
   }
   
 }

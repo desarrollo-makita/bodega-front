@@ -21,7 +21,6 @@ export class GraficoTortaComponent implements AfterViewInit {
   }
 
   crearGrafico() {
-    console.log("grficooooos : ", this.conteoTotal, this.saldoTotal);
     const porcentajeAvance = ((this.conteoTotal / this.saldoTotal) * 100).toFixed(2);
     const porcentajeSaldo = (100 - parseFloat(porcentajeAvance)).toFixed(2);
   
@@ -42,14 +41,14 @@ export class GraficoTortaComponent implements AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: 5 // Reduce espacio alrededor del gráfico
+          padding: 5
         },
         plugins: {
           legend: {
-            position: 'left', // Mantiene la leyenda a la izquierda
-            align: 'center', // Centra la leyenda verticalmente
+            position: 'left',
+            align: 'center',
             labels: {
-              padding: 5, // Reduce la separación entre el gráfico y los labels
+              padding: 5,
               font: {
                 size: 14
               }
@@ -64,7 +63,7 @@ export class GraficoTortaComponent implements AfterViewInit {
               label: function(context) {
                 let value = context.raw;
                 let label = context.label;
-                return `${label}: ${value}%`; // Muestra el % en el tooltip
+                return `${label}: ${value}%`;
               }
             }
           }

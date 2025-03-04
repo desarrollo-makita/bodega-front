@@ -1,0 +1,78 @@
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.dialog-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #FF4A55;
+}
+
+.mensaje-principal {
+  font-size: 18px;
+  color: #444;
+  font-weight: 500;
+}
+
+.mensaje-destacado {
+  font-weight: bold;
+  color: #00909E;
+}
+
+.subtitulo-class, .leyenda-class {
+  font-size: 16px;
+  color: #666;
+}
+
+.checkbox-title{
+  font-weight: bold;
+  color: #00909E;
+  font-size: 18px; /* Puedes ajustar este tamaño */
+}
+
+.form-group {
+  margin-top: 15px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.cancelar-boton {
+  font-weight: bold;
+  color: #666;
+}
+
+.confirmar-boton {
+  color: #00909E;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.boton-desactivado {
+  color: gray !important;
+  opacity: 0.6;
+}
+
+.combobox-pequeno {
+  width: 100px; /* Ajusta el tamaño según lo que necesites */
+  font-size: 12px;
+  padding: 5px;
+}
+
+.combobox-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+label {
+ margin-left: 1%;
+}

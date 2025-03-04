@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { AuthGuard } from 'app/auth/auth.guard';
 import { InventarioService } from 'app/services/inventario/inventario.service';
+import { ConfirmInventarioDialogComponent } from 'app/shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
 
 @Component({
   selector: 'app-inventario',
@@ -14,10 +17,16 @@ export class InventarioComponent implements OnInit {
   selectedTipoItem: string;
   selectedLocal: string;
 
+  periodo : any;
+  mes : any;
+  usuario:any;
+  
+
   mensaje: string = ''; // Mensaje para el usuario
   inventarioData: any = [];
   isLoading: boolean = false;
   showTable:boolean= false;
+  habilitarBoxes: boolean= false;
 
   p: number = 1; // Página actual
   itemsPerPage: number = 10; // Elementos por página
@@ -55,33 +64,43 @@ export class InventarioComponent implements OnInit {
     { descripcion: 'Centro de Servicios Copiapo', codigo: '05' }
   ];
 
-  
-  constructor(private invetarioServices: InventarioService) {}
+ 
+  constructor(
+    private invetarioServices: InventarioService , 
+    private dialog: MatDialog,
+    private authService: AuthGuard,) {}
 
   ngOnInit(): void {
-    this.selectedPeriodo = new Date().getFullYear().toString();
-    this.selectedMes = (new Date().getMonth() + 1).toString().padStart(2, '0');
-  }
+    const fechaActual = new Date();
+  
+    this.periodo = fechaActual.getFullYear().toString();
+    this.mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
 
-  onSubmit() {
-    const data = {
-      periodo: this.selectedPeriodo,
-      mes: this.selectedMes,
-      tipoItem: this.selectedTipoItem,
-      local: this.selectedLocal
-    };
-    this.isLoading = true;
-    this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+    this.selectedPeriodo = this.periodo;
+    this.selectedMes = this.mes;
+
+    const token = sessionStorage.getItem("authToken");
+    const decodedToken = this.authService.decodeToken(token);
+    this.usuario = decodedToken.username;
+    
+    this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor:', response);
+        
         this.isLoading = true;
-        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+        if (response.data.length === 0 ) {
+          // Mostrar el pop-up cuando el código sea 0
+          const mensaje = `Usted no ha iniciado el inventario`;
+          this.openConfirmDialog(mensaje);
+          this.habilitarBoxes = false;
+        } else if (response.data && response.data.recordset && response.data.recordset.length === 0) {
           this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
           this.inventarioData = [];
           this.resetFormulario();
           this.showTable = false;
         } else {
-          this.mensaje = ""; // Limpiar mensaje si hay datos
+          console.log("cae aca")
+          this.mensaje = ""; 
           this.inventarioData = response.data.recordset;
           this.showTable = true;
         }
@@ -92,11 +111,84 @@ export class InventarioComponent implements OnInit {
         this.mostrarMensaje("Ocurrió un error al obtener los datos.");
       },
       complete: () => {
-    
         this.calcularTotales()
         this.isLoading = false;
       },
     });
+  }
+
+
+  openConfirmDialog(mensaje: string): void {
+    const meses = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+  
+    // Convertir el número del mes a nombre del mes (recordar que los arrays comienzan en 0)
+    const mesNombre = meses[parseInt(this.mes, 10) - 1];
+  
+    const dialogRef = this.dialog.open(ConfirmInventarioDialogComponent, {
+      data: {
+        mensaje: mensaje,
+        periodo: this.periodo,
+        mes: mesNombre // Ahora pasamos el nombre del mes en lugar del número
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log("Iniciar inventario");
+        // Lógica para iniciar el inventario
+      } else {
+        console.log("Cancelar");
+        // Lógica para cancelar
+      }
+    });
+  }
+  
+
+
+  onSubmit() {
+    const data = {
+      periodo: this.selectedPeriodo,
+      mes: this.selectedMes,
+      tipoItem: this.selectedTipoItem,
+      local: this.selectedLocal
+    };
+    this.isLoading = true;
+    if(!this.habilitarBoxes){
+      const mensaje = `Usted no ha iniciado el inventario`;
+      this.openConfirmDialog(mensaje);
+      this.isLoading = false;
+    }else{
+      this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+        next: (response) => {
+          console.log('Respuesta del servidor:', response);
+          this.isLoading = true;
+          if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+            this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
+            this.inventarioData = [];
+            this.resetFormulario();
+            this.showTable = false;
+          } else {
+            this.mensaje = ""; // Limpiar mensaje si hay datos
+            this.inventarioData = response.data.recordset;
+            this.showTable = true;
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error en la consulta:', error);
+          this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+        },
+        complete: () => {
+      
+          this.calcularTotales()
+          this.isLoading = false;
+        },
+      });
+    }
+    
   }
 
 

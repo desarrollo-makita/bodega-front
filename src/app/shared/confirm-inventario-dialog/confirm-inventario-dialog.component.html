@@ -1,0 +1,71 @@
+<h2 mat-dialog-title class="dialog-title">Confirmación</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="mensaje-container">
+    <p class="mensaje-principal">
+      {{data.mensaje}} para el periodo <span class="mensaje-destacado">{{data.mes}} {{data.periodo}}</span>
+    </p>
+  </div>
+
+  <div class="subtitulo-container">
+    <p class="subtitulo-class">¿Desea Iniciar el inventario?</p>
+  </div>
+
+  <div class="leyenda-container">
+    <p class="leyenda-class">
+      Al iniciar el inventario, se actualizarán los saldos de las opciones escogidas.
+    </p>
+  </div>
+
+  <!-- Sección para los checkboxes de categorías -->
+  <div class="checkbox-container">
+    <p class="checkbox-title">Seleccione categorías:</p>
+    <div class="checkbox-list">
+      <div *ngFor="let categoria of categorias" class="form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="{{ categoria }}"
+          [attr.data-nombre]="categoria"
+          (change)="onCheckboxChange($event, categoria)"
+        />
+        <label class="form-check-label" for="{{ categoria }}">
+          {{ categoria }}
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Combobox con mejor diseño -->
+  <div class="combobox-container">
+    <mat-form-field appearance="outline" class="combobox">
+      <mat-label>Seleccionar Local</mat-label>
+      <mat-select [(value)]="selectedLocal">
+        <mat-option *ngFor="let local of ['01', '02', '03', '04', '05', '06']" [value]="local">
+          Local {{ local }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="combobox">
+      <mat-label>Seleccionar Local</mat-label>
+      <mat-select [(value)]="selectedLocal">
+        <mat-option *ngFor="let local of ['01', '02', '03', '04', '05', '06']" [value]="local">
+          Local {{ local }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button class="cancelar-boton" (click)="onCancel()">Cancelar</button>
+  <button 
+    mat-button 
+    class="confirmar-boton" 
+    (click)="onConfirm()" 
+    [ngClass]="{'boton-desactivado': desactivarBotonInicio}"  
+    [disabled]="desactivarBotonInicio">
+    Iniciar Inventario
+  </button>
+</mat-dialog-actions>

@@ -35,6 +35,8 @@ import { InventarioComponent } from './inventario/inventario/inventario.componen
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AsignarCapturadorComponent } from './asignar-capturador/asignar-capturador.component';
 import { GraficoTortaComponent } from './grafico-torta/grafico-torta.component';
+import { ConfirmInventarioDialogComponent } from './shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   imports: [
@@ -54,6 +56,7 @@ import { GraficoTortaComponent } from './grafico-torta/grafico-torta.component';
     MatFormFieldModule,  // Para usar mat-form-field
     MatInputModule,      // Para usar matInput
     MatCardModule,       // Para usar mat-card
+    MatSelectModule,
     NgxPaginationModule,
 
     
@@ -73,6 +76,7 @@ import { GraficoTortaComponent } from './grafico-torta/grafico-torta.component';
     InventarioComponent,
     AsignarCapturadorComponent,
     GraficoTortaComponent,
+    ConfirmInventarioDialogComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
