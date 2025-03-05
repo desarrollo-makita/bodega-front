@@ -37,10 +37,9 @@
                                 </div>
                                 
                                 <div class="form-group col-md-2">
-                                    <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()"
-                                        [title]="selectedTipoItem ? getTipoItemTooltip(selectedTipoItem) : 'Selecciona un tipo de ítem'">
-                                        <option *ngFor="let tipo of tiposItems" [value]="tipo.descripcion">
-                                            {{ tipo.descripcion }}
+                                    <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()">
+                                        <option *ngFor="let tipo of tiposItems" [value]="tipo.Tipoitem">
+                                            {{ tipo.Tipoitem }}
                                         </option>
                                     </select>
                                 </div>
@@ -176,10 +175,16 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div *ngIf="mensaje" class="alert alert-warning">
+                        
+                            <div
+                                *ngIf="successMessage"
+                                class="alert alert-success mt-3"
+                                role="alert">
                                 {{ mensaje }}
                             </div>
+                            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                                {{ mensaje }}
+                              </div>
                             <br>
                             <br>
                             <br>

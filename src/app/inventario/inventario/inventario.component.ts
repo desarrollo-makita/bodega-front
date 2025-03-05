@@ -27,6 +27,8 @@ export class InventarioComponent implements OnInit {
   isLoading: boolean = false;
   showTable:boolean= false;
   habilitarBoxes: boolean= false;
+  successMessage: boolean = false;
+  errorMessage: boolean = false;
 
   p: number = 1; // Página actual
   itemsPerPage: number = 10; // Elementos por página
@@ -50,12 +52,14 @@ export class InventarioComponent implements OnInit {
     { nombre: 'Diciembre', codigo: '12' }
   ];
 
-  tiposItems = [
+  /*tiposItems = [
     { descripcion: '01-Herramientas', codigo: '01' },
     { descripcion: '02-Kit', codigo: '02' },
     { descripcion: '03-Accesorios', codigo: '03' },
     { descripcion: '04-Repuestos', codigo: '04' }
-  ];
+  ];*/
+
+  tiposItems: any = [];
 
   locales = [
     { descripcion: 'Casa Matriz ENEA', codigo: '01' },
@@ -71,52 +75,8 @@ export class InventarioComponent implements OnInit {
     private authService: AuthGuard,) {}
 
   ngOnInit(): void {
-    const fechaActual = new Date();
-  
-    this.periodo = fechaActual.getFullYear().toString();
-    this.mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
-
-    this.selectedPeriodo = this.periodo;
-    this.selectedMes = this.mes;
-
-    const token = sessionStorage.getItem("authToken");
-    const decodedToken = this.authService.decodeToken(token);
-    this.usuario = decodedToken.username;
-    
-    this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
-      next: (response) => {
-        console.log('Respuesta del servidor:', response);
-        
-        this.isLoading = true;
-        if (response.data.length === 0 ) {
-          // Mostrar el pop-up cuando el código sea 0
-          const mensaje = `Usted no ha iniciado el inventario`;
-          this.openConfirmDialog(mensaje);
-          this.habilitarBoxes = false;
-        } else if (response.data && response.data.recordset && response.data.recordset.length === 0) {
-          this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
-          this.inventarioData = [];
-          this.resetFormulario();
-          this.showTable = false;
-        } else {
-          console.log("cae aca")
-          this.mensaje = ""; 
-          this.inventarioData = response.data.recordset;
-          this.showTable = true;
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        console.error('Error en la consulta:', error);
-        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
-      },
-      complete: () => {
-        this.calcularTotales()
-        this.isLoading = false;
-      },
-    });
+    this.validarInventarioFun();
   }
-
 
   openConfirmDialog(mensaje: string): void {
     const meses = [
@@ -128,6 +88,7 @@ export class InventarioComponent implements OnInit {
     const mesNombre = meses[parseInt(this.mes, 10) - 1];
   
     const dialogRef = this.dialog.open(ConfirmInventarioDialogComponent, {
+      disableClose: true,
       data: {
         mensaje: mensaje,
         periodo: this.periodo,
@@ -136,18 +97,29 @@ export class InventarioComponent implements OnInit {
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log("Iniciar inventario");
-        // Lógica para iniciar el inventario
+      if (result?.success) {
+        this.successMessage = true;
+        console.log('Inventario iniciado con éxito:', result.data);
+        this.mensaje = 'Inventario iniciado correctamente';
+        this.validarInventarioFun()
+        setTimeout(() => {
+          this.successMessage = false;
+          
+        }, 2000);
+       
       } else {
-        console.log("Cancelar");
-        // Lógica para cancelar
+        this.errorMessage = true;
+        this.mensaje = 'Error al iniciar el inventario';
+        console.log('El usuario canceló o hubo un error');
+        this.validarInventarioFun()
+        setTimeout(() => {
+          this.errorMessage = false;
+
+        }, 2000);
       }
     });
   }
   
-
-
   onSubmit() {
     const data = {
       periodo: this.selectedPeriodo,
@@ -241,5 +213,46 @@ export class InventarioComponent implements OnInit {
   actualizarPaginacion() {
     console.log("Nueva cantidad de elementos por página:", this.itemsPerPage);
     this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
+  }
+
+
+  validarInventarioFun(){
+    const fechaActual = new Date();
+  
+    this.periodo = fechaActual.getFullYear().toString();
+    this.mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+
+    this.selectedPeriodo = this.periodo;
+    this.selectedMes = this.mes;
+
+    const token = sessionStorage.getItem("authToken");
+    const decodedToken = this.authService.decodeToken(token);
+    this.usuario = decodedToken.username;
+    
+    this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor:', response);
+        this.tiposItems = response.data;
+        this.isLoading = true;
+        if (response.data.length === 0 ) {
+          // Mostrar el pop-up cuando el código sea 0
+          const mensaje = `Usted no ha iniciado el inventario`;
+          this.openConfirmDialog(mensaje);
+          this.habilitarBoxes = false;
+        }else {
+          this.habilitarBoxes =  true;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en la consulta:', error);
+        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+      },
+      complete: () => {
+        this.calcularTotales()
+        this.isLoading = false;
+        
+      },
+    });
   }
 }

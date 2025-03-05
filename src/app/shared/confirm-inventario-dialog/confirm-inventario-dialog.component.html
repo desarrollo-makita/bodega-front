@@ -35,23 +35,25 @@
       </div>
     </div>
   </div>
-
+  <div *ngIf="isLoading" id="loader">
+    <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+</div>
   <!-- Contenedor de Combobox con mejor diseño -->
   <div class="combobox-container">
     <mat-form-field appearance="outline" class="combobox">
       <mat-label>Seleccionar Local</mat-label>
-      <mat-select [(value)]="selectedLocal">
-        <mat-option *ngFor="let local of ['01', '02', '03', '04', '05', '06']" [value]="local">
-          Local {{ local }}
+      <mat-select [(value)]="selectedLocal" (selectionChange)="onLocalChange($event)">
+        <mat-option *ngFor="let local of grupoList" [value]="local">
+          {{ local.NumeroLocal }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="combobox">
-      <mat-label>Seleccionar Local</mat-label>
-      <mat-select [(value)]="selectedLocal">
-        <mat-option *ngFor="let local of ['01', '02', '03', '04', '05', '06']" [value]="local">
-          Local {{ local }}
+    <mat-form-field appearance="outline" class="combobox" style="width: 22em;">
+      <mat-label>Seleccionar Grupo Bodega</mat-label>
+      <mat-select [(value)]="selectedLocal" (selectionChange)="onLocalChange($event)">
+        <mat-option *ngFor="let local of grupoList" [value]="local">
+         {{ local.NombreGrupoBodega }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -59,8 +61,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="dialog-actions">
-  <button mat-button class="cancelar-boton" (click)="onCancel()">Cancelar</button>
-  <button 
+ <button 
     mat-button 
     class="confirmar-boton" 
     (click)="onConfirm()" 

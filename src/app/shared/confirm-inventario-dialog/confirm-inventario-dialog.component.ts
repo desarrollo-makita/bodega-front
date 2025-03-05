@@ -19,6 +19,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   seleccionados: string[] = [];
   grupoList: string[] = [];
 
+  isLoading: boolean = false;
   // Variables para los selects
   numeroLocalSeleccionado: string | null = null;
   nombreGrupoBodegaSeleccionado: string | null = null;
@@ -26,7 +27,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   desactivarBotonInicio : boolean = true ;
 
   // Variable para almacenar el local seleccionado
-  selectedLocal: string = '';  // Puedes inicializar con un valor predeterminado si lo deseas
+  selectedLocal: any;  // Puedes inicializar con un valor predeterminado si lo deseas
 
   
   constructor(private inventarioServices : InventarioService,
@@ -42,13 +43,44 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
 
   onConfirm(): void {
-   
+    this.isLoading = true;
+    this.desactivarBotonInicio = true;
+    
     const dataInicio = { 
-      periodo: this.data.periodo,
-      mes: this.data.mes,
-      categorias: this.seleccionados
-      }
+      periodo: this.periodo,
+      mes: this.mes,
+      categorias: this.seleccionados,
+      numeroLocal: this.local,
+      grupoBodega: this.grupo
     }
+   
+    this.inventarioServices.iniciarInventario(dataInicio).subscribe({
+     
+      next: (response) => {
+        console.log('Respuesta del servidor iniciarInventario:', response);
+       // Extraemos los tipos de ítem que llegaron en la respuesta
+       
+        
+        this.grupoList = response.data;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en la consulta:', error);
+        this.dialogRef.close({ success: false }); 
+       
+      },
+      complete: () => {
+        console.log("dtaaaaaaaaaaaaaaaaaaaaIncio" ,  dataInicio);
+        this.isLoading = false;
+        this.desactivarBotonInicio = false;
+        this.dialogRef.close({ success: true, data: dataInicio }); // Enviar datos al padre
+
+        
+      },
+    });
+     
+  
+   }
 
   onCancel(): void {
     this.dialogRef.close(false); // El usuario presionó "Cancelar"
@@ -63,9 +95,9 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       this.seleccionados = this.seleccionados.filter(item => item !== categoria); // Eliminar si se desmarca
     }
 
-  console.log("this.seleccionados" , this.seleccionados);
+    console.log("this.seleccionados" , this.seleccionados);
   
-   this.desactivarBotonInicio = this.seleccionados.length === 0 ? true: false
+    this.desactivarBotonInicio = this.seleccionados.length === 0 ? true: false
   }
 
   obtenerGrupoLocal(){
@@ -93,6 +125,9 @@ export class ConfirmInventarioDialogComponent implements OnInit {
    onLocalChange(event: any): void {
     // Aquí puedes agregar la lógica para manejar el cambio en la selección del local
     console.log('Local seleccionado: ', this.selectedLocal);
+
+    this.local = this.selectedLocal.NumeroLocal;
+    this.grupo = this.selectedLocal.GrupoBodega;
   }
 
  

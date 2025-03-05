@@ -181,3 +181,16 @@
       height: 300px; /* Establece la altura común para todos */
   }
   
+
+  .text-danger {
+    color: #dc3545;
+    font-weight: bold;
+  }
+
+  .alert-success {
+    background-color: rgba(0, 144, 158, 0.8);
+  }
+
+  .alert-danger{
+    background-color: rgba(235, 35, 35, 0.8);
+  }

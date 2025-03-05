@@ -11,8 +11,9 @@ export class InventarioService {
   private asignarUrl = 'http://172.16.1.206:3024/api/asignar-capturador'; 
   private getAssignmentUrl = 'http://172.16.1.206:3024/api/consultar-asignacion';
   private deleteAsignacionUrl = 'http://172.16.1.206:3024/api/delete-asignacion';
-  private iniciarInventarioUrl  = 'http://172.16.1.234:3024/api/validar-inicio-inventario';
+  private validarIncioInventarioUrl  = 'http://172.16.1.234:3024/api/validar-inicio-inventario';
   private obtenerBodegaUrl  = 'http://172.16.1.234:3024/api/consultar-grupo-bodega';
+  private inicioInventarioUrl  = 'http://172.16.1.234:3024/api/iniciar-inventario';
 
   constructor(private http: HttpClient) {}
 
@@ -41,7 +42,7 @@ export class InventarioService {
   }
 
   validarInicioInventario(periodo: number, mes: number): Observable<any> {
-    const url = `${this.iniciarInventarioUrl}/${periodo}/${mes}`;
+    const url = `${this.validarIncioInventarioUrl}/${periodo}/${mes}`;
     return this.http.get<any>(url);
   }
   
@@ -49,4 +50,8 @@ export class InventarioService {
     return this.http.get<any>(this.obtenerBodegaUrl);
   }
   
+//inicia inventario y carga saldos
+  iniciarInventario(data: any): Observable<any> {
+    return this.http.post(this.inicioInventarioUrl, data);
+  }
 }
