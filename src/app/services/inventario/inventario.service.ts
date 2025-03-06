@@ -11,9 +11,9 @@ export class InventarioService {
   private asignarUrl = 'http://172.16.1.206:3024/api/asignar-capturador'; 
   private getAssignmentUrl = 'http://172.16.1.206:3024/api/consultar-asignacion';
   private deleteAsignacionUrl = 'http://172.16.1.206:3024/api/delete-asignacion';
-  private validarIncioInventarioUrl  = 'http://172.16.1.234:3024/api/validar-inicio-inventario';
-  private obtenerBodegaUrl  = 'http://172.16.1.234:3024/api/consultar-grupo-bodega';
-  private inicioInventarioUrl  = 'http://172.16.1.234:3024/api/iniciar-inventario';
+  private validarIncioInventarioUrl  = 'http://172.16.1.206:3024/api/validar-inicio-inventario';
+  private obtenerBodegaUrl  = 'http://172.16.1.206:3024/api/consultar-grupo-bodega';
+  private inicioInventarioUrl  = 'http://172.16.1.206:3024/api/iniciar-inventario';
 
   constructor(private http: HttpClient) {}
 

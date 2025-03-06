@@ -108,7 +108,9 @@ export class InventarioComponent implements OnInit {
           
         }, 2000);
        
-      } else {
+      } else if (result?.action === 'cerrar') {
+        console.log("se cierra el modal")
+      }else{
         this.errorMessage = true;
         this.mensaje = 'Error al iniciar el inventario';
         console.log('El usuario canceló o hubo un error');
@@ -137,9 +139,10 @@ export class InventarioComponent implements OnInit {
     }else{
       this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
         next: (response) => {
-          console.log('Respuesta del servidor:', response);
+          console.log('Respuesta consultaInventario:', response);
           this.isLoading = true;
           if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+            this.successMessage = true;
             this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
             this.inventarioData = [];
             this.resetFormulario();
@@ -153,10 +156,10 @@ export class InventarioComponent implements OnInit {
         error: (error) => {
           this.isLoading = false;
           console.error('Error en la consulta:', error);
+          this.errorMessage = true;
           this.mostrarMensaje("Ocurrió un error al obtener los datos.");
         },
         complete: () => {
-      
           this.calcularTotales()
           this.isLoading = false;
         },
@@ -177,6 +180,8 @@ export class InventarioComponent implements OnInit {
     this.mensaje = texto;
     setTimeout(() => {
       this.mensaje = "";
+      this.successMessage = false;
+      this.errorMessage = false;
     }, 2000); // Ocultar mensaje después de 2 segundos
   }
 
