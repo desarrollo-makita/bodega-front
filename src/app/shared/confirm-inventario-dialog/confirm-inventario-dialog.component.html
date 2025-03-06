@@ -59,6 +59,9 @@
     </mat-form-field>
   </div>
 </mat-dialog-content>
+<div *ngIf="inventarioIniciado" class="alert alert-warning">
+  El inventario ya fue iniciado para este periodo, mes, local y grupo.
+</div>
 
 <mat-dialog-actions class="dialog-actions">
  <button 

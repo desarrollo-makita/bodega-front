@@ -36,7 +36,7 @@ export class InventarioComponent implements OnInit {
   saldoTotal : number = 0;
   conteoTotal : number = 0;
   titulo: string=''
-  
+  respuestaValidaInicioInventario : any;
   meses = [
     { nombre: 'Enero', codigo: '01' },
     { nombre: 'Febrero', codigo: '02' },
@@ -51,13 +51,6 @@ export class InventarioComponent implements OnInit {
     { nombre: 'Noviembre', codigo: '11' },
     { nombre: 'Diciembre', codigo: '12' }
   ];
-
-  /*tiposItems = [
-    { descripcion: '01-Herramientas', codigo: '01' },
-    { descripcion: '02-Kit', codigo: '02' },
-    { descripcion: '03-Accesorios', codigo: '03' },
-    { descripcion: '04-Repuestos', codigo: '04' }
-  ];*/
 
   tiposItems: any = [];
 
@@ -77,8 +70,12 @@ export class InventarioComponent implements OnInit {
   ngOnInit(): void {
     this.validarInventarioFun();
   }
-
-  openConfirmDialog(mensaje: string): void {
+  openDialog(mensaje: string){
+    this.openConfirmDialog(mensaje , this.respuestaValidaInicioInventario);
+  }
+ 
+  openConfirmDialog(mensaje: string , data?: any): void {
+    console.log("mensaje  : " , mensaje , '-' , data);
     const meses = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -87,12 +84,16 @@ export class InventarioComponent implements OnInit {
     // Convertir el número del mes a nombre del mes (recordar que los arrays comienzan en 0)
     const mesNombre = meses[parseInt(this.mes, 10) - 1];
   
+    
+    
     const dialogRef = this.dialog.open(ConfirmInventarioDialogComponent, {
       disableClose: true,
       data: {
         mensaje: mensaje,
         periodo: this.periodo,
-        mes: mesNombre // Ahora pasamos el nombre del mes en lugar del número
+        mes: mesNombre,
+        datos: data
+      
       }
     });
   
@@ -120,6 +121,7 @@ export class InventarioComponent implements OnInit {
     });
   }
   
+
   onSubmit() {
     const data = {
       periodo: this.selectedPeriodo,
@@ -232,12 +234,18 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor:', response);
+        
+        this.respuestaValidaInicioInventario = response.data;
+
         this.tiposItems = response.data;
+        
+        this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
+
         this.isLoading = true;
         if (response.data.length === 0 ) {
           // Mostrar el pop-up cuando el código sea 0
           const mensaje = `Usted no ha iniciado el inventario`;
-          this.openConfirmDialog(mensaje);
+          this.openConfirmDialog( mensaje);
           this.habilitarBoxes = false;
         }else {
           this.habilitarBoxes =  true;

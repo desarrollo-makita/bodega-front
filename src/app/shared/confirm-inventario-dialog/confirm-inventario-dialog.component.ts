@@ -28,14 +28,15 @@ export class ConfirmInventarioDialogComponent implements OnInit {
 
   // Variable para almacenar el local seleccionado
   selectedLocal: any;  // Puedes inicializar con un valor predeterminado si lo deseas
-
+  inventarioIniciado: boolean = false; 
   
   constructor(private inventarioServices : InventarioService,
     public dialogRef: MatDialogRef<ConfirmInventarioDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { mensaje: string, periodo: string, mes: string }
+    @Inject(MAT_DIALOG_DATA) public data: { mensaje: string, periodo: string, mes: string , datos: any }
   ) {}
 
   ngOnInit(): void {
+    console.log("mensaje0012132  : " , this.data.mensaje , '-' , this.data.periodo , '-' , this.data.mes , '-' , this.data.datos);
     this.obtenerGrupoLocal();
     const fechaActual = new Date();
     this.periodo = fechaActual.getFullYear().toString();
@@ -54,33 +55,45 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       grupoBodega: this.grupo
     }
    
-    this.inventarioServices.iniciarInventario(dataInicio).subscribe({
-     
-      next: (response) => {
-        console.log('Respuesta del servidor iniciarInventario:', response);
-       // Extraemos los tipos de ítem que llegaron en la respuesta
-       
-        
-        this.grupoList = response.data;
-      },
-      error: (error) => {
-        this.isLoading = false;
-        console.error('Error en la consulta:', error);
-        this.dialogRef.close({ success: false }); 
-       
-      },
-      complete: () => {
-        console.log("dtaaaaaaaaaaaaaaaaaaaaIncio" ,  dataInicio);
-        this.isLoading = false;
-        this.desactivarBotonInicio = false;
-        this.dialogRef.close({ success: true, data: dataInicio }); // Enviar datos al padre
 
+    if (this.verificarInventario(this.data.datos, dataInicio)) {
+      this.inventarioIniciado = true; // Setea a true si el inventario ya fue iniciado
+    
+      this.isLoading = false;
+      setTimeout(() => {
+        this.inventarioIniciado = false;
         
-      },
-    });
+      }, 2000);
+    } else{
+      
+      this.inventarioServices.iniciarInventario(dataInicio).subscribe({
      
+        next: (response) => {
+          console.log('Respuesta del servidor iniciarInventario:', response);
+         // Extraemos los tipos de ítem que llegaron en la respuesta
+         
+          
+          this.grupoList = response.data;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error en la consulta:', error);
+          this.dialogRef.close({ success: false }); 
+         
+        },
+        complete: () => {
+          console.log("dtaaaaaaaaaaaaaaaaaaaaIncio" ,  dataInicio);
+          this.isLoading = false;
+          this.desactivarBotonInicio = false;
+          this.dialogRef.close({ success: true, data: dataInicio }); // Enviar datos al padre
   
-   }
+          
+        },
+      });
+       
+    }
+
+  }
 
   onCancel(): void {
     this.dialogRef.close(false); // El usuario presionó "Cancelar"
@@ -130,5 +143,21 @@ export class ConfirmInventarioDialogComponent implements OnInit {
     this.grupo = this.selectedLocal.GrupoBodega;
   }
 
+
+  verificarInventario(resultado1: any[], resultado2: any): boolean {
+    const inventarioEncontrado = resultado1.some(item =>
+      item.Agno.toString() === resultado2.periodo &&
+      item.Mes.toString().padStart(2, '0') === resultado2.mes &&
+      item.Local === resultado2.numeroLocal &&
+      item.GrupoBodega === resultado2.grupoBodega
+    );
+  
+    if (inventarioEncontrado) {
+      console.log("Ya fue iniciado el inventario escogido");
+    }
+  
+    return inventarioEncontrado;
+  }
+  
  
 }
