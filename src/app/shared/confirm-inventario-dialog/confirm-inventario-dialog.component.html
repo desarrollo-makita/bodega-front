@@ -1,81 +1,93 @@
 <h2 mat-dialog-title class="dialog-title">Confirmación</h2>
 
 <mat-dialog-content class="dialog-content">
-  <div class="mensaje-container">
-    <p class="mensaje-principal">
-      {{data.mensaje}} para el periodo <span class="mensaje-destacado">{{data.mes}} {{data.periodo}}</span>
-    </p>
-  </div>
+  <form [formGroup]="inventarioForm" (ngSubmit)="onConfirm()">
+    <div class="mensaje-container">
+      <p class="mensaje-principal">
+        {{data.mensaje}} para el periodo <span class="mensaje-destacado">{{data.mes}} {{data.periodo}}</span>
+      </p>
+    </div>
+    
+    <div class="subtitulo-container">
+      <p class="subtitulo-class">¿Desea Iniciar el inventario?</p>
+    </div>
+  
+    <div class="leyenda-container">
+      <p class="leyenda-class">
+        Al iniciar el inventario, se actualizarán los saldos de las opciones escogidas.
+      </p>
+    </div>
 
-  <div class="subtitulo-container">
-    <p class="subtitulo-class">¿Desea Iniciar el inventario?</p>
-  </div>
-
-  <div class="leyenda-container">
-    <p class="leyenda-class">
-      Al iniciar el inventario, se actualizarán los saldos de las opciones escogidas.
-    </p>
-  </div>
-
-  <!-- Sección para los checkboxes de categorías -->
-  <div class="checkbox-container">
-    <p class="checkbox-title">Seleccione categorías:</p>
-    <div class="checkbox-list">
-      <div *ngFor="let categoria of categorias" class="form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="{{ categoria }}"
-          [attr.data-nombre]="categoria"
-          (change)="onCheckboxChange($event, categoria)"
-        />
-        <label class="form-check-label" for="{{ categoria }}">
-          {{ categoria }}
-        </label>
+     <!-- Sección para los checkboxes de categorías -->
+    <div class="checkbox-container">
+      <p class="checkbox-title">Seleccione categorías:</p>
+      <div class="checkbox-list">
+        <div *ngFor="let categoria of categorias" class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="{{ categoria }}"
+            [attr.data-nombre]="categoria"
+            (change)="onCheckboxChange($event, categoria)"
+          />
+          <label class="form-check-label" for="{{ categoria }}">
+            {{ categoria }}
+          </label>
+        </div>
       </div>
     </div>
-  </div>
-  <div *ngIf="isLoading" id="loader">
-    <img src="../../../assets/img/loader-preview.svg" alt="loading" />
-</div>
-  <!-- Contenedor de Combobox con mejor diseño -->
-  <div class="combobox-container">
-    <mat-form-field appearance="outline" class="combobox">
-      <mat-label>Seleccionar Local</mat-label>
-      <mat-select [(value)]="selectedLocal" (selectionChange)="onLocalChange($event)">
-        <mat-option *ngFor="let local of grupoList" [value]="local">
-          {{ local.NumeroLocal }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field appearance="outline" class="combobox" style="width: 22em;">
-      <mat-label>Seleccionar Grupo Bodega</mat-label>
-      <mat-select [(value)]="selectedLocal" (selectionChange)="onLocalChange($event)">
-        <mat-option *ngFor="let local of grupoList" [value]="local">
-         {{ local.NombreGrupoBodega }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+    <br>
+    
+    <div *ngIf="isLoading" id="loader">
+      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+    </div>
+
+     <!-- Contenedor de Combobox con mejor diseño -->
+    <div class="combobox-container">
+      <mat-form-field appearance="outline" class="combobox">
+        <mat-label>Seleccionar Local</mat-label>
+        <mat-select formControlName="selectedLocal" (selectionChange)="onLocalChange($event)"  [disabled]="desactivarComboBoxLocal">
+          <mat-option *ngFor="let local of grupoList" [value]="local">
+            {{ local.NumeroLocal }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="combobox" style="width: 22em;">
+        <mat-label>Seleccionar Grupo Bodega</mat-label>
+        <mat-select formControlName="selectedGrupoBodega"  [disabled]="true">
+          <mat-option *ngFor="let local of grupoList" [value]="local.NombreGrupoBodega">
+          {{ local.NombreGrupoBodega }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="inventarioIniciado" class="alert alert-warning">
+      El inventario ya fue iniciado para este periodo, mes, local y grupo.
+    </div>
+
+    <mat-dialog-actions class="dialog-actions">
+      <button
+        mat-button
+        class="cancelar-boton"
+        [mat-dialog-close]="{ action: 'cerrar' }"
+        [disabled]="desactivarBotonCerrar">
+        Cerrar
+      </button>
+      <button 
+        mat-button 
+        type="submit"
+        class="confirmar-boton" 
+        [ngClass]="{'boton-desactivado': desactivarBotonInicio}"  
+        [disabled]="desactivarBotonInicio">
+        Iniciar Inventario
+      </button>
+    </mat-dialog-actions>
+
+  </form>
 </mat-dialog-content>
-<div *ngIf="inventarioIniciado" class="alert alert-warning">
-  El inventario ya fue iniciado para este periodo, mes, local y grupo.
-</div>
 
-<mat-dialog-actions class="dialog-actions">
-  <button
-  mat-button
-  class="cancelar-boton"
-  [mat-dialog-close]="{ action: 'cerrar' }">
-  Cerrar
-</button>
-  <button 
-    mat-button 
-    class="confirmar-boton" 
-    (click)="onConfirm()" 
-    [ngClass]="{'boton-desactivado': desactivarBotonInicio}"  
-    [disabled]="desactivarBotonInicio">
-    Iniciar Inventario
-  </button>
-</mat-dialog-actions>
+
+

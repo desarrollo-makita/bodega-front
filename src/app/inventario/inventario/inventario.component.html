@@ -70,16 +70,16 @@
                             </div>
                             <br>
                             <div *ngIf="showTable" class="row">
-                                <!-- Columna de la tabla de áreas -->
                                 <div class="col-md-12">
                                     <div class="table-responsive table-full-width">
                                       <div class="pagination-controls-container">
                                         <label for="itemsPerPage" style="margin-left: 1%; font-weight: bold;">Mostrar: </label>
-                                          <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="actualizarPaginacion()">
-                                              <option [value]="10">10</option>
-                                              <option [value]="50">50</option>
-                                              <option [value]="100">100</option>
-                                          </select>
+                                            <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="actualizarPaginacion()">
+                                                <option [value]="5">5</option>  
+                                                <option [value]="10">10</option>
+                                                <option [value]="50">50</option>
+                                                <option [value]="100">100</option>
+                                            </select>
                                         <label style="font-weight: bold;">Items por pagina: </label>
                                       </div>
                                   
@@ -175,11 +175,20 @@
                                       <div class="pagination-container">
                                           <pagination-controls (pageChange)="p = $event"></pagination-controls>
                                       </div>
+                                      
                                       <br>
                                       <br>
                                       <div>
                                         <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo"></app-grafico-torta>
-                                      </div>
+                                        <div class="botones-container">
+                                            <button class="btn btn-primary btn-sm custom-btn">
+                                                Actualizar Conteo
+                                              </button>
+                                              <button class="btn btn-primary btn-sm custom-btn">
+                                                Actualizar Conteo
+                                              </button>
+                                          </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
