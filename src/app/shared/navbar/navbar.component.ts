@@ -62,13 +62,15 @@ export class NavbarComponent implements OnInit{
         } else if (title === '/inventario') {
             this.title = 'Inventario';
             this.showIcons = false;
-         } else if (title === '/bitacora-ubicaciones') {
+        } else if (title === '/bitacora-ubicaciones') {
             this.title = 'Bitacora Ubicaciones';
             this.showIcons = false;
-          }
-
-          else if (title === '/asignar-capturador') {
+        } else if (title === '/asignar-capturador') {
             this.title = 'Asignar Capturador';
+            this.showIcons = false;
+          }
+          else if (title === '/reconteo-inventario') {
+            this.title = 'Reconteos';
             this.showIcons = false;
           }
       }

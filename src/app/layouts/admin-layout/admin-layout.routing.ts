@@ -7,6 +7,7 @@ import { AreaMantenedorComponent } from 'app/area-mantenedor/area-mantenedor.com
 import { BitacoraUbicacionesComponent } from 'app/bitacora-ubicaciones/bitacora-ubicaciones.component';
 import { InventarioComponent } from 'app/inventario/inventario/inventario.component';
 import { AsignarCapturadorComponent } from 'app/asignar-capturador/asignar-capturador.component';
+import { ReconteosComponent } from 'app/reconteos/reconteos/reconteos.component';
 
 
 
@@ -18,6 +19,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bitacora-ubicaciones', component: BitacoraUbicacionesComponent },
     { path: 'inventario', component: InventarioComponent },
     { path: 'asignar-capturador', component: AsignarCapturadorComponent },
+    { path: 'reconteo-inventario', component: ReconteosComponent },
   
 
 ];

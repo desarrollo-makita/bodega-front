@@ -192,15 +192,28 @@
 
   .botones-container {
     display: flex;
-    justify-content: center;
-    gap: 10px; /* Espacio entre los botones */
-    margin-top: 20px; /* Espacio superior */
-    border: none;
-    border-radius: 30px;
-    padding: 10px;
-    width: auto !important; /* Ajustar el ancho del botón según el contenido */
-  
+    justify-content: flex-start; /* Alinear los botones al inicio */
+    margin-left: 1em; /* Alinea con la tabla */
+    margin-top: 1em; /* Espacio superior */
+    gap: 10px; /* Espacio entre botones */
   }
   
 
+  .overlay {
+    position: fixed; /* Fija la capa en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Asegura que esté sobre todo el contenido */
+  }
+  
+  /* Evita que el usuario interactúe con la página */
+  body.loading {
+    overflow: hidden;
+  }
   

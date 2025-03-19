@@ -17,7 +17,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   tipoItem:any;
   local:any;
   grupo;
-  categorias = ['HERRAMIENTAS', 'ACCESORIOS', 'REPUESTOS'];
+  categorias = ['01-HERRAMIENTAS','03-ACCESORIOS', '04-REPUESTOS'];
   seleccionados: string[] = [];
   grupoList: string[] = [];
 
@@ -52,7 +52,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("Datos recibidos:", this.data);
+   // console.log("Datos recibidos:", this.data);
     this.obtenerGrupoLocal();
 
     this.inventarioForm.valueChanges.subscribe(val => {
@@ -181,7 +181,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
         console.log('Respuesta del servidor grupoLocal:', response.data);
         this.grupoList = response.data;
 
-        console.log('this.grupoList:', this.grupoList);
+       
       },
       error: (error) => {
       

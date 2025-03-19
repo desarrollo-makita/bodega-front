@@ -14,6 +14,7 @@ export class InventarioService {
   private validarIncioInventarioUrl  = 'http://172.16.1.206:3024/api/validar-inicio-inventario';
   private obtenerBodegaUrl  = 'http://172.16.1.206:3024/api/consultar-grupo-bodega';
   private inicioInventarioUrl  = 'http://172.16.1.206:3024/api/iniciar-inventario';
+  private actualizarSinCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-sin-cierre';
 
   constructor(private http: HttpClient) {}
 
@@ -54,4 +55,10 @@ export class InventarioService {
   iniciarInventario(data: any): Observable<any> {
     return this.http.post(this.inicioInventarioUrl, data);
   }
+
+  actualizarSaldosSinCierre(data: any): Observable<any> {
+    return this.http.post(this.actualizarSinCierreUrl, data);
+  }
+
+
 }

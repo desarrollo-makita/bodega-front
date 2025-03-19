@@ -37,6 +37,8 @@ import { AsignarCapturadorComponent } from './asignar-capturador/asignar-captura
 import { GraficoTortaComponent } from './grafico-torta/grafico-torta.component';
 import { ConfirmInventarioDialogComponent } from './shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
 import { MatSelectModule } from '@angular/material/select';
+import { CerrarInventarioDialogComponent } from './shared/cerrar-inventario-dialog/cerrar-inventario-dialog.component';
+import { ReconteosComponent } from './reconteos/reconteos/reconteos.component';
 
 @NgModule({
   imports: [
@@ -77,6 +79,8 @@ import { MatSelectModule } from '@angular/material/select';
     AsignarCapturadorComponent,
     GraficoTortaComponent,
     ConfirmInventarioDialogComponent,
+    CerrarInventarioDialogComponent,
+    ReconteosComponent,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

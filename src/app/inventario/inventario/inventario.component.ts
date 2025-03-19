@@ -3,7 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthGuard } from 'app/auth/auth.guard';
 import { InventarioService } from 'app/services/inventario/inventario.service';
 import { ConfirmInventarioDialogComponent } from 'app/shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-inventario',
   templateUrl: './inventario.component.html',
@@ -16,6 +17,7 @@ export class InventarioComponent implements OnInit {
   selectedPeriodo: string;
   selectedTipoItem: string;
   selectedLocal: string;
+  selectedGrupo: string;
 
   periodo : any;
   mes : any;
@@ -29,9 +31,11 @@ export class InventarioComponent implements OnInit {
   habilitarBoxes: boolean= false;
   successMessage: boolean = false;
   errorMessage: boolean = false;
+  grupoList: any;
+  mostrarGrafico : boolean = false;
 
   p: number = 1; // Página actual
-  itemsPerPage: number = 10; // Elementos por página
+  itemsPerPage: number = 5; // Elementos por página
 
   saldoTotal : number = 0;
   conteoTotal : number = 0;
@@ -55,23 +59,25 @@ export class InventarioComponent implements OnInit {
   tiposItems: any = [];
 
   locales = [
-    { descripcion: 'Casa Matriz ENEA', codigo: '01' },
-    { descripcion: 'Serv. Tecnico Temuco', codigo: '03' },
-    { descripcion: 'Centro de Servicios Antofagasta', codigo: '04' },
-    { descripcion: 'Centro de Servicios Copiapo', codigo: '05' }
+    { descripcion: 'Casa Matriz ENEA', codigo: '01'},
+    { descripcion: 'Serv. Tecnico Temuco', codigo: '03'},
+    { descripcion: 'Centro de Servicios Antofagasta', codigo: '04'},
+    { descripcion: 'Centro de Servicios Copiapo', codigo: '05'}
   ];
 
  
   constructor(
     private invetarioServices: InventarioService , 
     private dialog: MatDialog,
-    private authService: AuthGuard,) {}
+    private authService: AuthGuard,
+    ) {}
 
   ngOnInit(): void {
     this.validarInventarioFun();
+    this.obtenerGrupoLocal();
   }
   openDialog(mensaje: string){
-    this.openConfirmDialog(mensaje , this.respuestaValidaInicioInventario);
+    this.openConfirmDialog(mensaje);
   }
  
   openConfirmDialog(mensaje: string , data?: any): void {
@@ -83,9 +89,7 @@ export class InventarioComponent implements OnInit {
   
     // Convertir el número del mes a nombre del mes (recordar que los arrays comienzan en 0)
     const mesNombre = meses[parseInt(this.mes, 10) - 1];
-  
-    
-    
+      
     const dialogRef = this.dialog.open(ConfirmInventarioDialogComponent, {
       disableClose: true,
       data: {
@@ -123,14 +127,34 @@ export class InventarioComponent implements OnInit {
     });
   }
   
+  obtenerGrupoLocal(){
+
+    this.invetarioServices.obtenerBodegas().subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor grupoLocal:', response.data);
+        this.grupoList = response.data;
+      },
+      error: (error) => {
+      
+        console.error('Error en la consulta:', error);
+       
+      },
+      complete: () => {
+       
+      },
+    });
+
+  }
 
   onSubmit() {
+    
     const data = {
       periodo: this.selectedPeriodo,
       mes: this.selectedMes,
       tipoItem: this.selectedTipoItem,
       local: this.selectedLocal
     };
+    
     this.isLoading = true;
     if(!this.habilitarBoxes){
       const mensaje = `Usted no ha iniciado el inventario`;
@@ -161,6 +185,7 @@ export class InventarioComponent implements OnInit {
         },
         complete: () => {
           this.calcularTotales()
+          this.mostrarGrafico = true
           this.isLoading = false;
         },
       });
@@ -239,22 +264,31 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor:', response);
-        
-        this.respuestaValidaInicioInventario = response.data;
+        if (!response.data) {
+          console.log("Error: response.data es null o undefined.");
+          this.tiposItems = []; // Evita el error de map() al asignar un array vacío
+        } else if (!Array.isArray(response.data)) {
+          console.log("Error: response.data no es un array. Valor recibido:", response.data);
+          this.tiposItems = [];
+        }else{
+          this.respuestaValidaInicioInventario = response.data;
 
-        this.tiposItems = response.data;
+          this.tiposItems = response.data;
         
-        this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
-
-        this.isLoading = true;
-        if (response.data.length === 0 ) {
-          // Mostrar el pop-up cuando el código sea 0
-          const mensaje = `Usted no ha iniciado el inventario`;
-          this.openConfirmDialog( mensaje);
-          this.habilitarBoxes = false;
-        }else {
-          this.habilitarBoxes =  true;
+          this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
+          console.log("tiposItems 01: " , this.tiposItems);
+  
+          this.isLoading = true;
+          if (response.data.length === 0 ) {
+            // Mostrar el pop-up cuando el código sea 0
+            const mensaje = `Usted no ha iniciado el inventario`;
+            this.openConfirmDialog( mensaje);
+            this.habilitarBoxes = false;
+          }else {
+            this.habilitarBoxes =  true;
+          }
         }
+      
       },
       error: (error) => {
         this.isLoading = false;
@@ -268,4 +302,101 @@ export class InventarioComponent implements OnInit {
       },
     });
   }
-}
+
+  exportToExcel(): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.inventarioData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Inventario': worksheet }, SheetNames: ['Inventario'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    saveAs(data, 'inventario.xlsx');
+  }
+
+  actualizarConteo(){ 
+    this.isLoading = true;
+    const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
+  
+    const data = {
+        periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+        mes: parseInt(this.selectedMes, 10) || null, 
+        tipoItem: this.selectedTipoItem,
+        local: this.selectedLocal,
+        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+    };
+
+    console.log("data:", data);
+
+    this.invetarioServices.actualizarSaldosSinCierre(data).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor actualizarSaldosSinCierre:', response);
+    },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en la consulta:', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al actual los datos."); setTimeout(() => {
+          this.errorMessage = false;
+
+        }, 2000);
+      },
+      complete: () => {
+      
+        const dataActualizaTabla = {
+          periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+          mes: parseInt(this.selectedMes, 10) || null, 
+          tipoItem: this.selectedTipoItem,
+          local: this.selectedLocal,
+          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+      };
+        this.actualizaTabla(dataActualizaTabla);
+        this.isLoading = false;
+       
+        
+      },
+    });
+  }
+
+
+  actualizaTabla(data: any) {
+    this.mostrarGrafico= false;
+    this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+      next: (response) => {
+        console.log('Respuesta actualizaTabla:', response);
+        this.isLoading = true;
+        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+          this.successMessage = true;
+          this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
+          this.inventarioData = [];
+          this.resetFormulario();
+          this.showTable = false;
+        } else {
+          this.mensaje = ""; // Limpiar mensaje si hay datos
+          this.inventarioData = response.data.recordset;
+          this.showTable = true;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en la consulta:', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al obtener los datos actualizaTabla");
+      },
+      complete: () => {
+        this.calcularTotales()
+        this.mostrarGrafico = true
+        this.isLoading = false;
+        this.successMessage = true;
+        this.mensaje = 'Saldos Actualizados correctamente';
+        setTimeout(() => {
+          this.successMessage = false;
+
+        }, 2000);
+      },
+    });
+  }
+
+
+
+} //FIN CLASE
+
+
