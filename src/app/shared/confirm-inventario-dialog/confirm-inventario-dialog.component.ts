@@ -52,7 +52,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   // console.log("Datos recibidos:", this.data);
+    console.log("Datos recibidos:", this.data);
     this.obtenerGrupoLocal();
 
     this.inventarioForm.valueChanges.subscribe(val => {
@@ -214,11 +214,13 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
   
   verificarInventario(resultado1: any[], resultado2: any): boolean {
+    
     const inventarioEncontrado = resultado1.some(item =>
       item.Agno.toString() === resultado2.periodo &&
       item.Mes.toString().padStart(2, '0') === resultado2.mes &&
       item.Local === resultado2.numeroLocal &&
-      item.GrupoBodega === resultado2.grupoBodega
+      item.GrupoBodega === resultado2.grupoBodega &&
+      resultado2.categorias.includes(item.Tipoitem)
     );
   
     if (inventarioEncontrado) {

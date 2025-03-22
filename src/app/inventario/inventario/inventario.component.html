@@ -73,16 +73,17 @@
                             <div class="col-md-12">
                                 <div class="table-responsive table-full-width">
                                     <div class="pagination-controls-container">
-                                    <label for="itemsPerPage" style="margin-left: 1%; font-weight: bold;">Mostrar: </label>
-                                        <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="actualizarPaginacion()">
-                                            <option [value]="5">5</option>  
-                                            <option [value]="10">10</option>
-                                            <option [value]="50">50</option>
-                                            <option [value]="100">100</option>
-                                        </select>
-                                    <label style="font-weight: bold;">Items por pagina: </label>
+                                        <label for="itemsPerPage" style="margin-left: 1%; font-weight: bold;">Mostrar: </label>
+                                            <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="actualizarPaginacion()">
+                                                <option [value]="5">5</option>  
+                                                <option [value]="10">10</option>
+                                                <option [value]="50">50</option>
+                                                <option [value]="100">100</option>
+                                            </select>
+                                        <label style="font-weight: bold;">Items por pagina: </label>
+                                        <input type="text" class="custom-input" [(ngModel)]="searchQuery" placeholder="Buscar por Item" (input)="filterItems()">
                                     </div>
-                                
+                                    
                                     <br>
                                 <div style="overflow-x: auto; width:100%;">
                                     <table class="table table-hover table-striped">
@@ -100,7 +101,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let row of inventarioData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+                                        <tr *ngFor="let row of filteredInventarioData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
                                          
                                             <td>{{ row.TipoItem }}</td>
                                             <td>{{ row.Item }}</td>

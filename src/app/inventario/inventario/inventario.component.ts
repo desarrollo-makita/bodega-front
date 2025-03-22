@@ -25,7 +25,11 @@ export class InventarioComponent implements OnInit {
   
 
   mensaje: string = ''; // Mensaje para el usuario
-  inventarioData: any = [];
+  inventarioData: any[] = [];  // Lista completa de 18,000 registros
+  filteredInventarioData: any[] = []; // Lista filtrada
+  searchQuery: string = '';  // Lo que el usuario escribe en el input
+
+ 
   isLoading: boolean = false;
   showTable:boolean= false;
   habilitarBoxes: boolean= false;
@@ -65,7 +69,7 @@ export class InventarioComponent implements OnInit {
     { descripcion: 'Centro de Servicios Copiapo', codigo: '05'}
   ];
 
- 
+
   constructor(
     private invetarioServices: InventarioService , 
     private dialog: MatDialog,
@@ -80,8 +84,8 @@ export class InventarioComponent implements OnInit {
     this.openConfirmDialog(mensaje);
   }
  
-  openConfirmDialog(mensaje: string , data?: any): void {
-    console.log("mensaje  : " , mensaje , '-' , data);
+  openConfirmDialog(mensaje: string): void {
+    console.log("mensaje  : " , mensaje , '-' , this.respuestaValidaInicioInventario);
     const meses = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -96,7 +100,7 @@ export class InventarioComponent implements OnInit {
         mensaje: mensaje,
         periodo: this.periodo,
         mes: mesNombre,
-        datos: data
+        datos: this.respuestaValidaInicioInventario
       
       }
     });
@@ -147,48 +151,17 @@ export class InventarioComponent implements OnInit {
   }
 
   onSubmit() {
-    
-    const data = {
-      periodo: this.selectedPeriodo,
-      mes: this.selectedMes,
-      tipoItem: this.selectedTipoItem,
-      local: this.selectedLocal
-    };
-    
     this.isLoading = true;
+    // Añadir la clase 'loading' al body para desactivar interacciones
+    
     if(!this.habilitarBoxes){
       const mensaje = `Usted no ha iniciado el inventario`;
       this.openConfirmDialog(mensaje);
       this.isLoading = false;
+      
     }else{
-      this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
-        next: (response) => {
-          console.log('Respuesta consultaInventario:', response);
-          this.isLoading = true;
-          if (response.data && response.data.recordset && response.data.recordset.length === 0) {
-            this.successMessage = true;
-            this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
-            this.inventarioData = [];
-            this.resetFormulario();
-            this.showTable = false;
-          } else {
-            this.mensaje = ""; // Limpiar mensaje si hay datos
-            this.inventarioData = response.data.recordset;
-            this.showTable = true;
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          console.error('Error en la consulta:', error);
-          this.errorMessage = true;
-          this.mostrarMensaje("Ocurrió un error al obtener los datos.");
-        },
-        complete: () => {
-          this.calcularTotales()
-          this.mostrarGrafico = true
-          this.isLoading = false;
-        },
-      });
+      this.consultaTablaRegistro();
+      
     }
     
   }
@@ -196,10 +169,11 @@ export class InventarioComponent implements OnInit {
 
   calcularTotales() {
     // Sumamos los valores de "SaldoStock" y "Conteo" de cada fila
+   
     this.saldoTotal = this.inventarioData.reduce((total, row) => total + row.SaldoStock, 0);
     this.conteoTotal = this.inventarioData.reduce((total, row) => total + row.Conteo, 0);
+
     this.titulo = this.selectedTipoItem;        
-    console.log("Inventario : " , this.saldoTotal , this.conteoTotal);  
   }
   mostrarMensaje(texto: string) {
     this.mensaje = texto;
@@ -207,7 +181,7 @@ export class InventarioComponent implements OnInit {
       this.mensaje = "";
       this.successMessage = false;
       this.errorMessage = false;
-    }, 2000); // Ocultar mensaje después de 2 segundos
+    }, 3000); // Ocultar mensaje después de 2 segundos
   }
 
   resetFormulario() {   
@@ -249,6 +223,7 @@ export class InventarioComponent implements OnInit {
 
 
   validarInventarioFun(){
+
     const fechaActual = new Date();
   
     this.periodo = fechaActual.getFullYear().toString();
@@ -263,7 +238,6 @@ export class InventarioComponent implements OnInit {
     
     this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor:', response);
         if (!response.data) {
           console.log("Error: response.data es null o undefined.");
           this.tiposItems = []; // Evita el error de map() al asignar un array vacío
@@ -276,7 +250,7 @@ export class InventarioComponent implements OnInit {
           this.tiposItems = response.data;
         
           this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
-          console.log("tiposItems 01: " , this.tiposItems);
+        
   
           this.isLoading = true;
           if (response.data.length === 0 ) {
@@ -365,7 +339,7 @@ export class InventarioComponent implements OnInit {
         this.isLoading = true;
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
           this.successMessage = true;
-          this.mostrarMensaje("No se encontraron datos para los filtros seleccionados.");
+          this.mostrarMensaje(`DEBE INICIAR INVENTARIO DE ${data.tipoItem}`);
           this.inventarioData = [];
           this.resetFormulario();
           this.showTable = false;
@@ -391,6 +365,59 @@ export class InventarioComponent implements OnInit {
           this.successMessage = false;
 
         }, 2000);
+      },
+    });
+  }
+
+  filterItems() {
+    if (!this.searchQuery.trim()) {
+        this.filteredInventarioData = [...this.inventarioData]; // Restaurar datos originales
+    } else {
+        this.filteredInventarioData = this.inventarioData.filter(item =>
+            item.Item.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+    }
+    this.p = 1; // Reiniciar paginación a la primera página
+}
+
+  consultaTablaRegistro(){
+    const data = {
+      periodo: this.selectedPeriodo,
+      mes: this.selectedMes,
+      tipoItem: this.selectedTipoItem,
+      local: this.selectedLocal
+    };
+    
+    this.isLoading = true;
+    this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+      next: (response) => {
+        console.log('Respuesta consultaInventario:', response);
+        
+        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+          this.successMessage = true;
+          this.mostrarMensaje(`DEBE INICIAR INVENTARIO DE ${data.tipoItem}`);
+          this.inventarioData = [];
+          this.resetFormulario();
+          this.showTable = false;
+        } else {
+          this.mensaje = ""; // Limpiar mensaje si hay datos
+          this.inventarioData = response.data.recordset;
+          this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
+          this.showTable = true;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        
+        console.error('Error en la consulta:', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+      },
+      complete: () => {
+        this.calcularTotales()
+        this.mostrarGrafico = true
+        this.isLoading = false;
+        
       },
     });
   }
