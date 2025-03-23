@@ -16,10 +16,10 @@
                                     <label for="mes" style="font-weight: bold;">Mes</label>
                                 </div>
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="mes" style="font-weight: bold;">Tipo Item</label>
+                                    <label for="tipoItem" style="font-weight: bold;">Tipo Item</label>
                                 </div>
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="mes" style="font-weight: bold;">Local</label>
+                                    <label for="local" style="font-weight: bold;">Local</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -28,13 +28,12 @@
                                 </div>
                                 <div class="form-group col-md-2">
                                     <select class="form-control custom-select" id="mes" [(ngModel)]="selectedMes" name="mes" required (change)="onChange()"
-                                    [title]="selectedMes ? getMesTooltip(selectedMes) : 'Selecciona un mes'">
-                                    <option *ngFor="let mes of meses" [value]="mes.codigo">
-                                        {{ mes.nombre }}
-                                    </option>
-                                </select>
+                                        [title]="selectedMes ? getMesTooltip(selectedMes) : 'Selecciona un mes'">
+                                        <option *ngFor="let mes of meses" [value]="mes.codigo">
+                                            {{ mes.nombre }}
+                                        </option>
+                                    </select>
                                 </div>
-                                
                                 <div class="form-group col-md-2">
                                     <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()">
                                         <option *ngFor="let tipo of tiposItems" [value]="tipo.Tipoitem">
@@ -42,28 +41,25 @@
                                         </option>
                                     </select>
                                 </div>
-                                
-                             
                                 <div class="form-group col-md-2">
                                     <select class="form-control custom-select" id="local" [(ngModel)]="selectedLocal" name="local" required (change)="onChange()"
-                                    [title]="selectedLocal ? getLocalTooltip(selectedLocal) : 'Selecciona un local'">
+                                        [title]="selectedLocal ? getLocalTooltip(selectedLocal) : 'Selecciona un local'">
                                         <option *ngFor="let local of locales" [value]="local.codigo">
                                             {{ local.descripcion }}
                                         </option>
                                     </select>
                                 </div>
-
                                 <div class="form-group col-md-4">
-                                    <button type="submit" class="btn btn-primary btn-sm custom-btn"  [disabled]="!formValido()">
+                                    <button type="submit" class="btn btn-primary btn-sm custom-btn" [disabled]="!formValido()">
                                         Buscar&nbsp;&nbsp; <i class="fas fa-search ml-2"></i>
                                     </button>
                                 </div>
                             </div>
                         </form>
                         <br>
-                        <div clas="row">
+                        <div class="row">
                             <div class="form-group">
-                                <span style="cursor: pointer; font-weight: bold; color: #008686;" (click)="openDialog('Usted no ha iniciado el inventario')">
+                                <span style="cursor: pointer; font-weight: bold; color: #008686; margin-left: 1%;" (click)="openDialog('Usted no ha iniciado el inventario')">
                                     <i class="fas fa-upload"></i> Inicio Inventario
                                 </span>
                             </div>
@@ -74,52 +70,46 @@
                                 <div class="table-responsive table-full-width">
                                     <div class="pagination-controls-container">
                                         <label for="itemsPerPage" style="margin-left: 1%; font-weight: bold;">Mostrar: </label>
-                                            <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="actualizarPaginacion()">
-                                                <option [value]="5">5</option>  
-                                                <option [value]="10">10</option>
-                                                <option [value]="50">50</option>
-                                                <option [value]="100">100</option>
-                                            </select>
-                                        <label style="font-weight: bold;">Items por pagina: </label>
+                                        <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="actualizarPaginacion()">
+                                            <option [value]="5">5</option>
+                                            <option [value]="10">10</option>
+                                            <option [value]="50">50</option>
+                                            <option [value]="100">100</option>
+                                        </select>
+                                        <label style="font-weight: bold;">Items por página: </label>
                                         <input type="text" class="custom-input" [(ngModel)]="searchQuery" placeholder="Buscar por Item" (input)="filterItems()">
+                                        <div class="pagination-container">
+                                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                                        </div>
                                     </div>
-                                    
                                     <br>
-                                <div style="overflow-x: auto; width:100%;">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                        <tr>
-                                        
-                                            <th>Tipo Item</th>
-                                            <th>Item</th>
-                                            <th>Saldo Stock</th>
-                                            <th>Conteo</th>
-                                            <th>Diferencia</th>
-                                            <th>Ubicacion</th>
-                                            <th>Fecha Creacion</th>
-                                           
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr *ngFor="let row of filteredInventarioData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
-                                         
-                                            <td>{{ row.TipoItem }}</td>
-                                            <td>{{ row.Item }}</td>
-                                            <td>{{ row.SaldoStock }}</td>
-                                            <td>{{ row.Conteo }}</td>
-                                            <td>{{ row.Diferencia }}</td>
-                                            <td>{{ row.Ubicacion }}</td>
-                                            <td>{{ row.FechaCreacion | date:'dd-MM-yyyy HH:mm:ss' }}</td>
-                                           
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                    
-                                    <div class="pagination-container">
-                                        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                                    <div style="overflow-x: auto; width:100%;">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tipo Item</th>
+                                                    <th>Item</th>
+                                                    <th>Saldo Stock</th>
+                                                    <th>Conteo</th>
+                                                    <th>Diferencia</th>
+                                                    <th>Ubicación</th>
+                                                    <th>Fecha Creación</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let row of filteredInventarioData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+                                                    <td>{{ row.TipoItem }}</td>
+                                                    <td>{{ row.Item }}</td>
+                                                    <td>{{ row.SaldoStock }}</td>
+                                                    <td>{{ row.Conteo }}</td>
+                                                    <td>{{ row.Diferencia }}</td>
+                                                    <td>{{ row.Ubicacion }}</td>
+                                                    <td>{{ row.FechaCreacion | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" style="margin-top: 2%;">
                                         <div class="form-group col-md-2">
                                             <button class="btn btn-primary btn-sm custom-btn" (click)="actualizarConteo()">
                                                 Actualizar Conteo
@@ -131,28 +121,19 @@
                                             </button>
                                         </div>
                                     </div>
-                                    
                                     <br>
-                                    <br>
-                                    <div *ngIf="mostrarGrafico">    
+                                    <div *ngIf="mostrarGrafico">
                                         <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo"></app-grafico-torta>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div
-                            *ngIf="successMessage"
-                            class="alert alert-success mt-3"
-                            role="alert">
+                        <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
                             {{ mensaje }}
                         </div>
                         <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
                             {{ mensaje }}
                         </div>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
                         <br>
                         <div *ngIf="isLoading" id="loader" class="overlay">
                             <img src="../../../assets/img/loader-preview.svg" alt="loading" />
