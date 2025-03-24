@@ -288,6 +288,7 @@ export class InventarioComponent implements OnInit {
 
   actualizarConteo(){ 
     this.isLoading = true;
+    this.mostrarGrafico = false;
     const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
   
     const data = {
@@ -389,6 +390,7 @@ export class InventarioComponent implements OnInit {
     };
     
     this.isLoading = true;
+    this.showTable = false;
     this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
       next: (response) => {
         console.log('Respuesta consultaInventario:', response);
@@ -415,6 +417,7 @@ export class InventarioComponent implements OnInit {
       },
       complete: () => {
         this.calcularTotales()
+        this.showTable= true;
         this.mostrarGrafico = true
         this.isLoading = false;
         
