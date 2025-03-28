@@ -20,6 +20,7 @@ export class AsignarCapturadorComponent {
   asignaciones: any[] = [];
   
   isLoading: boolean = false;
+  
   capturadores: { nombre: string }[] = Array.from({ length: 45 }, (_, i) => ({ nombre: `Honeywell-${(i + 1).toString().padStart(2, '0')}` }));
   
   meses = [
@@ -69,7 +70,9 @@ export class AsignarCapturadorComponent {
     { "nombre": "ROXANA LAGOS" },
     { "nombre": "BARBARA MEDINA" },
     { "nombre": "CRISTIAN ARAYA" },
-    { "nombre": "JOSE CASTILLO" }
+    { "nombre": "JOSE CASTILLO" },
+    { "nombre": "Felipe Sepulveda" },
+    { "nombre": "Rodrigo Aguilera" }
   ]
   
 

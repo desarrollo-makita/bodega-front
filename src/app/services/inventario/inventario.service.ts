@@ -15,6 +15,9 @@ export class InventarioService {
   private obtenerBodegaUrl  = 'http://172.16.1.206:3024/api/consultar-grupo-bodega';
   private inicioInventarioUrl  = 'http://172.16.1.206:3024/api/iniciar-inventario';
   private actualizarSinCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-sin-cierre';
+  private actualizarConCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-cierre';
+  private validaCierreInvUrl = 'http://172.16.1.206:3024/api/validar-cierre-inventario';
+                                                               
 
   constructor(private http: HttpClient) {}
 
@@ -60,5 +63,20 @@ export class InventarioService {
     return this.http.post(this.actualizarSinCierreUrl, data);
   }
 
+  cierreInventario(data: any): Observable<any> {
+    return this.http.post(this.actualizarConCierreUrl, data);
+  }
+
+
+  validarCierreInventario(periodo: string, mes: string, tipoItem: string, local: string): Observable<any> {
+    const params = new HttpParams()
+      .set('periodo', periodo.toString())
+      .set('mes', mes.toString())
+      .set('tipoItem', tipoItem)
+      .set('local', local);
+
+    return this.http.get<any>(this.validaCierreInvUrl, { params });
+  }
+  
 
 }

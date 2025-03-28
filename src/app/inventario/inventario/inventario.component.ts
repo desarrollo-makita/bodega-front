@@ -19,6 +19,8 @@ export class InventarioComponent implements OnInit {
   selectedLocal: string;
   selectedGrupo: string;
 
+  codigoBloqueo: boolean= false;
+
   periodo : any;
   mes : any;
   usuario:any;
@@ -37,6 +39,9 @@ export class InventarioComponent implements OnInit {
   errorMessage: boolean = false;
   grupoList: any;
   mostrarGrafico : boolean = false;
+  sinInventarioIniciado: boolean = false;
+  mostrarFlecha : boolean= false;
+  isInventarioCerrado : boolean = false;
 
   p: number = 1; // Página actual
   itemsPerPage: number = 5; // Elementos por página
@@ -81,7 +86,9 @@ export class InventarioComponent implements OnInit {
     this.obtenerGrupoLocal();
   }
   openDialog(mensaje: string){
+    this.mostrarFlecha= false;
     this.openConfirmDialog(mensaje);
+    this.errorMessage= false;
   }
  
   openConfirmDialog(mensaje: string): void {
@@ -181,7 +188,7 @@ export class InventarioComponent implements OnInit {
       this.mensaje = "";
       this.successMessage = false;
       this.errorMessage = false;
-    }, 3000); // Ocultar mensaje después de 2 segundos
+    }, 9000); // Ocultar mensaje después de 2 segundos
   }
 
   resetFormulario() {   
@@ -361,11 +368,11 @@ export class InventarioComponent implements OnInit {
         this.mostrarGrafico = true
         this.isLoading = false;
         this.successMessage = true;
-        this.mensaje = 'Saldos Actualizados correctamente';
+        this.mensaje = 'Proceso realizado correctamente';
         setTimeout(() => {
           this.successMessage = false;
 
-        }, 2000);
+        }, 2500);
       },
     });
   }
@@ -394,18 +401,26 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
       next: (response) => {
         console.log('Respuesta consultaInventario:', response);
-        
+
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
-          this.successMessage = true;
-          this.mostrarMensaje(`DEBE INICIAR INVENTARIO DE ${data.tipoItem}`);
+          this.sinInventarioIniciado =  true;
+          this.showTable = false;
+          this.errorMessage = true;
+          this.mostrarFlecha = true;
+          this.mostrarMensaje(`${response.info.mensaje}`);
           this.inventarioData = [];
           this.resetFormulario();
-          this.showTable = false;
+          setTimeout(() => {
+           this.mostrarFlecha = false;
+          }, 8000);
+ 
         } else {
+          this.sinInventarioIniciado =  false;
           this.mensaje = ""; // Limpiar mensaje si hay datos
           this.inventarioData = response.data.recordset;
           this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
           this.showTable = true;
+          this.mostrarFlecha = false;
         }
       },
       error: (error) => {
@@ -416,11 +431,99 @@ export class InventarioComponent implements OnInit {
         this.mostrarMensaje("Ocurrió un error al obtener los datos.");
       },
       complete: () => {
-        this.calcularTotales()
-        this.showTable= true;
-        this.mostrarGrafico = true
-        this.isLoading = false;
+        if(this.sinInventarioIniciado){
+
+          this.showTable= false;
+          this.mostrarGrafico = false
+          this.isLoading = false;
+        }else{
+          this.calcularTotales()
+          console.log("entrooooo al elseeeeee")
+          this.mostrarGrafico = true
+          this.showTable= true;
         
+          this.validarCierreInventario(data)
+        }
+        
+        
+      },
+    });
+  }
+
+  cerrarInventario(){
+    this.isLoading = true;
+    this.mostrarGrafico = false;
+    const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
+  
+   const data = {
+        periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
+        mes: parseInt(this.selectedMes, 10) || null, 
+        tipoItem: this.selectedTipoItem,
+        local: this.selectedLocal,
+        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+    };
+
+    console.log("data:", data);
+
+    this.invetarioServices.cierreInventario(data).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor cierreInventario:', response);
+        this.codigoBloqueo = response.codigo === 0 ? true: false;
+    },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en la consulta: cierreInventario', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al cierreInventario."); 
+        setTimeout(() => {
+          this.errorMessage = false;
+
+        }, 2000);
+      },
+      complete: () => {
+      
+        const dataActualizaTabla = {
+          periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+          mes: parseInt(this.selectedMes, 10) || null, 
+          tipoItem: this.selectedTipoItem,
+          local: this.selectedLocal,
+          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+      };
+        this.actualizaTabla(dataActualizaTabla);
+        
+        
+      },
+    });
+    
+  }
+
+  validarCierreInventario(data: any){
+    this.invetarioServices.validarCierreInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+      next: (response) => {
+        console.log('Respuesta valida cierre inventario:', response);
+
+        this.codigoBloqueo = response.data.Estado === 1 ? true : false;
+       
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.mostrarMensaje(`Error al validar cierre inventario`);
+       
+        setTimeout(() => {
+          this.errorMessage = false;
+
+        }, 10000);
+
+      },
+      complete: () => {
+        this.successMessage = true; 
+        this.isLoading = false;
+        this.mostrarMensaje(`Inventario Cerrado , Solo puede Exportar los datos.`);
+       
+        setTimeout(() => {
+          this.successMessage = false;
+
+        }, 10000);
       },
     });
   }

@@ -13,7 +13,25 @@
   padding: 10px;
   margin-left: 10%;
   margin-top: -3%;
-  width: auto !important; /* Ajustar el ancho del botón según el contenido */
+  width: 100%; /* Ajustar el ancho del botón según el contenido */
+}
+.custom-btn-cerrar {
+  background-color: #f42738;
+  border: none;
+  border-radius: 30px;
+  padding: 10px;
+  margin-left: 10%;
+  margin-top: -3%;
+  width: 100%; /* Ajustar el ancho del botón según el contenido */
+}
+.custom-btn-buscar {
+  background-color: #00909E;
+  border: none;
+  border-radius: 30px;
+  padding: 10px;
+  margin-left: 10%;
+  margin-top: -3%;
+  width: auto !important
 }
 
 .custom-btn:hover {
@@ -174,14 +192,21 @@
   .text-danger {
     color: #dc3545;
     font-weight: bold;
+    
   }
 
   .alert-success {
     background-color: rgba(0, 144, 158, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
   }
 
   .alert-danger{
     background-color: rgba(235, 35, 35, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
   }
 
   .botones-container {
@@ -199,17 +224,16 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999; /* Asegura que esté sobre todo el contenido */
   }
   
-  /* Evita que el usuario interactúe con la página */
-  body.loading {
-    overflow: hidden;
+  #loader {
+    width: 20%;
   }
+  
   
 
 
@@ -223,3 +247,13 @@
     color: #00909E;
     width: 15%;
   }
+
+  @keyframes parpadeo {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.parpadeo {
+    animation: parpadeo 1s infinite;
+}
