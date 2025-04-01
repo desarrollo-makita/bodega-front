@@ -68,11 +68,13 @@ export class NavbarComponent implements OnInit{
         } else if (title === '/asignar-capturador') {
             this.title = 'Asignar Capturador';
             this.showIcons = false;
-          }
-          else if (title === '/reconteo-inventario') {
+        } else if (title === '/reconteo-inventario') {
             this.title = 'Reconteos';
             this.showIcons = false;
-          }
+        } else if (title === '/asignacion-reconteos') {
+            this.title = 'Asignacion de Reconteos';
+            this.showIcons = false;
+        }
       }
 
     

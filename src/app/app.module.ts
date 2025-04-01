@@ -39,6 +39,9 @@ import { ConfirmInventarioDialogComponent } from './shared/confirm-inventario-di
 import { MatSelectModule } from '@angular/material/select';
 import { CerrarInventarioDialogComponent } from './shared/cerrar-inventario-dialog/cerrar-inventario-dialog.component';
 import { ReconteosComponent } from './reconteos/reconteos/reconteos.component';
+import { AsignacionReconteosComponent } from './reconteos/asignacion-reconteos/asignacion-reconteos.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   imports: [
@@ -60,6 +63,8 @@ import { ReconteosComponent } from './reconteos/reconteos/reconteos.component';
     MatCardModule,       // Para usar mat-card
     MatSelectModule,
     NgxPaginationModule,
+    MatNativeDateModule,
+    MatDatepickerModule
 
     
   ],
@@ -81,6 +86,9 @@ import { ReconteosComponent } from './reconteos/reconteos/reconteos.component';
     ConfirmInventarioDialogComponent,
     CerrarInventarioDialogComponent,
     ReconteosComponent,
+    AsignacionReconteosComponent,
+    
+    
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

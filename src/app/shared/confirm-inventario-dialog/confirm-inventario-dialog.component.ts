@@ -20,6 +20,8 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   categorias = ['01-HERRAMIENTAS','03-ACCESORIOS', '04-REPUESTOS'];
   seleccionados: string[] = [];
   grupoList: string[] = [];
+  fechaInicio: Date;
+  formattedDate: any;
 
   isLoading: boolean = false;
   // Variables para los selects
@@ -52,7 +54,11 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("Datos recibidos:", this.data);
+    this.fechaInicio = new Date();
+    
+    // Formatear la fecha al formato YYYY-MM-DD
+    this.formattedDate = this.fechaInicio.toISOString().split('T')[0];
+    
     this.obtenerGrupoLocal();
 
     this.inventarioForm.valueChanges.subscribe(val => {
@@ -75,7 +81,8 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       mes: this.mes,
       categorias: this.seleccionados,
       numeroLocal: this.local,
-      grupoBodega: this.grupo
+      grupoBodega: this.grupo,
+      fechaInventario: this.formattedDate
     }
    
     
@@ -123,9 +130,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
         next: (response) => {
           console.log('Respuesta del servidor iniciarInventario:', response);
          // Extraemos los tipos de ítem que llegaron en la respuesta
-         
-          
-          this.grupoList = response.data;
+         this.grupoList = response.data;
         },
         error: (error) => {
           

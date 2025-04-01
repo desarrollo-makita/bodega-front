@@ -8,6 +8,7 @@ import { BitacoraUbicacionesComponent } from 'app/bitacora-ubicaciones/bitacora-
 import { InventarioComponent } from 'app/inventario/inventario/inventario.component';
 import { AsignarCapturadorComponent } from 'app/asignar-capturador/asignar-capturador.component';
 import { ReconteosComponent } from 'app/reconteos/reconteos/reconteos.component';
+import { AsignacionReconteosComponent } from 'app/reconteos/asignacion-reconteos/asignacion-reconteos.component';
 
 
 
@@ -19,6 +20,7 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'bitacora-ubicaciones', component: BitacoraUbicacionesComponent },
     { path: 'inventario', component: InventarioComponent },
     { path: 'asignar-capturador', component: AsignarCapturadorComponent },
+    { path: 'asignacion-reconteos', component: AsignacionReconteosComponent },
     { path: 'reconteo-inventario', component: ReconteosComponent },
   
 

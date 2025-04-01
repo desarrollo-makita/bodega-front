@@ -5,6 +5,8 @@ import { InventarioService } from 'app/services/inventario/inventario.service';
 import { ConfirmInventarioDialogComponent } from 'app/shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { LOCALES, MESES } from 'app/shared/constants';
+
 @Component({
   selector: 'app-inventario',
   templateUrl: './inventario.component.html',
@@ -45,34 +47,17 @@ export class InventarioComponent implements OnInit {
 
   p: number = 1; // Página actual
   itemsPerPage: number = 5; // Elementos por página
-
+  selectedFechaInicio:string
   saldoTotal : number = 0;
   conteoTotal : number = 0;
   titulo: string=''
   respuestaValidaInicioInventario : any;
-  meses = [
-    { nombre: 'Enero', codigo: '01' },
-    { nombre: 'Febrero', codigo: '02' },
-    { nombre: 'Marzo', codigo: '03' },
-    { nombre: 'Abril', codigo: '04' },
-    { nombre: 'Mayo', codigo: '05' },
-    { nombre: 'Junio', codigo: '06' },
-    { nombre: 'Julio', codigo: '07' },
-    { nombre: 'Agosto', codigo: '08' },
-    { nombre: 'Septiembre', codigo: '09' },
-    { nombre: 'Octubre', codigo: '10' },
-    { nombre: 'Noviembre', codigo: '11' },
-    { nombre: 'Diciembre', codigo: '12' }
-  ];
-
+  meses = MESES;
   tiposItems: any = [];
+  formattedDate: any;
 
-  locales = [
-    { descripcion: 'Casa Matriz ENEA', codigo: '01'},
-    { descripcion: 'Serv. Tecnico Temuco', codigo: '03'},
-    { descripcion: 'Centro de Servicios Antofagasta', codigo: '04'},
-    { descripcion: 'Centro de Servicios Copiapo', codigo: '05'}
-  ];
+  respuestaValidaCierreInventario: any;
+  locales =LOCALES;
 
 
   constructor(
@@ -202,10 +187,11 @@ export class InventarioComponent implements OnInit {
   }
 
   onChange() {
-    console.log('Mes seleccionado:', this.selectedMes);
+  
     console.log('Tipo de ítem seleccionado:', this.selectedTipoItem);
     console.log('Local seleccionado:', this.selectedLocal);
-    console.log('Periodo seleccionado:', this.selectedPeriodo);
+    console.log('Fecha inicio inventsario:', this.selectedFechaInicio);
+    
   }
 
   getMesTooltip(codigo: string): string {
@@ -228,11 +214,14 @@ export class InventarioComponent implements OnInit {
     this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
   }
 
-
   validarInventarioFun(){
 
     const fechaActual = new Date();
-  
+  // Formatear la fecha al formato YYYY-MM-DD
+    this.formattedDate = fechaActual.toISOString().split('T')[0];
+
+    console.log("Fecha formateada : ", this.formattedDate);
+    
     this.periodo = fechaActual.getFullYear().toString();
     this.mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
 
@@ -243,7 +232,7 @@ export class InventarioComponent implements OnInit {
     const decodedToken = this.authService.decodeToken(token);
     this.usuario = decodedToken.username;
     
-    this.invetarioServices.validarInicioInventario(this.periodo, this.mes).subscribe({
+    this.invetarioServices.validarInicioInventario(this.formattedDate).subscribe({
       next: (response) => {
         if (!response.data) {
           console.log("Error: response.data es null o undefined.");
@@ -338,10 +327,10 @@ export class InventarioComponent implements OnInit {
     });
   }
 
-
   actualizaTabla(data: any) {
     this.mostrarGrafico= false;
-    this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+    const fecha = new Date('2025-02-31');
+   /* this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local , fecha).subscribe({
       next: (response) => {
         console.log('Respuesta actualizaTabla:', response);
         this.isLoading = true;
@@ -374,7 +363,7 @@ export class InventarioComponent implements OnInit {
 
         }, 2500);
       },
-    });
+    });*/
   }
 
   filterItems() {
@@ -389,16 +378,17 @@ export class InventarioComponent implements OnInit {
 }
 
   consultaTablaRegistro(){
-    const data = {
-      periodo: this.selectedPeriodo,
-      mes: this.selectedMes,
+    
+const data = {
       tipoItem: this.selectedTipoItem,
-      local: this.selectedLocal
+      local: this.selectedLocal,
+      fechaInventario: this.selectedFechaInicio
     };
     
+    console.log("dataaaaaaaaaaaaaaaaaaaaaaa : " , data);
     this.isLoading = true;
     this.showTable = false;
-    this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         console.log('Respuesta consultaInventario:', response);
 
@@ -498,11 +488,14 @@ export class InventarioComponent implements OnInit {
   }
 
   validarCierreInventario(data: any){
-    this.invetarioServices.validarCierreInventario(data.periodo, data.mes, data.tipoItem, data.local).subscribe({
+    console.log("validaaaqaaciereeeee" , data);
+    this.isLoading = true;
+    this.invetarioServices.validarCierreInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
       next: (response) => {
         console.log('Respuesta valida cierre inventario:', response);
 
         this.codigoBloqueo = response.data.Estado === 1 ? true : false;
+    
        
       },
       error: (error) => {
@@ -516,18 +509,57 @@ export class InventarioComponent implements OnInit {
 
       },
       complete: () => {
-        this.successMessage = true; 
-        this.isLoading = false;
-        this.mostrarMensaje(`Inventario Cerrado , Solo puede Exportar los datos.`);
-       
-        setTimeout(() => {
-          this.successMessage = false;
 
-        }, 10000);
+        if(this.codigoBloqueo){
+          this.successMessage = true; 
+          this.isLoading = false;
+          this.mostrarMensaje(`Inventario Cerrado , Solo puede Exportar los datos.`);
+         
+          setTimeout(() => {
+            this.successMessage = false;
+  
+          }, 10000);
+        }else{
+          this.isLoading = false;
+        }
+       
       },
     });
   }
 
+  separarFecha(fecha: Date | string | null): { periodo: string, mes: string, dia: number } {
+    // Si la fecha es null, retornamos valores predeterminados
+    if (fecha === null) {
+      console.log('Error: fecha es null');
+      return { periodo: '', mes: '', dia: 0 };
+    }
+  
+    // Si la fecha no es de tipo Date, intentamos convertirla a Date
+    if (!(fecha instanceof Date)) {
+      // Si la fecha es una cadena, intentamos crear un objeto Date
+      if (typeof fecha === 'string') {
+        fecha = new Date(fecha);
+      } else {
+        console.log('Error: el parámetro no es una fecha válida');
+        return { periodo: '', mes: '', dia: 0 };  // Retorna valores predeterminados si no se puede convertir
+      }
+    }
+  
+    // Verificar si la conversión fue exitosa
+    if (isNaN(fecha.getTime())) {
+      console.log('Error: la fecha no es válida');
+      return { periodo: '', mes: '', dia: 0 };  // Retorna valores predeterminados si la fecha no es válida
+    }
+  
+    // Si la fecha es válida, procesamos el año, mes y día
+    console.log('Tipo de datos de fecha:', typeof fecha);  // Esto te mostrará el tipo de datos
+  
+    const periodo = fecha.getFullYear().toString();
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const dia = fecha.getDate();
+    
+    return { periodo, mes, dia };
+  }
 
 
 } //FIN CLASE

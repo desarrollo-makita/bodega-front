@@ -21,12 +21,11 @@ export class InventarioService {
 
   constructor(private http: HttpClient) {}
 
-  consultaInventario(periodo: string, mes: string, tipoItem: string, local: string): Observable<any> {
+  consultaInventario(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
     const params = new HttpParams()
-      .set('periodo', periodo.toString())
-      .set('mes', mes.toString())
       .set('tipoItem', tipoItem)
-      .set('local', local);
+      .set('local', local)
+      .set('fechaInventario', fechaInventario);
 
     return this.http.get<any>(this.apiUrl, { params });
   }
@@ -45,8 +44,8 @@ export class InventarioService {
     return this.http.delete<any>(this.deleteAsignacionUrl, { params });
   }
 
-  validarInicioInventario(periodo: number, mes: number): Observable<any> {
-    const url = `${this.validarIncioInventarioUrl}/${periodo}/${mes}`;
+  validarInicioInventario(fechaInventario: string): Observable<any> {
+    const url = `${this.validarIncioInventarioUrl}/${fechaInventario}`;
     return this.http.get<any>(url);
   }
   
@@ -68,12 +67,11 @@ export class InventarioService {
   }
 
 
-  validarCierreInventario(periodo: string, mes: string, tipoItem: string, local: string): Observable<any> {
+  validarCierreInventario(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
     const params = new HttpParams()
-      .set('periodo', periodo.toString())
-      .set('mes', mes.toString())
       .set('tipoItem', tipoItem)
-      .set('local', local);
+      .set('local', local)
+      .set('fechaInventario', fechaInventario);
 
     return this.http.get<any>(this.validaCierreInvUrl, { params });
   }

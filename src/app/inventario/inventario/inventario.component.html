@@ -9,31 +9,18 @@
                     <div class="content">
                         <form (ngSubmit)="onSubmit()" #form="ngForm">
                             <div class="row">
-                                <div class="form-group col-md-1">
-                                    <label for="periodo" style="font-weight: bold;">Periodo</label>
-                                </div>
-                                <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="mes" style="font-weight: bold;">Mes</label>
-                                </div>
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
                                     <label for="tipoItem" style="font-weight: bold;">Tipo Item</label>
                                 </div>
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
                                     <label for="local" style="font-weight: bold;">Local</label>
                                 </div>
+                                <div class="form-group col-md-2" style="margin-left: -1%;">
+                                    <label for="fechaInicio" style="font-weight: bold;">Fecha Inicio Inventario</label>
+                                </div>
+                               
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-1">
-                                    <p class="custom-text">{{ selectedPeriodo }}</p>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <select class="form-control custom-select" id="mes" [(ngModel)]="selectedMes" name="mes" required (change)="onChange()"
-                                        [title]="selectedMes ? getMesTooltip(selectedMes) : 'Selecciona un mes'">
-                                        <option *ngFor="let mes of meses" [value]="mes.codigo">
-                                            {{ mes.nombre }}
-                                        </option>
-                                    </select>
-                                </div>
                                 <div class="form-group col-md-2">
                                     <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()">
                                         <option *ngFor="let tipo of tiposItems" [value]="tipo.Tipoitem">
@@ -49,7 +36,10 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-2">
+                                    <input type="date" id="fechaInicio" class="form-control custom-select" [(ngModel)]="selectedFechaInicio" name="fechaInicio" required (change)="onChange()">
+                                </div>
+                                <div class="form-group col-md-3">
                                     <button type="submit" class="btn btn-primary btn-sm custom-btn-buscar" [disabled]="!formValido()">
                                         Buscar&nbsp;&nbsp; <i class="fas fa-search ml-2"></i>
                                     </button>

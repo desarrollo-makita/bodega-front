@@ -1,0 +1,35 @@
+/* Estilo del encabezado */
+.title {
+    color: #00909E;
+    font-weight: 400;
+  }
+
+  .custom-btn-buscar {
+    background-color: #00909E;
+    border: none;
+    border-radius: 30px;
+    padding: 10px;
+    margin-left: 10%;
+    margin-top: -3%;
+    width: auto !important
+  }
+
+  /* Estilos de los select y input */
+.custom-select {
+    border: 1px solid #00909E;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    color: #00909E;
+    width: 100%; /* Hacemos que los select ocupen todo el ancho */
+    margin-top: -7%;
+   
+}
+.btn-primary {
+    color: #fff;
+  }
+
+  .custom-text {
+    color: #00909E;
+    font-weight: 400;
+  }
