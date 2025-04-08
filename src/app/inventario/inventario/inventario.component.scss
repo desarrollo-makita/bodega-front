@@ -38,6 +38,10 @@
   background-color: #006f7b; /* Un tono más oscuro de #00909E */
 }
 
+.custom-btn-cerrar:hover{
+  background-color: #f42738;
+} 
+
 .btn-primary {
   color: #fff;
 }
@@ -52,7 +56,7 @@
   font-size: 1.5rem;
   color: #00909E;
   width: 100%; /* Hacemos que los select ocupen todo el ancho */
-  margin-top: -7%;
+  margin-top: -2%;
  
 }
 

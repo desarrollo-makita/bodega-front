@@ -1,7 +1,7 @@
 // src/app/services/my-data.service.ts
 
 import { Injectable } from '@angular/core';
-import { User } from 'app/models/user.model';
+import { User , ReconteoData } from 'app/models/user.model';
 import { BehaviorSubject } from 'rxjs';
  
 
@@ -14,12 +14,15 @@ export class MyDataService {
   private arrayDataSource = new BehaviorSubject<any[]>([]); // Valor inicial para array
   private userObjectSource = new BehaviorSubject<User | null>(null); // Valor inicial para el objeto
   private showEdit = new BehaviorSubject<boolean>(true); // Valor inicial para boolean
+  private reconteoDataSource = new BehaviorSubject<ReconteoData | null>(null);
   
   // Observables expuestos para suscribirse
   stringData$ = this.dataSource.asObservable();
   arrayData$ = this.arrayDataSource.asObservable();
   userObjectData$ = this.userObjectSource.asObservable();
   booleanData$ = this.showEdit.asObservable();
+  reconteoData$ = this.reconteoDataSource.asObservable();
+
   
   constructor() { }
 
@@ -39,6 +42,10 @@ export class MyDataService {
     return this.userObjectData$;
   }
 
+  getReconteoData() {
+    return this.reconteoData$;
+  }
+
   // Métodos para actualizar los datos
   setBooleanData(data: boolean) {
     this.showEdit.next(data);
@@ -53,5 +60,9 @@ export class MyDataService {
 
   setUserObjectData(data: User) {
     this.userObjectSource.next(data);
+  }
+
+  setReconteoData(data: ReconteoData) {
+    this.reconteoDataSource.next(data);
   }
 }

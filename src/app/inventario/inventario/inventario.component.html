@@ -10,7 +10,7 @@
                         <form (ngSubmit)="onSubmit()" #form="ngForm">
                             <div class="row">
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="tipoItem" style="font-weight: bold;">Tipo Item</label>
+                                    <label for="tipoItem" style="font-weight: bold;">Tipo Producto</label>
                                 </div>
                                 <div class="form-group col-md-2" style="margin-left: 1%;">
                                     <label for="local" style="font-weight: bold;">Local</label>
@@ -24,7 +24,7 @@
                                 <div class="form-group col-md-2">
                                     <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()">
                                         <option *ngFor="let tipo of tiposItems" [value]="tipo.Tipoitem">
-                                            {{ tipo.Tipoitem }}
+                                            {{ tipo.Tipoitem.substring(3) }}
                                         </option>
                                     </select>
                                 </div>
@@ -117,6 +117,11 @@
                                         <div class="form-group col-md-2">
                                             <button class="btn btn-primary btn-sm custom-btn-cerrar" (click)="cerrarInventario()" [disabled]="codigoBloqueo">
                                                 <i class="fas fa-lock"></i> Cerrar Inventario
+                                            </button>
+                                        </div>
+                                        <div *ngIf="codigoBloqueo" class="form-group col-md-2">
+                                            <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()">
+                                                <i class="fas fa-list-ol"></i> Asignar Reconteo
                                             </button>
                                         </div>
                                     </div>

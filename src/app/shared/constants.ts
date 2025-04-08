@@ -14,9 +14,9 @@ export const MESES = [
   ];
   
   export const TIPOS_ITEMS = [
-    "01-HERRAMIENTAS",
-    "03-ACCESORIOS",
-    "04-REPUESTOS"
+    {Tipoitem : "01-HERRAMIENTAS"},
+    {Tipoitem : "03-ACCESORIOS"},
+    {Tipoitem : "04-REPUESTOS"}
   ];
   
   export const LOCALES = [

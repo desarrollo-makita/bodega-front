@@ -17,6 +17,7 @@ export class InventarioService {
   private actualizarSinCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-sin-cierre';
   private actualizarConCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-cierre';
   private validaCierreInvUrl = 'http://172.16.1.206:3024/api/validar-cierre-inventario';
+  private consultarReconteoUrl = 'http://172.16.1.206:3024/api/consultar-reconteos';
                                                                
 
   constructor(private http: HttpClient) {}
@@ -63,9 +64,9 @@ export class InventarioService {
   }
 
   cierreInventario(data: any): Observable<any> {
+    console.log('Request data:', data); // Imprime los datos antes de enviarlos
     return this.http.post(this.actualizarConCierreUrl, data);
   }
-
 
   validarCierreInventario(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
     const params = new HttpParams()
@@ -75,6 +76,11 @@ export class InventarioService {
 
     return this.http.get<any>(this.validaCierreInvUrl, { params });
   }
+
+  consultarReconteo(data: any): Observable<any> {
+    return this.http.post(this.consultarReconteoUrl, data);
+  }
+
   
 
 }

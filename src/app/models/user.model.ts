@@ -20,3 +20,10 @@ export interface User {
     codigoActividad: number; // Asegúrate de que este tipo coincida con tus datos
   }
   
+
+ export interface ReconteoData {
+    tipoItem: string;
+    local: string;
+    fechaInventario: string;
+    bodega: number;
+  }

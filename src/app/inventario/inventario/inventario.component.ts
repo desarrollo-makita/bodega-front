@@ -5,7 +5,9 @@ import { InventarioService } from 'app/services/inventario/inventario.service';
 import { ConfirmInventarioDialogComponent } from 'app/shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { LOCALES, MESES } from 'app/shared/constants';
+import { LOCALES, MESES, TIPOS_ITEMS } from 'app/shared/constants';
+import { Router } from '@angular/router';
+import { MyDataService } from 'app/services/data/my-data.service';
 
 @Component({
   selector: 'app-inventario',
@@ -36,7 +38,7 @@ export class InventarioComponent implements OnInit {
  
   isLoading: boolean = false;
   showTable:boolean= false;
-  habilitarBoxes: boolean= false;
+  habilitarBoxes: boolean= true;
   successMessage: boolean = false;
   errorMessage: boolean = false;
   grupoList: any;
@@ -64,7 +66,9 @@ export class InventarioComponent implements OnInit {
     private invetarioServices: InventarioService , 
     private dialog: MatDialog,
     private authService: AuthGuard,
-    ) {}
+    private router: Router,
+    private myDataService: MyDataService
+) {}
 
   ngOnInit(): void {
     this.validarInventarioFun();
@@ -144,9 +148,10 @@ export class InventarioComponent implements OnInit {
 
   onSubmit() {
     this.isLoading = true;
+    this.consultaTablaRegistro();
     // Añadir la clase 'loading' al body para desactivar interacciones
     
-    if(!this.habilitarBoxes){
+   /* if(!this.habilitarBoxes){
       const mensaje = `Usted no ha iniciado el inventario`;
       this.openConfirmDialog(mensaje);
       this.isLoading = false;
@@ -154,7 +159,7 @@ export class InventarioComponent implements OnInit {
     }else{
       this.consultaTablaRegistro();
       
-    }
+    }*/
     
   }
 
@@ -245,7 +250,9 @@ export class InventarioComponent implements OnInit {
 
           this.tiposItems = response.data;
         
-          this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
+        //  this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
+
+        this.tiposItems= TIPOS_ITEMS;
         
   
           this.isLoading = true;
@@ -292,7 +299,8 @@ export class InventarioComponent implements OnInit {
         mes: parseInt(this.selectedMes, 10) || null, 
         tipoItem: this.selectedTipoItem,
         local: this.selectedLocal,
-        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array
+        fechaInventario: this.selectedFechaInicio,
     };
 
     console.log("data:", data);
@@ -329,8 +337,8 @@ export class InventarioComponent implements OnInit {
 
   actualizaTabla(data: any) {
     this.mostrarGrafico= false;
-    const fecha = new Date('2025-02-31');
-   /* this.invetarioServices.consultaInventario(data.periodo, data.mes, data.tipoItem, data.local , fecha).subscribe({
+   // const fecha = new Date('2025-02-31');
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         console.log('Respuesta actualizaTabla:', response);
         this.isLoading = true;
@@ -363,7 +371,7 @@ export class InventarioComponent implements OnInit {
 
         }, 2500);
       },
-    });*/
+    })
   }
 
   filterItems() {
@@ -379,11 +387,11 @@ export class InventarioComponent implements OnInit {
 
   consultaTablaRegistro(){
     
-const data = {
-      tipoItem: this.selectedTipoItem,
-      local: this.selectedLocal,
-      fechaInventario: this.selectedFechaInicio
-    };
+    const data = {
+          tipoItem: this.selectedTipoItem,
+          local: this.selectedLocal,
+          fechaInventario: this.selectedFechaInicio
+        };
     
     console.log("dataaaaaaaaaaaaaaaaaaaaaaa : " , data);
     this.isLoading = true;
@@ -450,7 +458,8 @@ const data = {
         mes: parseInt(this.selectedMes, 10) || null, 
         tipoItem: this.selectedTipoItem,
         local: this.selectedLocal,
-        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null,
+        fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
     };
 
     console.log("data:", data);
@@ -513,7 +522,7 @@ const data = {
         if(this.codigoBloqueo){
           this.successMessage = true; 
           this.isLoading = false;
-          this.mostrarMensaje(`Inventario Cerrado , Solo puede Exportar los datos.`);
+          this.mostrarMensaje(`Inventario Cerrado , Solo puede Exportar los datos a Exel e iniciar el reconteo.`);
          
           setTimeout(() => {
             this.successMessage = false;
@@ -561,7 +570,34 @@ const data = {
     return { periodo, mes, dia };
   }
 
+  reconteo(){
 
-} //FIN CLASE
+    console.log();
+    console.log("reconteo");
+    console.log("selectedTipoItem : " , this.selectedTipoItem);
+    console.log("selectedLocal : " , this.selectedLocal); 
+    console.log("selectedFechaInicio : " , this.selectedFechaInicio);
+    const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
+    console.log("grupoEncontrado : " , grupoEncontrado.GrupoBodega);
+    console.log("selectedPeriodo : " , this.selectedPeriodo);
+    console.log("selected mes " , this.selectedMes)
+
+    const datosInventario = {
+      tipoItem: '01-HERRAMIENTAS',
+      local: '05',
+      fechaInventario: '2025-04-01',
+      bodega: 4
+    };
+
+   this.myDataService.setReconteoData(datosInventario);
+   
+    
+    
+    
+    this.router.navigate(['/asignacion-reconteos']);
+  }
+
+
+}
 
 

@@ -1,35 +1,165 @@
-/* Estilo del encabezado */
-.title {
-    color: #00909E;
-    font-weight: 400;
-  }
-
-  .custom-btn-buscar {
-    background-color: #00909E;
-    border: none;
-    border-radius: 30px;
-    padding: 10px;
-    margin-left: 10%;
-    margin-top: -3%;
-    width: auto !important
-  }
-
-  /* Estilos de los select y input */
-.custom-select {
-    border: 1px solid #00909E;
-    padding: 10px 20px;
-    transition: all 0.3s ease;
-    font-size: 1.5rem;
-    color: #00909E;
-    width: 100%; /* Hacemos que los select ocupen todo el ancho */
-    margin-top: -7%;
-   
+.custom-card {
+  background: white; /* Fondo blanco limpio */
+  color: #333;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #00909E; /* Verde profesional */
 }
-.btn-primary {
-    color: #fff;
-  }
 
-  .custom-text {
-    color: #00909E;
-    font-weight: 400;
+.card-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+ // padding-bottom: 15%;
+  //border-bottom: 3px solid rgba(0, 144, 158, 0.2);
+  color: #00909E;
+}
+
+.reconteo-box {
+  background: rgba(0, 144, 158, .1);
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: inline-block;
+  box-shadow: 0 4px 15px #00909e4d;
+  //margin-top: 17px;
+  color: #00909e;
+  /* margin-left: 1%; */
+  width: 100%;
+}
+
+.cantidad {
+  font-size: 3rem;
+  font-weight: bold;
+  display: block;
+}
+
+.message {
+  font-size: 100%;
+  margin-top: 1%;
+}
+
+.no-reconteo {
+  background: rgba(255, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 100%;
+  color: #D9534F;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.input-container {
+  margin-top: 20px;
+  text-align: left;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.input-container label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #00909E;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-field {
+  width: 100%;
+  max-width: 200px;
+  padding: 10px;
+  font-size: 100%;
+  border: 2px solid #00909E;
+  border-radius: 5px;
+  text-align: center;
+  outline: none;
+  transition: 0.3s ease-in-out;
+  margin-top: 5px;
+}
+
+.input-field:focus {
+  border-color: #007B8E;
+  box-shadow: 0px 0px 10px rgba(0, 144, 158, 0.4);
+}
+
+.add-button {
+  background-color: #00909E;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: 0.3s;
+  margin-top: 20%;
+}
+
+.add-button:hover {
+  background-color: #007B8E;
+}
+
+.nombre-list {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nombre-card {
+  margin-top: 3%;
+  //background: #e5f4f5; /* Cambiado a blanco */
+  background: white; /* Cambiado a blanco */
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 90%;
+  font-weight: bold;
+  color: #00909E;
+  box-shadow: 0px 4px 10px rgba(0, 144, 158, 0.3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.nombre-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.nombres-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Comienza con una columna */
+  gap: 5px;
+
+  @media (min-width: 768px) { 
+    grid-template-columns: 1fr 1fr; /* Cuando hay más de 10 nombres, usa dos columnas */
   }
+}
+
+.nombres-grid p {
+  font-size: 100%;
+  font-weight: 600;
+  color: #00909E;
+}
+
+.nombre-editable {
+  margin-top: 15px;
+}
+
+.nombre-input {
+  background: none;
+  border-bottom: 2px solid #00909E;
+  padding: 5px;
+  font-size: 100%;
+  color: #00909E;
+  min-width: 150px;
+  cursor: text;
+  outline: none;
+
+}
+
+.nombre-input:focus {
+  border-bottom: 2px solid #007B8E;
+}

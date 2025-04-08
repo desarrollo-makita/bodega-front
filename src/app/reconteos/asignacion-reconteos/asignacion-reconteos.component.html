@@ -1,61 +1,59 @@
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title">Asignación de Reconteos</h4>
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div *ngIf="cantidadReconteo > 0" class="card-header">
+                    <div class="col-md-3 reconteo-box">
+                        <span class="cantidad">{{ cantidadReconteo }}</span>
+                        <p class="message">Ítems de {{tipoItem}} encontrados para recontar</p>
                     </div>
-                    <div class="content">
-                        <form (ngSubmit)="asignar()" #form="ngForm">
-                            <div class="row">
-                                <div class="form-group col-md-1">
-                                    <label for="periodo" style="font-weight: bold;">Periodo</label>
-                                </div>
-                                <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="mes" style="font-weight: bold;">Mes</label>
-                                </div>
-                                <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="tipoItem" style="font-weight: bold;">Tipo Item</label>
-                                </div>
-                                <div class="form-group col-md-2" style="margin-left: 1%;">
-                                    <label for="local" style="font-weight: bold;">Local</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-1">
-                                    <p class="custom-text">{{ selectedPeriodo }}</p>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <select class="form-control custom-select" id="mes" [(ngModel)]="selectedMes" name="mes" required (change)="onChange()"
-                                        [title]="selectedMes ? getMesTooltip(selectedMes) : 'Selecciona un mes'">
-                                        <option *ngFor="let mes of meses" [value]="mes.codigo">
-                                            {{ mes.nombre }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <select class="form-control custom-select" id="tipoItem" [(ngModel)]="selectedTipoItem" name="tipoItem" required (change)="onChange()">
-                                        <option *ngFor="let tipo of tiposItems" [value]="tipo">
-                                            {{ tipo }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <select class="form-control custom-select" id="local" [(ngModel)]="selectedLocal" name="local" required (change)="onChange()"
-                                        [title]="selectedLocal ? getLocalTooltip(selectedLocal) : 'Selecciona un local'">
-                                        <option *ngFor="let local of locales" [value]="local.codigo">
-                                            {{ local.descripcion }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <button type="submit" class="btn btn-primary btn-sm custom-btn-buscar" [disabled]="asignacionForm.invalid">
-                                        Buscar&nbsp;&nbsp; <i class="fas fa-search ml-2"></i>
-                                    </button>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="cantidadReconteo > 0; else noReconteos">
+                        <!-- Ingresar cantidad de operarios -->
+                        <div class="col-md-3 input-container">
+                            <label for="personasReconteo" style="font-size:100%;">Cantidad de operarios:</label>
+                            <input type="number" id="personasReconteo" class="input-field"
+                                [(ngModel)]="cantidadPersonas" name="cantidadPersonas"
+                                min="1" max="100" required
+                                (change)="actualizarOperarios()">
+                        </div>
+
+                        <!-- Mostrar campos dinámicos para ingresar los nombres de los operarios -->
+                        <div *ngFor="let operario of operarios; let i = index" class="col-md-3 nombre-editable">
+                            <label style="font-size: 90%;">Operario {{ i + 1 }}:</label>
+                            <p contenteditable="true"
+                               class="nombre-input"
+                               (input)="formatearNombre($event, i)"
+                               #inputElement>
+                            </p>
+                        </div>
+                        
+                     
+                    </div>
+                    <ng-template #noReconteos>
+                        <div class="no-reconteo">
+                            <p>No hay ítems pendientes de reconteo</p>
+                        </div>
+                    </ng-template>
+
+                    <!-- Lista de operarios ingresados -->
+                    <div *ngIf="operarios.length > 0">
+                        <div class="col-md-12 nombre-container">
+                            <div class="nombre-card">
+                                <p><strong>📋 Operarios Asignados:</strong></p>
+                                <div class="nombres-grid">
+                                    <div *ngFor="let operario of operarios; let i = index">
+                                        <p>{{ i + 1 }} - {{ operario.nombre }}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="add-button"
+                            (click)="agregarNombre()" [disabled]="operarios.length == 0">
+                        Agregar</button>
                     </div>
                 </div>
             </div>
