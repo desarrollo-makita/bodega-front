@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BitacoraUbicacionesService {
-  private bitacoraUrl = "http://172.16.1.206:3024/api/obtener-bitacora-ubicacion-fecha/";
+  private bitacoraUrl = "http://172.16.1.234:3024/api/obtener-bitacora-ubicacion-fecha/";
   constructor(private http: HttpClient) {}
 
   getRegistroUbicaciones(fecha): Observable<any> {

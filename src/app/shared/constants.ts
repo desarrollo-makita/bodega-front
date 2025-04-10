@@ -25,4 +25,41 @@ export const MESES = [
     { descripcion: 'Centro de Servicios Antofagasta', codigo: '04' },
     { descripcion: 'Centro de Servicios Copiapo', codigo: '05' }
   ];
+
+
+  export const OPERARIOS =[
+    { "nombre": "ALAN SALAS" },
+    { "nombre": "ALVARO CARDENAS" },
+    { "nombre": "ALVARO JARA" },
+    { "nombre": "ANA GONZALEZ" },
+    { "nombre": "ANDRES RIQUELME" },
+    { "nombre": "BARBARA MEDINA" },
+    { "nombre": "BASTIAN AMPUERO" },
+    { "nombre": "BASTIAN OLIVARES" },
+    { "nombre": "BEATRIZ MUNOZ" },
+    { "nombre": "CARLA GARRIDO" },
+    { "nombre": "CARMEN COLPI" },
+    { "nombre": "CRISTIAN ARAYA" },
+    { "nombre": "DAVID LEIVA" },
+    { "nombre": "DYLAN TORRES" },
+    { "nombre": "ERNAN CASCOS" },
+    { "nombre": "ERICK RAMIREZ" },
+    { "nombre": "FABIAN MOLINA" },
+    { "nombre": "FELIPE ARAVENA" },
+    { "nombre": "FELIPE SEPULVEDA" },
+    { "nombre": "FELIPE VALENZUELA" },
+    { "nombre": "JAVIERA BADILLA" },
+    { "nombre": "JORGE GUERRA" },
+    { "nombre": "JOSE CASTILLO" },
+    { "nombre": "JOSE VASQUEZ" },
+    { "nombre": "JUAN TORO" },
+    { "nombre": "JUAN VALENZUELA" },
+    { "nombre": "MARISELA JARA" },
+    { "nombre": "NELSON ROMERO" },
+    { "nombre": "PABLO QUIMEN" },
+    { "nombre": "PATRICIO RAMIREZ" },
+    { "nombre": "ROBERTO LARENA" },
+    { "nombre": "RODRIGO AGUILERA" },
+    { "nombre": "ROXANA LAGOS" }
+  ]
   

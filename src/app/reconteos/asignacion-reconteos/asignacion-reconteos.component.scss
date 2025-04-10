@@ -163,3 +163,36 @@
 .nombre-input:focus {
   border-bottom: 2px solid #007B8E;
 }
+
+#loader {
+  width: 20%;
+}
+
+.text-danger {
+  color: #dc3545;
+  font-weight: bold;
+  
+}
+
+.alert-success {
+  background-color: rgba(0, 144, 158, 0.8);
+  font-size : 150%;
+  text-align: center; /* Centrar el texto */
+  padding: 10px; /* Espaciado interno */
+  margin-top: 35%;
+}
+
+.alert-danger{
+  background-color: rgba(235, 35, 35, 0.8);
+  font-size : 150%;
+  text-align: center; /* Centrar el texto */
+  padding: 10px; /* Espaciado interno */
+  margin-top: 35%;
+}
+
+
+.export-text {
+  color: #007bff; /* Cambia el color del texto */
+  cursor: pointer; /* Muestra el puntero del mouse al pasar sobre el texto */
+  font-weight: bold; /* Pone el texto en negrita */
+}

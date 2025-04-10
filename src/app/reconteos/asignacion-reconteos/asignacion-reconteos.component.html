@@ -6,9 +6,18 @@
                     <div class="col-md-3 reconteo-box">
                         <span class="cantidad">{{ cantidadReconteo }}</span>
                         <p class="message">Ítems de {{tipoItem}} encontrados para recontar</p>
+                     
+                            <!-- Reemplazamos el botón por el texto "Exportar Data" -->
+                            <span class="export-text" (click)="exportToExcel()">
+                                Exportar Data
+                            </span>
+                       
                     </div>
                 </div>
-                <div class="card-body">
+                <div *ngIf="isLoading" id="loader" class="overlay" style="margin-top: 20%;">
+                    <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+                </div>
+                <div *ngIf="showMostrarBody" class="card-body">
                     <div *ngIf="cantidadReconteo > 0; else noReconteos">
                         <!-- Ingresar cantidad de operarios -->
                         <div class="col-md-3 input-container">
@@ -22,12 +31,13 @@
                         <!-- Mostrar campos dinámicos para ingresar los nombres de los operarios -->
                         <div *ngFor="let operario of operarios; let i = index" class="col-md-3 nombre-editable">
                             <label style="font-size: 90%;">Operario {{ i + 1 }}:</label>
-                            <p contenteditable="true"
-                               class="nombre-input"
-                               (input)="formatearNombre($event, i)"
-                               #inputElement>
-                            </p>
-                        </div>
+                            <select [(ngModel)]="operarios[i].nombre" class="form-control" name="operario{{i}}">
+                              <option value="" disabled selected>Seleccionar operario</option>
+                              <option *ngFor="let persona of operariosAsignados" [value]="persona.nombre">
+                                {{ persona.nombre }}
+                              </option>
+                            </select>
+                          </div>
                         
                      
                     </div>
@@ -41,7 +51,7 @@
                     <div *ngIf="operarios.length > 0">
                         <div class="col-md-12 nombre-container">
                             <div class="nombre-card">
-                                <p><strong>📋 Operarios Asignados:</strong></p>
+                                <p><strong>Operarios Asignados:</strong></p>
                                 <div class="nombres-grid">
                                     <div *ngFor="let operario of operarios; let i = index">
                                         <p>{{ i + 1 }} - {{ operario.nombre }}</p>
@@ -55,8 +65,21 @@
                             (click)="agregarNombre()" [disabled]="operarios.length == 0">
                         Agregar</button>
                     </div>
+                    <br>
+                    <br>
+                    
+
+                </div>
+                <div class="alert-container">
+                    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+                        {{ mensaje }}
+                    </div>
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+                        {{ mensaje }}
+                    </div>
                 </div>
             </div>
+         
         </div>
     </div>
 </div>

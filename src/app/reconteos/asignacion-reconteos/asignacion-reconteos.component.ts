@@ -2,8 +2,10 @@ import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MyDataService } from 'app/services/data/my-data.service';
 import { InventarioService } from 'app/services/inventario/inventario.service';
-import { LOCALES, MESES, TIPOS_ITEMS } from 'app/shared/constants';
+import { LOCALES, MESES, OPERARIOS, TIPOS_ITEMS } from 'app/shared/constants';
 import { take } from 'rxjs';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-asignacion-reconteos',
@@ -12,32 +14,43 @@ import { take } from 'rxjs';
 })
 export class AsignacionReconteosComponent implements OnInit {
 
+  successMessage: boolean = false;
+  errorMessage: boolean = false;
   requestReconteo: any;
   nuevoNombre: string = '';
   listaNombres: { nombre: string }[] = [];
   tipoItem:any;
   listaItems: any[] = [];
+  usuariosValidos: string[] = [];
+  mensaje: string = ''; // Mensaje para el usuario
+   reconteosData: any;
+  isLoading: boolean = false;
 
-  cantidadReconteo: number = 5; // Ejemplo, este valor debería venir de tu lógica
+  cantidadReconteo: number = 0; // Ejemplo, este valor debería venir de tu lógica
   cantidadPersonas: number = 1; // Cantidad de operarios seleccionada
   operarios: { nombre: string }[] = []; // Arreglo de operarios
   cantidadOperarios: number = 0;
+  showMostrarBody = false;
+
+  operariosAsignados = OPERARIOS
 
 
   @ViewChildren('inputElement') inputs!: QueryList<ElementRef>;
 
   constructor(private dataService: MyDataService,
               private invetarioServices: InventarioService
+              ,
   ) { }
 
   ngOnInit(): void {
-    
+    this.isLoading = true;
+    this.showMostrarBody = false;
     this.dataService.getReconteoData().pipe(take(1)).subscribe({
       next: (response) => {
-
+        this.isLoading = true;
         this.requestReconteo = response;
         console.log("responseReconteo AsignacionReconteosComponent", response);
-
+this.reconteosData = response.numeroReconteo;
         this.tipoItem = response.tipoItem.substring(3);
       },
       error: (error) => {
@@ -45,8 +58,8 @@ export class AsignacionReconteosComponent implements OnInit {
         // Lógica de manejo de errores
       },
       complete: () => {
-        console.log("Obtener getReconteoData completada" , );
-       this.obtenerReconteo(this.requestReconteo)
+      this.iniciarReconteos(this.requestReconteo);
+       //this.obtenerReconteo(this.requestReconteo)
       },
     });
 
@@ -60,7 +73,8 @@ export class AsignacionReconteosComponent implements OnInit {
 }
 
   obtenerReconteo(data : any ){
-    this.invetarioServices.consultarReconteo(this.requestReconteo).subscribe({
+    console.log("dataaaaaaaaaaaa : " , data);
+    this.invetarioServices.consultarReconteo(data).subscribe({
       next: (response) => {
         console.log('Respuesta consultarReconteo:', response);
         this.cantidadReconteo = response.data.length;
@@ -72,7 +86,28 @@ export class AsignacionReconteosComponent implements OnInit {
     });
   }
 
+  iniciarReconteos(data : any ){
+    this.invetarioServices.iniciarReconteo(data).subscribe({
+      next: (response) => {
+        console.log('Respuesta iniciarReconteos:', response);
+       
+      },
+      error: (error) => {},
+      complete: () => {
+
+          this.obtenerReconteo(data)
+          setTimeout(() => {
+            this.isLoading = false;
+            this.showMostrarBody = true;
+  
+          }, 10000);
+      },
+    });
+  }
+
   agregarNombre() {
+    this.showMostrarBody = false;
+    this.isLoading = true;
     this.listaNombres = this.operarios
       .filter(op => op.nombre.trim() !== '') // Filtra vacíos
       .map(op => ({ nombre: op.nombre })); // Obtiene solo los nombres
@@ -81,7 +116,31 @@ export class AsignacionReconteosComponent implements OnInit {
 
    
     const resultado = this.dividirReconteos(this.listaItems, this.listaNombres);
-     console.log('resultado', resultado);
+    console.log('asasas', this.reconteosData);
+    console.log('resultado', resultado);
+
+    this.invetarioServices.asignarReconteos(resultado ).subscribe({
+      next: (response) => {
+        console.log('Respuesta asignarReconteos:', response);
+       
+      },
+      error: (error) => {
+        console.log("Error :" , error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Error al asignar reconteo"); 
+        this.isLoading= false;
+      },
+      complete: () => {
+     
+        this.isLoading= false;
+        this.successMessage = true;
+        this.mostrarMensaje("Asignación de reconteo exitosa");
+        this.cantidadPersonas = 0;
+        this.operarios = [];
+          console.log("asignar reconteo exitoso");
+      },
+    });
+
 
   }
   
@@ -92,14 +151,11 @@ export class AsignacionReconteosComponent implements OnInit {
     console.log("operaqrios asignados : " , this.operarios , this.cantidadPersonas);
   }
   
+  
   capitalizar(texto: string): string {
     return texto
       .toLowerCase() // Convertir todo a minúsculas primero
       .replace(/\b\w/g, letra => letra.toUpperCase()); // Capitalizar cada palabra
-  }
-
-  todosLosNombresIngresados(): boolean {
-    return this.operarios.every(operario => operario.nombre.trim() !== '');
   }
 
 
@@ -161,6 +217,7 @@ export class AsignacionReconteosComponent implements OnInit {
     listaNombres.forEach((nombre, i) => {
       const itemsAsignados = listaItems.slice(itemIndex, itemIndex + itemsPorNombre); // Toma una parte de los ítems
       resultado.push({
+      cantidad : this.reconteosData,
         nombre: nombre.nombre,
         data: itemsAsignados // Asignamos los ítems a la propiedad `data`
       });
@@ -170,6 +227,42 @@ export class AsignacionReconteosComponent implements OnInit {
     console.log('Resultado:', resultado);
     return resultado;
   }
+
+  obtenerAsignacionesusuarios() {
+   
+    this.invetarioServices.obtenerAsignaciones().subscribe({
+      next: (response) => {
+     
+        this.usuariosValidos = response.data;
+        console.log('Respuesta obtenerAsignaciones  - servidor:', response);
+        
+      },
+      error: (error) => {},
+      complete: () => {
+        console.log('Proceso exitoso');
+    },
+    });
+  }
+
+  mostrarMensaje(texto: string) {
+    this.mensaje = texto;
+    setTimeout(() => {
+      this.mensaje = "";
+      this.successMessage = false;
+      this.errorMessage = false;
+     
+    }, 9000); // Ocultar mensaje después de 2 segundos
+  }
+  
+
+    exportToExcel(): void {
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet( this.listaItems);
+      const workbook: XLSX.WorkBook = { Sheets: { 'reconteos': worksheet }, SheetNames: ['reconteos'] };
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  
+      const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+      saveAs(data, 'reconteos.xlsx');
+    }
   
   
 }

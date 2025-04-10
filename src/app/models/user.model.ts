@@ -26,4 +26,6 @@ export interface User {
     local: string;
     fechaInventario: string;
     bodega: number;
+    loading: boolean;
+    numeroReconteo: number;
   }

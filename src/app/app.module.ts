@@ -42,6 +42,7 @@ import { ReconteosComponent } from './reconteos/reconteos/reconteos.component';
 import { AsignacionReconteosComponent } from './reconteos/asignacion-reconteos/asignacion-reconteos.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   imports: [
@@ -64,7 +65,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSelectModule,
     NgxPaginationModule,
     MatNativeDateModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatAutocompleteModule
 
     
   ],

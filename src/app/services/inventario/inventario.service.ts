@@ -7,18 +7,20 @@ import { Observable } from 'rxjs';
 })
 export class InventarioService {
   
-  private apiUrl = 'http://172.16.1.206:3024/api/consultar-inventario';
-  private asignarUrl = 'http://172.16.1.206:3024/api/asignar-capturador'; 
-  private getAssignmentUrl = 'http://172.16.1.206:3024/api/consultar-asignacion';
-  private deleteAsignacionUrl = 'http://172.16.1.206:3024/api/delete-asignacion';
-  private validarIncioInventarioUrl  = 'http://172.16.1.206:3024/api/validar-inicio-inventario';
-  private obtenerBodegaUrl  = 'http://172.16.1.206:3024/api/consultar-grupo-bodega';
-  private inicioInventarioUrl  = 'http://172.16.1.206:3024/api/iniciar-inventario';
-  private actualizarSinCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-sin-cierre';
-  private actualizarConCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-cierre';
-  private validaCierreInvUrl = 'http://172.16.1.206:3024/api/validar-cierre-inventario';
-  private consultarReconteoUrl = 'http://172.16.1.206:3024/api/consultar-reconteos';
-                                                               
+  private apiUrl = 'http://172.16.1.234:3024/api/consultar-inventario';
+  private asignarUrl = 'http://172.16.1.234:3024/api/asignar-capturador'; 
+  private getAssignmentUrl = 'http://172.16.1.234:3024/api/consultar-asignacion';
+  private deleteAsignacionUrl = 'http://172.16.1.234:3024/api/delete-asignacion';
+  private validarIncioInventarioUrl  = 'http://172.16.1.234:3024/api/validar-inicio-inventario';
+  private obtenerBodegaUrl  = 'http://172.16.1.234:3024/api/consultar-grupo-bodega';
+  private inicioInventarioUrl  = 'http://172.16.1.234:3024/api/iniciar-inventario';
+  private actualizarSinCierreUrl = 'http://172.16.1.234:3024/api/actualizar-conteo-sin-cierre';
+  private actualizarConCierreUrl = 'http://172.16.1.234:3024/api/actualizar-conteo-cierre';
+  private validaCierreInvUrl = 'http://172.16.1.234:3024/api/validar-cierre-inventario';
+  private consultarReconteoUrl = 'http://172.16.1.234:3024/api/consultar-reconteos';
+  private iniciarReconteosUrl = 'http://172.16.1.234:3024/api/iniciar-reconteos';
+  private asignarReconteosUrl = 'http://172.16.1.234:3024/api/asignar-reconteos';
+  private validaCantidadReconteosUrl = 'http://172.16.1.234:3024/api/validar-cantidad-reconteos';
 
   constructor(private http: HttpClient) {}
 
@@ -81,6 +83,25 @@ export class InventarioService {
     return this.http.post(this.consultarReconteoUrl, data);
   }
 
-  
+  iniciarReconteo(data: any): Observable<any> {
+    return this.http.post(this.iniciarReconteosUrl, data);
+  }
+
+
+  asignarReconteos(data: any): Observable<any> {
+    return this.http.post(this.asignarReconteosUrl, data);
+  }
+
+
+  validarCantidadReconteos(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
+    const params = new HttpParams()
+      .set('tipoItem', tipoItem)
+      .set('local', local)
+      .set('fechaInventario', fechaInventario);
+
+    return this.http.get<any>(this.validaCantidadReconteosUrl, { params });
+  }
+
+
 
 }

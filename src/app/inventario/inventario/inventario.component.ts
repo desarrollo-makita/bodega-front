@@ -61,6 +61,8 @@ export class InventarioComponent implements OnInit {
   respuestaValidaCierreInventario: any;
   locales =LOCALES;
 
+  cantidadReconteos: number = 0; // Ejemplo, este valor debería venir de tu lógica
+
 
   constructor(
     private invetarioServices: InventarioService , 
@@ -228,7 +230,9 @@ export class InventarioComponent implements OnInit {
     console.log("Fecha formateada : ", this.formattedDate);
     
     this.periodo = fechaActual.getFullYear().toString();
+    console.log("periodo ", this.periodo);
     this.mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+    console.log("mes : ", this.mes);
 
     this.selectedPeriodo = this.periodo;
     this.selectedMes = this.mes;
@@ -236,11 +240,12 @@ export class InventarioComponent implements OnInit {
     const token = sessionStorage.getItem("authToken");
     const decodedToken = this.authService.decodeToken(token);
     this.usuario = decodedToken.username;
-    
+    console.log("validarInicioInventario : ", this.formattedDate);
     this.invetarioServices.validarInicioInventario(this.formattedDate).subscribe({
       next: (response) => {
+        console.log("response : ", response);
         if (!response.data) {
-          console.log("Error: response.data es null o undefined.");
+          console.log("Error: response.data es null o undefined." , response);
           this.tiposItems = []; // Evita el error de map() al asignar un array vacío
         } else if (!Array.isArray(response.data)) {
           console.log("Error: response.data no es un array. Valor recibido:", response.data);
@@ -325,7 +330,8 @@ export class InventarioComponent implements OnInit {
           mes: parseInt(this.selectedMes, 10) || null, 
           tipoItem: this.selectedTipoItem,
           local: this.selectedLocal,
-          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array,
+          fechaInventario: this.selectedFechaInicio,
       };
         this.actualizaTabla(dataActualizaTabla);
         this.isLoading = false;
@@ -361,14 +367,15 @@ export class InventarioComponent implements OnInit {
         this.mostrarMensaje("Ocurrió un error al obtener los datos actualizaTabla");
       },
       complete: () => {
-        this.calcularTotales()
+        this.calcularTotales();
+        this.successMessage = true;
         this.mostrarGrafico = true
         this.isLoading = false;
         this.successMessage = true;
-        this.mensaje = 'Proceso realizado correctamente';
+        this.mensaje = 'Inventario Actualizado correctamente';
+        this.consultaTablaRegistro();
         setTimeout(() => {
           this.successMessage = false;
-
         }, 2500);
       },
     })
@@ -393,7 +400,7 @@ export class InventarioComponent implements OnInit {
           fechaInventario: this.selectedFechaInicio
         };
     
-    console.log("dataaaaaaaaaaaaaaaaaaaaaaa : " , data);
+   
     this.isLoading = true;
     this.showTable = false;
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
@@ -414,7 +421,7 @@ export class InventarioComponent implements OnInit {
  
         } else {
           this.sinInventarioIniciado =  false;
-          this.mensaje = ""; // Limpiar mensaje si hay datos
+         // this.mensaje = ""; // Limpiar mensaje si hay datos
           this.inventarioData = response.data.recordset;
           this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
           this.showTable = true;
@@ -436,11 +443,13 @@ export class InventarioComponent implements OnInit {
           this.isLoading = false;
         }else{
           this.calcularTotales()
-          console.log("entrooooo al elseeeeee")
-          this.mostrarGrafico = true
+          console.log("se calcularon los totales");
+          this.mostrarGrafico = true;
           this.showTable= true;
+          
         
-          this.validarCierreInventario(data)
+          this.validarCierreInventario(data);
+          this.validarCantidadReconteos(data);
         }
         
         
@@ -486,7 +495,8 @@ export class InventarioComponent implements OnInit {
           mes: parseInt(this.selectedMes, 10) || null, 
           tipoItem: this.selectedTipoItem,
           local: this.selectedLocal,
-          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null // Devuelve el número en lugar de un array
+          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array
+          fechaInventario: this.selectedFechaInicio,
       };
         this.actualizaTabla(dataActualizaTabla);
         
@@ -536,6 +546,23 @@ export class InventarioComponent implements OnInit {
     });
   }
 
+  /*validarNumeroReconteos(data: any){
+    console.log("validarNumeroReconteos" , data);
+  
+    this.invetarioServices.validarNumeroReconteos(data.tipoItem, data.local , data.fechaInventario).subscribe({
+      next: (response) => {
+        console.log('Respuesta validarNumeroReconteos:', response);
+    
+       
+      },
+      error: (error) => {
+
+        console.log("Error al validarNumeroReconteos", error);
+      },
+      complete: () => {},
+    });
+  }*/
+
   separarFecha(fecha: Date | string | null): { periodo: string, mes: string, dia: number } {
     // Si la fecha es null, retornamos valores predeterminados
     if (fecha === null) {
@@ -571,32 +598,47 @@ export class InventarioComponent implements OnInit {
   }
 
   reconteo(){
-
-    console.log();
-    console.log("reconteo");
-    console.log("selectedTipoItem : " , this.selectedTipoItem);
-    console.log("selectedLocal : " , this.selectedLocal); 
-    console.log("selectedFechaInicio : " , this.selectedFechaInicio);
+  
     const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
-    console.log("grupoEncontrado : " , grupoEncontrado.GrupoBodega);
-    console.log("selectedPeriodo : " , this.selectedPeriodo);
-    console.log("selected mes " , this.selectedMes)
-
+    
     const datosInventario = {
-      tipoItem: '01-HERRAMIENTAS',
-      local: '05',
-      fechaInventario: '2025-04-01',
-      bodega: 4
+      tipoItem: this.selectedTipoItem,
+      local: this.selectedLocal,
+      fechaInventario: this.selectedFechaInicio,
+      bodega: grupoEncontrado.GrupoBodega,
+      loading: this.isLoading,
+      numeroReconteo :  this.cantidadReconteos,
     };
+
+    console.log("datosInventario : ",datosInventario)
 
    this.myDataService.setReconteoData(datosInventario);
    
-    
-    
-    
-    this.router.navigate(['/asignacion-reconteos']);
+   this.router.navigate(['/asignacion-reconteos']);
   }
 
+
+  validarCantidadReconteos(data: any){
+    console.log("validarCantidadReconteos" , data);
+ 
+    this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local , data.fechaInventario).subscribe({
+      next: (response) => {
+        console.log('Respuesta validarCantidadReconteos:', response);
+        this.cantidadReconteos = response.data.Accion.charAt(response.data.Accion.length - 1);
+        console.log(' this.cantidadReconteos',  this.cantidadReconteos);
+       
+      },
+      error: (error) => {
+       
+
+      },
+      complete: () => {
+
+  
+       
+      },
+    });
+  }
 
 }
 
