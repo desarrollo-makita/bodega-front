@@ -21,6 +21,8 @@ export class InventarioService {
   private iniciarReconteosUrl = 'http://172.16.1.234:3024/api/iniciar-reconteos';
   private asignarReconteosUrl = 'http://172.16.1.234:3024/api/asignar-reconteos';
   private validaCantidadReconteosUrl = 'http://172.16.1.234:3024/api/validar-cantidad-reconteos';
+  private siguienteReconteoURL = 'http://172.16.1.234:3024/api/siguiente-reconteo';
+
 
   constructor(private http: HttpClient) {}
 
@@ -102,6 +104,10 @@ export class InventarioService {
     return this.http.get<any>(this.validaCantidadReconteosUrl, { params });
   }
 
+
+  siguienteReconteo(data: any): Observable<any> {
+    return this.http.post(this.siguienteReconteoURL, data);
+  }
 
 
 }

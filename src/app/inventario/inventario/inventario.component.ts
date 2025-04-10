@@ -618,27 +618,38 @@ export class InventarioComponent implements OnInit {
   }
 
 
-  validarCantidadReconteos(data: any){
-    console.log("validarCantidadReconteos" , data);
- 
-    this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local , data.fechaInventario).subscribe({
+  validarCantidadReconteos(data: any) {
+    console.log("validarCantidadReconteos", data);
+  
+    this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         console.log('Respuesta validarCantidadReconteos:', response);
-        this.cantidadReconteos = response.data.Accion.charAt(response.data.Accion.length - 1);
-        console.log(' this.cantidadReconteos',  this.cantidadReconteos);
-       
+        console.log('response.data.Accion:', response.data.Accion);
+        console.log('typeof response.data.Accion:', typeof response.data.Accion);
+        
+        if (response?.data?.Accion !== undefined) {
+          console.log('Entró al IF: Accion es', response.data.Accion);
+  
+          const ultimo = parseInt(response.data.Accion.charAt(response.data.Accion.length - 1), 10);
+          this.cantidadReconteos = isNaN(ultimo) ? 1 : ultimo + 1;
+        } else {
+          console.log('Entró al ELSE: Accion es undefined o no existe');
+          this.cantidadReconteos = 1;
+        }
+  
+        console.log('this.cantidadReconteos', this.cantidadReconteos);
       },
       error: (error) => {
-       
-
+        console.error('Error al validar cantidad de reconteos:', error);
+        // this.cantidadReconteos = 1;
       },
       complete: () => {
-
-  
-       
+        // Aquí puedes hacer algo adicional si es necesario
       },
     });
   }
+  
+  
 
 }
 
