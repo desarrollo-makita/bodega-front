@@ -62,9 +62,10 @@ export class InventarioComponent implements OnInit {
   respuestaValidaCierreInventario: any;
   locales =LOCALES;
 
-  cantidadReconteos: number = 0; // Ejemplo, este valor debería venir de tu lógica
+  cantidadReconteos: number = 0;
 
-  cantidadReconteos2: number = 2; // Ejemplo, este valor debería venir de tu lógica
+  cantidadReconteos2: number = 2;
+  almacenamiento: string = 'N';
 
   constructor(
     private invetarioServices: InventarioService , 
@@ -611,6 +612,7 @@ export class InventarioComponent implements OnInit {
       bodega: grupoEncontrado.GrupoBodega,
       loading: this.isLoading,
       numeroReconteo :  this.cantidadReconteos,
+      almacenamiento: this.almacenamiento,
     };
 
     console.log("datosInventario : ",datosInventario)
@@ -646,6 +648,12 @@ export class InventarioComponent implements OnInit {
         // Aquí puedes hacer algo adicional si es necesario
       },
     });
+  }
+
+  onToggleAlmacenamiento(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.almacenamiento = checked ? 'S' : 'N';
+    console.log('almacenamiento:', this.almacenamiento);
   }
   
   
