@@ -1,4 +1,5 @@
 <div class="grafico-container">
-  <canvas #graficoCanvas></canvas>
-  <p><strong>% de Avance:</strong> {{ ((conteoTotal / saldoTotal) * 100).toFixed(2) }}%</p>
+  <canvas class="canvas-style" #graficoCanvas></canvas>
+  
+  <p style="margin-top: -5em; margin-left: 2%;"><strong>{{ ((conteoTotal / saldoTotal) * 100).toFixed(2) }}% de Avance</strong></p>
 </div>

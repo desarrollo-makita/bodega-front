@@ -11,6 +11,7 @@ export class GraficoTortaComponent implements AfterViewInit {
   @Input() saldoTotal: number = 0; // Recibimos el total de Saldo Stock
   @Input() conteoTotal: number = 0; // Recibimos el total de Conteo
   @Input() titulo: string = ''; // Recibimos el titulo del gráfico
+  @Input() totalItems: number = 0; // Recibimos el total items
 
   constructor() {
     Chart.register(...registerables);
@@ -28,13 +29,12 @@ export class GraficoTortaComponent implements AfterViewInit {
       type: 'pie',
       data: {
         labels: [
-          `Saldo Stock = ${this.saldoTotal}`, 
+          `Saldo total Stock = ${this.saldoTotal}`, 
           `Conteo = ${this.conteoTotal}`
-
         ],
         datasets: [{
           data: [porcentajeSaldo, porcentajeAvance], 
-          backgroundColor: ['#ff6347', '#008686'],
+          backgroundColor: ['#ff6347', '#008686'], // Colores para cada sección del gráfico
         }]
       },
       options: {
@@ -50,13 +50,17 @@ export class GraficoTortaComponent implements AfterViewInit {
             labels: {
               padding: 5,
               font: {
-                size: 14
+                size:20
               }
             }
           },
           title: {
             display: true, 
-            text: this.titulo
+            text: `Se encontraron ${this.totalItems} Items de  ${this.titulo.substring(3)}`,
+            font: {
+              size: 20,
+              weight: 'bold'
+            },
           },
           tooltip: {
             callbacks: {

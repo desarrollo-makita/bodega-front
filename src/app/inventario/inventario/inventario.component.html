@@ -86,19 +86,39 @@
                                                     <th>Saldo Stock</th>
                                                     <th>Conteo</th>
                                                     <th>Diferencia</th>
-                                                    <th>Ubicación</th>
-                                                    <th>Fecha Creación</th>
+                                                    <th *ngIf="cantidadReconteos >= 1">Reconteo 1</th>
+                                                    <th *ngIf="cantidadReconteos >= 1">Diferencia 1</th>
+                                                    <th *ngIf="cantidadReconteos >= 2">Reconteo 2</th>
+                                                    <th *ngIf="cantidadReconteos >= 2">Diferencia 2</th>
+                                                    <th *ngIf="cantidadReconteos >= 3">Reconteo 3</th>
+                                                    <th *ngIf="cantidadReconteos >= 3">Diferencia 3</th>
+                                                    <th *ngIf="cantidadReconteos >= 4">Reconteo 4</th>
+                                                    <th *ngIf="cantidadReconteos >= 4">Diferencia 4</th>
+                                                    <th *ngIf="cantidadReconteos >= 5">Reconteo 5</th>
+                                                    <th *ngIf="cantidadReconteos >= 5">Diferencia 5</th>
+                                                    <th *ngIf="cantidadReconteos >= 6">Reconteo 6</th>
+                                                    <th *ngIf="cantidadReconteos >= 6">Diferencia 6</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let row of filteredInventarioData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
-                                                    <td>{{ row.TipoItem }}</td>
+                                                    <td>{{ row.TipoItem.substring(3) }}</td>
                                                     <td>{{ row.Item }}</td>
                                                     <td>{{ row.SaldoStock }}</td>
                                                     <td>{{ row.Conteo }}</td>
                                                     <td>{{ row.Diferencia }}</td>
-                                                    <td>{{ row.Ubicacion }}</td>
-                                                    <td>{{ row.FechaCreacion | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 1">{{ row.Reconteo01 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 1">{{ row.Diferencia01 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 2">{{ row.Reconteo02 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 2">{{ row.Diferencia02 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 3">{{ row.Reconteo03 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 3">{{ row.Diferencia03 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 4">{{ row.Reconteo04 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 4">{{ row.Diferencia04 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 5">{{ row.Reconteo05 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 5">{{ row.Diferencia05 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 6">{{ row.Reconteo06 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 6">{{ row.Diferencia06 }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -124,10 +144,12 @@
                                                 <i class="fas fa-list-ol"></i> Iniciar Reconteo {{ cantidadReconteos}}
                                             </button>
                                         </div>
+                                        
                                     </div>
+                                
                                     <br>
                                     <div>
-                                        <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo"></app-grafico-torta>
+                                        <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo" [totalItems]="totalItems"></app-grafico-torta>
                                     </div>
                                 </div>
                             </div>

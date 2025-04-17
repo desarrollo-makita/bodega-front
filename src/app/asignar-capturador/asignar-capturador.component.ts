@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { InventarioService } from 'app/services/inventario/inventario.service';
+import { OPERARIOS } from 'app/shared/constants';
 
 @Component({
   selector: 'app-asignar-capturador',
@@ -40,41 +41,7 @@ export class AsignarCapturadorComponent {
 
 
 
-  usuarios =[
-    { "nombre": "ANA GONZALEZ" },
-    { "nombre": "DYLAN TORRES" },
-    { "nombre": "MARISELA JARA" },
-    { "nombre": "BASTIAN OLIVARES" },
-    { "nombre": "ANDRES RIQUELME" },
-    { "nombre": "ALVARO JARA" },
-    { "nombre": "FABIAN MOLINA" },
-    { "nombre": "ROBERTO LARENA" },
-    { "nombre": "CARMEN COLPI" },
-    { "nombre": "BASTIAN AMPUERO" },
-    { "nombre": "ALAN SALAS" },
-    { "nombre": "PABLO QUIMEN" },
-    { "nombre": "ERNAN CASCOS" },
-    { "nombre": "PATRICIO RAMIREZ" },
-    { "nombre": "JAVIERA BADILLA" },
-    { "nombre": "JOSE VASQUEZ" },
-    { "nombre": "JORGE GUERRA" },
-    { "nombre": "ERICK RAMIREZ" },
-    { "nombre": "NELSON ROMERO" },
-    { "nombre": "FELIPE VALENZUELA" },
-    { "nombre": "ALVARO CARDENAS" },
-    { "nombre": "DAVID LEIVA" },
-    { "nombre": "JUAN VALENZUELA" },
-    { "nombre": "FELIPE ARAVENA" },
-    { "nombre": "CARLA GARRIDO" },
-    { "nombre": "JUAN TORO" },
-    { "nombre": "ROXANA LAGOS" },
-    { "nombre": "BARBARA MEDINA" },
-    { "nombre": "CRISTIAN ARAYA" },
-    { "nombre": "JOSE CASTILLO" },
-    { "nombre": "Felipe Sepulveda" },
-    { "nombre": "Rodrigo Aguilera" }
-  ]
-  
+  usuarios =OPERARIOS;
 
   productos= [
     { nombre: '01-HERRAMIENTAS' },

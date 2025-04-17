@@ -45,12 +45,14 @@ export class AsignacionReconteosComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.showMostrarBody = false;
+    
+    // recuperamos la dta que se setea en la pantalla de inventario
     this.dataService.getReconteoData().pipe(take(1)).subscribe({
       next: (response) => {
         this.isLoading = true;
         this.requestReconteo = response;
         console.log("responseReconteo AsignacionReconteosComponent", response);
-this.reconteosData = response.numeroReconteo;
+        this.reconteosData = response.numeroReconteo;
         this.tipoItem = response.tipoItem.substring(3);
       },
       error: (error) => {
@@ -58,7 +60,14 @@ this.reconteosData = response.numeroReconteo;
         // Lógica de manejo de errores
       },
       complete: () => {
-      this.iniciarReconteos(this.requestReconteo);
+
+        console.log("variable que determina si donde entramos es el primer reconteo o no : " , this.reconteosData);
+        if(this.reconteosData === 1 ){
+          this.iniciarReconteos(this.requestReconteo);
+        }else{
+          this.siguienteReconteo(this.requestReconteo);
+        }
+
        //this.obtenerReconteo(this.requestReconteo)
       },
     });
@@ -73,7 +82,6 @@ this.reconteosData = response.numeroReconteo;
 }
 
   obtenerReconteo(data : any ){
-    console.log("dataaaaaaaaaaaa : " , data);
     this.invetarioServices.consultarReconteo(data).subscribe({
       next: (response) => {
         console.log('Respuesta consultarReconteo:', response);
@@ -96,6 +104,25 @@ this.reconteosData = response.numeroReconteo;
       complete: () => {
 
           this.obtenerReconteo(data)
+          setTimeout(() => {
+            this.isLoading = false;
+            this.showMostrarBody = true;
+  
+          }, 10000);
+      },
+    });
+  }
+
+  siguienteReconteo(data : any ){
+    this.invetarioServices.siguienteReconteo(data).subscribe({
+      next: (response) => {
+        console.log('Respuesta siguienteReconteo:', response);
+       
+      },
+      error: (error) => {},
+      complete: () => {
+
+        this.obtenerReconteo(data)
           setTimeout(() => {
             this.isLoading = false;
             this.showMostrarBody = true;
@@ -255,14 +282,15 @@ this.reconteosData = response.numeroReconteo;
   }
   
 
-    exportToExcel(): void {
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet( this.listaItems);
-      const workbook: XLSX.WorkBook = { Sheets: { 'reconteos': worksheet }, SheetNames: ['reconteos'] };
-      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  exportToExcel(): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet( this.listaItems);
+    const workbook: XLSX.WorkBook = { Sheets: { 'reconteos': worksheet }, SheetNames: ['reconteos'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    saveAs(data, 'reconteos.xlsx');
+  }
   
-      const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-      saveAs(data, 'reconteos.xlsx');
-    }
   
   
 }

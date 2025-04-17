@@ -52,6 +52,7 @@ export class InventarioComponent implements OnInit {
   selectedFechaInicio:string
   saldoTotal : number = 0;
   conteoTotal : number = 0;
+  totalItems: number = 0;
   titulo: string=''
   respuestaValidaInicioInventario : any;
   meses = MESES;
@@ -63,6 +64,7 @@ export class InventarioComponent implements OnInit {
 
   cantidadReconteos: number = 0; // Ejemplo, este valor debería venir de tu lógica
 
+  cantidadReconteos2: number = 2; // Ejemplo, este valor debería venir de tu lógica
 
   constructor(
     private invetarioServices: InventarioService , 
@@ -407,6 +409,7 @@ export class InventarioComponent implements OnInit {
       next: (response) => {
         console.log('Respuesta consultaInventario:', response);
 
+        this.totalItems = response.data.recordset.length;
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
           this.sinInventarioIniciado =  true;
           this.showTable = false;
@@ -619,14 +622,10 @@ export class InventarioComponent implements OnInit {
 
 
   validarCantidadReconteos(data: any) {
-    console.log("validarCantidadReconteos", data);
-  
+    
     this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
-        console.log('Respuesta validarCantidadReconteos:', response);
-        console.log('response.data.Accion:', response.data.Accion);
-        console.log('typeof response.data.Accion:', typeof response.data.Accion);
-        
+      
         if (response?.data?.Accion !== undefined) {
           console.log('Entró al IF: Accion es', response.data.Accion);
   

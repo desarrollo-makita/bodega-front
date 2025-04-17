@@ -50,6 +50,7 @@ export const MESES = [
     { "nombre": "FELIPE VALENZUELA" },
     { "nombre": "JAVIERA BADILLA" },
     { "nombre": "JORGE GUERRA" },
+    { "nombre": "JORGE HERRERA" },
     { "nombre": "JOSE CASTILLO" },
     { "nombre": "JOSE VASQUEZ" },
     { "nombre": "JUAN TORO" },
