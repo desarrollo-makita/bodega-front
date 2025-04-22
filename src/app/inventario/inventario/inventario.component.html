@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="form-group col-md-3">
                                     <button type="submit" class="btn btn-primary btn-sm custom-btn-buscar" [disabled]="!formValido()">
-                                        Buscar&nbsp;&nbsp; <i class="fas fa-search ml-2"></i>
+                                        Mostrar&nbsp;&nbsp; <i class="fas fa-search ml-2"></i>
                                     </button>
                                 </div>
                             </div>
@@ -86,18 +86,18 @@
                                                     <th>Saldo Stock</th>
                                                     <th>Conteo</th>
                                                     <th>Diferencia</th>
-                                              <!--      <th *ngIf="cantidadReconteos >= 1">Reconteo 1</th>
-                                                    <th *ngIf="cantidadReconteos >= 1">Diferencia 1</th>
-                                                    <th *ngIf="cantidadReconteos >= 2">Reconteo 2</th>
-                                                    <th *ngIf="cantidadReconteos >= 2">Diferencia 2</th>
-                                                    <th *ngIf="cantidadReconteos >= 3">Reconteo 3</th>
-                                                    <th *ngIf="cantidadReconteos >= 3">Diferencia 3</th>
-                                                    <th *ngIf="cantidadReconteos >= 4">Reconteo 4</th>
-                                                    <th *ngIf="cantidadReconteos >= 4">Diferencia 4</th>
-                                                    <th *ngIf="cantidadReconteos >= 5">Reconteo 5</th>
-                                                    <th *ngIf="cantidadReconteos >= 5">Diferencia 5</th>
-                                                    <th *ngIf="cantidadReconteos >= 6">Reconteo 6</th>
-                                                    <th *ngIf="cantidadReconteos >= 6">Diferencia 6</th>-->
+                                                    <th *ngIf="ultimo >= 1">Reconteo 1</th>
+                                                    <th *ngIf="ultimo >= 1">Diferencia 1</th>
+                                                    <th *ngIf="ultimo >= 2">Reconteo 2</th>
+                                                    <th *ngIf="ultimo >= 2">Diferencia 2</th>
+                                                    <th *ngIf="ultimo >= 3">Reconteo 3</th>
+                                                    <th *ngIf="ultimo >= 3">Diferencia 3</th>
+                                                    <th *ngIf="ultimo >= 4">Reconteo 4</th>
+                                                    <th *ngIf="ultimo >= 4">Diferencia 4</th>
+                                                    <th *ngIf="ultimo >= 5">Reconteo 5</th>
+                                                    <th *ngIf="ultimo >= 5">Diferencia 5</th>
+                                                    <th *ngIf="ultimo >= 6">Reconteo 6</th>
+                                                    <th *ngIf="ultimo >= 6">Diferencia 6</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -107,18 +107,18 @@
                                                     <td>{{ row.SaldoStock }}</td>
                                                     <td>{{ row.Conteo }}</td>
                                                     <td>{{ row.Diferencia }}</td>
-                                        <!--        <td *ngIf="cantidadReconteos >= 1">{{ row.Reconteo01 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 1">{{ row.Diferencia01 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 2">{{ row.Reconteo02 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 2">{{ row.Diferencia02 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 3">{{ row.Reconteo03 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 3">{{ row.Diferencia03 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 4">{{ row.Reconteo04 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 4">{{ row.Diferencia04 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 5">{{ row.Reconteo05 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 5">{{ row.Diferencia05 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 6">{{ row.Reconteo06 }}</td>
-                                                    <td *ngIf="cantidadReconteos >= 6">{{ row.Diferencia06 }}</td> --> 
+                                                     <td *ngIf="ultimo >= 1">{{ row.Reconteo01 }}</td>
+                                                    <td *ngIf="ultimo >= 1">{{ row.Diferencia01 }}</td>
+                                                    <td *ngIf="ultimo >= 2">{{ row.Reconteo02 }}</td>
+                                                    <td *ngIf="ultimo >= 2">{{ row.Diferencia02 }}</td>
+                                                    <td *ngIf="ultimo >= 3">{{ row.Reconteo03 }}</td>
+                                                    <td *ngIf="ultimo >= 3">{{ row.Diferencia03 }}</td>
+                                                    <td *ngIf="ultimo >= 4">{{ row.Reconteo04 }}</td>
+                                                    <td *ngIf="ultimo >= 4">{{ row.Diferencia04 }}</td>
+                                                    <td *ngIf="ultimo >= 5">{{ row.Reconteo05 }}</td>
+                                                    <td *ngIf="ultimo >= 5">{{ row.Diferencia05 }}</td>
+                                                    <td *ngIf="ultimo >= 6">{{ row.Reconteo06 }}</td>
+                                                    <td *ngIf="ultimo >= 6">{{ row.Diferencia06 }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -144,20 +144,6 @@
                                                 <i class="fas fa-list-ol"></i> Iniciar Reconteo {{ cantidadReconteos}}
                                             </button>
                                         </div>
-                                        <div class="row">
-                                            <div *ngIf="codigoBloqueo" class="form-group col-md-4 d-flex align-items-center">
-                                                <label class="mr-2" style="font-weight: bold;">Sumar Almacenamiento</label>
-                                                <label class="switch">
-                                                    <input 
-                                                    type="checkbox" 
-                                                    [checked]="almacenamiento === 'S'" 
-                                                    name="almacenamiento" 
-                                                    (change)="onToggleAlmacenamiento($event)">
-                                                    <span class="slider round"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        
                                     </div>
                                 
                                     <br>

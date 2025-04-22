@@ -43,6 +43,8 @@ import { AsignacionReconteosComponent } from './reconteos/asignacion-reconteos/a
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { AlmacenamientoDialogComponent } from './shared/almacenamiento-dialog/almacenamiento-dialog.component';
+
 
 @NgModule({
   imports: [
@@ -89,6 +91,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     CerrarInventarioDialogComponent,
     ReconteosComponent,
     AsignacionReconteosComponent,
+    AlmacenamientoDialogComponent,
+
     
     
   ],

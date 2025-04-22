@@ -51,9 +51,10 @@ export class AsignacionReconteosComponent implements OnInit {
       next: (response) => {
         this.isLoading = true;
         this.requestReconteo = response;
-        console.log("responseReconteo AsignacionReconteosComponent", response);
         this.reconteosData = response.numeroReconteo;
         this.tipoItem = response.tipoItem.substring(3);
+      
+        console.log('Asignacion de Reconteos', response);
       },
       error: (error) => {
         console.error("Error al obtener responseReconteo", error);

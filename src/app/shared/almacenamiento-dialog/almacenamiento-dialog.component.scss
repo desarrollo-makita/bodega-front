@@ -1,0 +1,110 @@
+/* Estilo para contenedor general del diálogo */
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del diálogo */
+.dialog-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #FF4A55;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Mensaje */
+.mensaje-principal {
+  font-size: 17px;
+  color: #333;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Estilo del switch con su label */
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Recuadro para mostrar datos */
+.stats-card {
+  background: #f1fefe;
+  border-left: 4px solid #008686;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.4s ease-in-out;
+ 
+}
+
+/* Elemento individual de estadística */
+.stat-item {
+  justify-content: space-between;
+  font-size: 16px;
+}
+
+/* Etiquetas */
+.stat-label {
+  font-weight: 600;
+  color: #444;
+}
+
+/* Valores */
+.stat-value {
+  font-weight: bold;
+  color: #008686;
+  margin-left: 5px;
+}
+
+/* Animación de entrada suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Botón final */
+.reconteo-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.reconteo-button {
+  background-color: #008686;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 15px;
+  border-radius: 6px;
+ // font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0, 134, 134, 0.25);
+}
+
+.reconteo-button:hover {
+  background-color: #006b6b;
+  transform: translateY(-1px);
+}
+
+.switch-hint {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin-top: 4px;
+  margin-left: 4px;
+}

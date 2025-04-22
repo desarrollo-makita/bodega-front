@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 import { LOCALES, MESES, TIPOS_ITEMS } from 'app/shared/constants';
 import { Router } from '@angular/router';
 import { MyDataService } from 'app/services/data/my-data.service';
+import { AlmacenamientoDialogComponent } from 'app/shared/almacenamiento-dialog/almacenamiento-dialog.component';
 
 @Component({
   selector: 'app-inventario',
@@ -58,7 +59,7 @@ export class InventarioComponent implements OnInit {
   meses = MESES;
   tiposItems: any = [];
   formattedDate: any;
-
+  ultimo: number = 0;
   respuestaValidaCierreInventario: any;
   locales =LOCALES;
 
@@ -105,6 +106,8 @@ export class InventarioComponent implements OnInit {
       
       }
     });
+
+    
   
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
@@ -131,6 +134,33 @@ export class InventarioComponent implements OnInit {
       }
     });
   }
+
+  almacenamientoConfirmDialog(mensaje: string , datosFiltro : any): void {
+    console.log("mensaje  : " , mensaje , '-' , datosFiltro);
+    const dialogRef = this.dialog.open(AlmacenamientoDialogComponent, {
+      //disableClose: true,
+      data: {
+        mensaje: mensaje,       
+        datos: datosFiltro
+      
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.success) {
+        this.successMessage = true;
+      
+        setTimeout(() => {
+          this.successMessage = false;
+          
+        }, 2000);
+       
+      } else if (result?.action === 'cerrar') {
+        console.log("se cierra el modal")
+      }
+    });
+  }
+  
   
   obtenerGrupoLocal(){
 
@@ -171,7 +201,7 @@ export class InventarioComponent implements OnInit {
 
   calcularTotales() {
     // Sumamos los valores de "SaldoStock" y "Conteo" de cada fila
-   
+    console.log("Datos del inventario:", this.inventarioData);
     this.saldoTotal = this.inventarioData.reduce((total, row) => total + row.SaldoStock, 0);
     this.conteoTotal = this.inventarioData.reduce((total, row) => total + row.Conteo, 0);
 
@@ -549,24 +579,7 @@ export class InventarioComponent implements OnInit {
       },
     });
   }
-
-  /*validarNumeroReconteos(data: any){
-    console.log("validarNumeroReconteos" , data);
   
-    this.invetarioServices.validarNumeroReconteos(data.tipoItem, data.local , data.fechaInventario).subscribe({
-      next: (response) => {
-        console.log('Respuesta validarNumeroReconteos:', response);
-    
-       
-      },
-      error: (error) => {
-
-        console.log("Error al validarNumeroReconteos", error);
-      },
-      complete: () => {},
-    });
-  }*/
-
   separarFecha(fecha: Date | string | null): { periodo: string, mes: string, dia: number } {
     // Si la fecha es null, retornamos valores predeterminados
     if (fecha === null) {
@@ -603,6 +616,8 @@ export class InventarioComponent implements OnInit {
 
   reconteo(){
   
+    console.log("this.cantidadReconteos," , this.cantidadReconteos);
+    const mensaje = `¿Desea sumar el almacenaje?`;
     const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
     
     const datosInventario = {
@@ -617,9 +632,17 @@ export class InventarioComponent implements OnInit {
 
     console.log("datosInventario : ",datosInventario)
 
-   this.myDataService.setReconteoData(datosInventario);
+    this.myDataService.setReconteoData(datosInventario);
+
+    if(this.cantidadReconteos === 1){
+      this.router.navigate(['/asignacion-reconteos']);
+    }else{
+      this.almacenamientoConfirmDialog(mensaje, datosInventario);
+    }
+
+    // this.almacenamientoConfirmDialog(mensaje, datosInventario);
    
-   this.router.navigate(['/asignacion-reconteos']);
+    
   }
 
 
@@ -628,11 +651,11 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
       
-        if (response?.data?.Accion !== undefined) {
-          console.log('Entró al IF: Accion es', response.data.Accion);
+        if (response?.data?.NumeroReconteo !== undefined) {
+          console.log('Entró al IF: NumeroReconteo es', response.data.NumeroReconteo);
   
-          const ultimo = parseInt(response.data.Accion.charAt(response.data.Accion.length - 1), 10);
-          this.cantidadReconteos = isNaN(ultimo) ? 1 : ultimo + 1;
+          this.ultimo = response.data.NumeroReconteo;
+          this.cantidadReconteos = isNaN(this.ultimo) ? 1 : this.ultimo + 1;
         } else {
           console.log('Entró al ELSE: Accion es undefined o no existe');
           this.cantidadReconteos = 1;

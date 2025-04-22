@@ -1,0 +1,53 @@
+<h2 mat-dialog-title class="dialog-title">🔄 Reconteos</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="almacenamientoForm" (ngSubmit)="onConfirm()">
+    
+    <!-- Mensaje principal -->
+    <div class="mensaje-container">
+      <p class="mensaje-principal">
+        {{ data.mensaje }}
+      </p>
+    </div>
+
+    <!-- Switch Sumar Almacenamiento -->
+    <div class="switch-container">
+      <label class="label-bold">Sumar Almacenamiento</label>
+      <label class="switch">
+        <input 
+          type="checkbox" 
+          [checked]="almacenamiento === 'S'" 
+          name="almacenamiento" 
+          (change)="onToggleAlmacenamiento($event)">
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <p class="switch-hint">
+      * Si activas esta opción, los items en almacenamiento serán sumados al reconteo. Si no, solo se contará lo nuevo ingresado.
+    </p>
+    <div *ngIf="isLoading" id="loader">
+      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+    </div>
+
+    <!-- Datos estadísticos -->
+    <div *ngIf="showInfoAlmacenamiento" class="stats-card">
+      <div class="stat-item">
+        <span class="stat-label">📦 Cantidad de unidades:</span>
+        <span class="stat-value">{{ cantidadUnitaria }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">📊 Items en almacenamiento:</span>
+        <span class="stat-value">{{ totalItems }}</span>
+      </div>
+    </div>
+
+
+    <div class="reconteo-button-wrapper">
+      <button type="submit" class="reconteo-button">
+        ✅ Ir a reconteo
+      </button>
+    </div>
+
+  </form>
+</mat-dialog-content>
