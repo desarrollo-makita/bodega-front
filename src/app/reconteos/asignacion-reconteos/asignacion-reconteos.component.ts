@@ -21,18 +21,31 @@ export class AsignacionReconteosComponent implements OnInit {
   listaNombres: { nombre: string }[] = [];
   tipoItem:any;
   listaItems: any[] = [];
+  listaSinUsuarios:any [] =[];
   usuariosValidos: string[] = [];
   mensaje: string = ''; // Mensaje para el usuario
-   reconteosData: any;
+  reconteosData: any;
   isLoading: boolean = false;
 
-  cantidadReconteo: number = 0; // Ejemplo, este valor debería venir de tu lógica
-  cantidadPersonas: number = 1; // Cantidad de operarios seleccionada
+  cantidadReconteo: number = 0; // 
+  cantidadPersonas: number = 1; // 
   operarios: { nombre: string }[] = []; // Arreglo de operarios
   cantidadOperarios: number = 0;
   showMostrarBody = false;
 
-  operariosAsignados = OPERARIOS
+  showMostrarTarjetas = false;
+  
+  showAsignarReconteos: boolean = false;
+
+  operariosAsignados :any[] = [];
+
+  groupedByUsuario: any[] = [];
+
+  porcentajeReconteo: number = 60;
+  
+  ItemsRecibidos: number = 0;
+  ItemsEnviados: number = 0;
+
 
 
   @ViewChildren('inputElement') inputs!: QueryList<ElementRef>;
@@ -44,8 +57,7 @@ export class AsignacionReconteosComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.showMostrarBody = false;
-    
+    this.setCapturadores();
     // recuperamos la dta que se setea en la pantalla de inventario
     this.dataService.getReconteoData().pipe(take(1)).subscribe({
       next: (response) => {
@@ -54,7 +66,7 @@ export class AsignacionReconteosComponent implements OnInit {
         this.reconteosData = response.numeroReconteo;
         this.tipoItem = response.tipoItem.substring(3);
       
-        console.log('Asignacion de Reconteos', response);
+       
       },
       error: (error) => {
         console.error("Error al obtener responseReconteo", error);
@@ -62,17 +74,17 @@ export class AsignacionReconteosComponent implements OnInit {
       },
       complete: () => {
 
-        console.log("variable que determina si donde entramos es el primer reconteo o no : " , this.reconteosData);
+    
         if(this.reconteosData === 1 ){
+     
           this.iniciarReconteos(this.requestReconteo);
         }else{
           this.siguienteReconteo(this.requestReconteo);
         }
-
-       //this.obtenerReconteo(this.requestReconteo)
       },
     });
 
+    this.consultarResumenReconteo(this.requestReconteo);
   }
 
   ngAfterViewInit() {
@@ -85,39 +97,57 @@ export class AsignacionReconteosComponent implements OnInit {
   obtenerReconteo(data : any ){
     this.invetarioServices.consultarReconteo(data).subscribe({
       next: (response) => {
-        console.log('Respuesta consultarReconteo:', response);
+      
         this.cantidadReconteo = response.data.length;
         this.listaItems= response.data;
-        console.log('cantidadReconteo :', this.cantidadReconteo);
+
+        this.listaSinUsuarios = this.listaItems.filter(
+          (item: any) => !item.Usuario || item.Usuario.trim() === ''
+        );
+      
+        if(this.listaSinUsuarios.length === 0 ){
+
+          this.showMostrarBody = false;
+         
+        }else{
+          this.showMostrarBody = true;
+          this.showMostrarTarjetas = false;
+          
+        }
       },
       error: (error) => {},
-      complete: () => {},
+      complete: () => {
+        this.agruparItemsPorUsuario(this.listaItems)
+        setTimeout(() => {
+          this.isLoading = false;
+        
+         }, 3000);
+        
+      },
     });
   }
 
   iniciarReconteos(data : any ){
     this.invetarioServices.iniciarReconteo(data).subscribe({
       next: (response) => {
-        console.log('Respuesta iniciarReconteos:', response);
+    
        
       },
-      error: (error) => {},
+      error: (error) => {console.log("Error : " , error);},
       complete: () => {
-
-          this.obtenerReconteo(data)
+        this.obtenerReconteo(data)
           setTimeout(() => {
             this.isLoading = false;
-            this.showMostrarBody = true;
-  
-          }, 10000);
-      },
+            this.showMostrarTarjetas = !this.showMostrarBody ? true : false;
+           }, 3000);
+        },
     });
   }
 
   siguienteReconteo(data : any ){
     this.invetarioServices.siguienteReconteo(data).subscribe({
       next: (response) => {
-        console.log('Respuesta siguienteReconteo:', response);
+     
        
       },
       error: (error) => {},
@@ -139,44 +169,70 @@ export class AsignacionReconteosComponent implements OnInit {
     this.listaNombres = this.operarios
       .filter(op => op.nombre.trim() !== '') // Filtra vacíos
       .map(op => ({ nombre: op.nombre })); // Obtiene solo los nombres
-
-    console.log('Lista consolidada:', this.listaNombres);
-
-   
+    
     const resultado = this.dividirReconteos(this.listaItems, this.listaNombres);
-    console.log('asasas', this.reconteosData);
-    console.log('resultado', resultado);
+    
+    
 
     this.invetarioServices.asignarReconteos(resultado ).subscribe({
       next: (response) => {
-        console.log('Respuesta asignarReconteos:', response);
+        
+        // Filtrar los nombres únicos de usuarios sin capturador
+        const usuariosSinCapturador = Array.from(
+          new Set(response.fallidos.map(item => item.usuario))
+        );
+        
+        if (usuariosSinCapturador.length > 0) {
+          // Crear un solo mensaje con los nombres
+          const mensaje = `Los siguientes usuarios no tienen capturador asignado: ${usuariosSinCapturador.join(', ')}`;
+          this.mostrarMensaje(mensaje);  // Mostrar el mensaje completo
+          this.errorMessage = true;
+        } else {
+          // Si no hay fallidos, mostrar un mensaje de éxito
+          this.successMessage = true;
+          this.mostrarMensaje("Asignación de reconteos exitosa");
+        }
        
       },
       error: (error) => {
-        console.log("Error :" , error);
+        
         this.errorMessage = true;
-        this.mostrarMensaje("Error al asignar reconteo"); 
+        this.mostrarMensaje("Error al asignar reconteos"); 
         this.isLoading= false;
       },
       complete: () => {
      
         this.isLoading= false;
-        this.successMessage = true;
-        this.mostrarMensaje("Asignación de reconteo exitosa");
+        // ACA LLAMAR A LA ACTUALIZACION DE LA LISTA DE ASIGNADOS
+        this.showMostrarTarjetas = true;
+
+       // this.successMessage = true;
+        //this.mostrarMensaje("Asignación de reconteo exitosa");
         this.cantidadPersonas = 0;
         this.operarios = [];
-          console.log("asignar reconteo exitoso");
-      },
+        this.obtenerReconteo(this.requestReconteo);  
+        
+        
+        },
+
+      
     });
 
 
   }
   
   actualizarOperarios() {
-    // Limpiar la lista de operarios y agregar la cantidad necesaria
-
-    this.operarios = Array.from({ length: this.cantidadPersonas }, () => ({ nombre: '' }));
-    console.log("operaqrios asignados : " , this.operarios , this.cantidadPersonas);
+    // Verificar cuántos operarios se necesitan y ajustar la lista
+    if (this.operarios.length < this.cantidadPersonas) {
+      // Si la cantidad actual de operarios es menor, agregar más operarios vacíos
+      const cantidadNueva = this.cantidadPersonas - this.operarios.length;
+      this.operarios.push(...Array.from({ length: cantidadNueva }, () => ({ nombre: '' })));
+    } else if (this.operarios.length > this.cantidadPersonas) {
+      // Si hay más operarios de los necesarios, eliminar los excedentes
+      this.operarios = this.operarios.slice(0, this.cantidadPersonas);
+    }
+  
+    
   }
   
   
@@ -229,13 +285,12 @@ export class AsignacionReconteosComponent implements OnInit {
     }
   }
 
-
   dividirReconteos(listaItems: any[], listaNombres: { nombre: string }[]): any[] {
-    const totalItems = listaItems.length; // Total de ítems (2000 en tu ejemplo)
-    const cantidadNombres = listaNombres.length; // Número de nombres (en este caso 2)
+    const totalItems = listaItems.length; 
+    const cantidadNombres = listaNombres.length;
   
-    // Calcular cuántos items recibe cada nombre
-    const itemsPorNombre = Math.floor(totalItems / cantidadNombres); // 1000 ítems por persona
+    // Calcular cuántos items recibe cada nombre (parte entera)
+    const itemsPorNombre = Math.floor(totalItems / cantidadNombres);
   
     // Creamos un array para los resultados
     const resultado = [];
@@ -243,31 +298,39 @@ export class AsignacionReconteosComponent implements OnInit {
     // Dividimos los ítems entre los nombres
     let itemIndex = 0;
     listaNombres.forEach((nombre, i) => {
-      const itemsAsignados = listaItems.slice(itemIndex, itemIndex + itemsPorNombre); // Toma una parte de los ítems
+      // Si es el último nombre, le damos el resto también
+      let fin = (i === cantidadNombres - 1) 
+        ? totalItems // hasta el final
+        : itemIndex + itemsPorNombre;
+  
+      const itemsAsignados = listaItems.slice(itemIndex, fin);
+      
       resultado.push({
-      cantidad : this.reconteosData,
+        cantidad : this.reconteosData,
         nombre: nombre.nombre,
-        data: itemsAsignados // Asignamos los ítems a la propiedad `data`
+        data: itemsAsignados
       });
-      itemIndex += itemsPorNombre; // Aumentamos el índice para tomar la siguiente parte
+  
+      itemIndex = fin; // Actualizamos el índice de inicio para el siguiente
     });
   
-    console.log('Resultado:', resultado);
+    
     return resultado;
   }
-
+  
+  
   obtenerAsignacionesusuarios() {
    
     this.invetarioServices.obtenerAsignaciones().subscribe({
       next: (response) => {
      
         this.usuariosValidos = response.data;
-        console.log('Respuesta obtenerAsignaciones  - servidor:', response);
+        
         
       },
       error: (error) => {},
       complete: () => {
-        console.log('Proceso exitoso');
+        
     },
     });
   }
@@ -292,6 +355,82 @@ export class AsignacionReconteosComponent implements OnInit {
     saveAs(data, 'reconteos.xlsx');
   }
   
+  agruparItemsPorUsuario(lista: any[]){
+    const agrupadoPorUsuario: { [key: string]: any[] } = {};
   
+    lista.forEach(item => {
+      const usuario = item.Usuario; // Usa 'Usuario' con U mayúscula
   
+      if (!agrupadoPorUsuario[usuario]) {
+        agrupadoPorUsuario[usuario] = [];
+      }
+  
+      agrupadoPorUsuario[usuario].push(item);
+    });
+  
+    this.groupedByUsuario = Object.keys(agrupadoPorUsuario).map(nombre => ({
+      nombre,
+      data: agrupadoPorUsuario[nombre]
+    }));
+
+    
+
+    
+  }
+  
+
+   setCapturadores(){
+    
+    this.dataService.getArrayCap().pipe(take(1)).subscribe({
+      next: (response) => {
+        
+        this.operariosAsignados = response;
+      },
+      error: (error) => {
+        console.error("Error al obtener asignacion de capturadores", error);
+        // Lógica de manejo de errores
+      },
+      complete: () => {
+
+    
+      },
+    });
+  }
+
+  actualizarDatos(){
+   this.consultarResumenReconteo(this.requestReconteo);
+  }
+  
+  volverAtras() {
+    window.history.back();
+  }
+
+  consultarResumenReconteo(data: any) {
+    this.isLoading =true;
+    this.showMostrarTarjetas = false;
+    this.invetarioServices.consultarResumenReconteo(data).subscribe({
+      next: (response) => {
+         if (response && response.data) {
+          this.ItemsRecibidos = response.data.ItemsRecibidos;
+          this.ItemsEnviados = response.data.ItemsEnviados;
+          if( this.ItemsRecibidos ===  this.ItemsEnviados){
+            sessionStorage.setItem('siguienteReconteo', 'true');
+          }
+         }
+        
+        
+      },
+      error: (error) => {
+        this.isLoading= false;
+        
+      },
+      complete: () => {
+        this.obtenerReconteo(this.requestReconteo);
+        setTimeout(() => {
+          this.isLoading = false;
+          this.showMostrarTarjetas = true;
+        }, 3000);
+      },
+    });
+  }
 }

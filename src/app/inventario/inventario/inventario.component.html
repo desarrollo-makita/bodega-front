@@ -70,11 +70,8 @@
                                             <option [value]="50">50</option>
                                             <option [value]="100">100</option>
                                         </select>
-                                        <label style="font-weight: bold;">Items por página: </label>
+                                        <label style="font-weight: bold;">Items por página </label>
                                         <input type="text" class="custom-input" [(ngModel)]="searchQuery" placeholder="Buscar por Item" (input)="filterItems()">
-                                        <div class="pagination-container">
-                                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
-                                        </div>
                                     </div>
                                     <br>
                                     <div style="overflow-x: auto; width:100%;">
@@ -123,32 +120,44 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div *ngIf="mostrarGrafico" class="row" style="margin-top: 2%;">
-                                        <div class="form-group col-md-2">
-                                            <button class="btn btn-primary btn-sm custom-btn" (click)="actualizarConteo()"  [disabled]="codigoBloqueo">
-                                                <i class="fas fa-sync-alt"></i> Actualizar Conteo
-                                            </button>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <button class="btn btn-primary btn-sm custom-btn" (click)="exportToExcel()">
-                                                 <i class="fas fa-file-excel"></i> Exportar a Excel
-                                            </button>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <button class="btn btn-primary btn-sm custom-btn-cerrar" (click)="cerrarInventario()" [disabled]="codigoBloqueo">
-                                                <i class="fas fa-lock"></i> Cerrar Inventario
-                                            </button>
-                                        </div>
-                                        <div *ngIf="codigoBloqueo" class="form-group col-md-2">
-                                            <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()">
-                                                <i class="fas fa-list-ol"></i> Iniciar Reconteo {{ cantidadReconteos}}
-                                            </button>
-                                        </div>
+                                    <br>
+                                    <div class="pagination-container">
+                                        <pagination-controls (pageChange)="p = $event"></pagination-controls>
                                     </div>
                                 
-                                    <br>
-                                    <div>
-                                        <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo" [totalItems]="totalItems"></app-grafico-torta>
+                                    <div *ngIf="isLoading" class="loader-container">
+                                        <div class="loader-content">
+                                          <img src="../../../assets/img/loader-preview.svg" alt="loading" class="loader-image" />
+                                          <p class="loader-text">{{mensajeCargado}}</p>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!isLoading" @fadeSlideIn>
+                                        <div *ngIf="mostrarGrafico" class="row" style="margin-top: 2%;">
+                                            <div *ngIf="!codigoBloqueo"     class="form-group col-md-2">
+                                                <button class="btn btn-primary btn-sm custom-btn" (click)="actualizarConteo()"  [disabled]="codigoBloqueo">
+                                                    <i class="fas fa-sync-alt"></i> Actualizar Conteo
+                                                </button>
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                <button class="btn btn-primary btn-sm custom-btn" (click)="exportToExcel()">
+                                                     <i class="fas fa-file-excel"></i> Exportar a Excel
+                                                </button>
+                                            </div>
+                                            <div *ngIf="!codigoBloqueo" class="form-group col-md-2">
+                                                <button class="btn btn-primary btn-sm custom-btn-cerrar" (click)="cerrarInventario()" [disabled]="codigoBloqueo">
+                                                    <i class="fas fa-lock"></i> Terminar Conteo
+                                                </button>
+                                            </div>
+                                            <div *ngIf="codigoBloqueo" class="form-group col-md-2">
+                                                <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()">
+                                                    <i class="fas fa-list-ol"></i> Ir a Reconteo {{ cantidadReconteos}}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div>
+                                            <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo" [totalItems]="totalItems" [listaRegistros]="listaRegistros"></app-grafico-torta>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -161,9 +170,7 @@
                             {{ mensaje }}
                         </div>
                         <br>
-                        <div *ngIf="isLoading" id="loader" class="overlay">
-                            <img src="../../../assets/img/loader-preview.svg" alt="loading" />
-                        </div>
+                    
                     </div>
                 </div>
             </div>

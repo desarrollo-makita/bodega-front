@@ -6,14 +6,14 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class UserService {
-  private apiUrl = "http://172.16.1.206:3024/api/crear-usuarios";
-  private getUser = "http://172.16.1.206:3024/api/get-all-users";
-  private updatetUser = "http://172.16.1.206:3024/api/editar-usuarios";
-  private getUserNameUrl = "http://172.16.1.206:3024/api/get-nombre-usuario";
-  private deleteUserUrl = "http://172.16.1.206:3024/api/delete-usuario";
-  private claveActualUrl = "http://172.16.1.206:3024/api/valida-clave-actual";
-  private recuperarClaveUrl = "http://172.16.1.206:3024/api/recuperar-password";
-  private replaceClaveUrl = "http://172.16.1.206:3024/api/replace-password-id";
+  private apiUrl = "http://172.16.1206:3024/api/crear-usuarios";
+  private getUser = "http://172.16.1206:3024/api/get-all-users";
+  private updatetUser = "http://172.16.1206:3024/api/editar-usuarios";
+  private getUserNameUrl = "http://172.16.1206:3024/api/get-nombre-usuario";
+  private deleteUserUrl = "http://172.16.1206:3024/api/delete-usuario";
+  private claveActualUrl = "http://172.16.1206:3024/api/valida-clave-actual";
+  private recuperarClaveUrl = "http://172.16.1206:3024/api/recuperar-password";
+  private replaceClaveUrl = "http://172.16.1206:3024/api/replace-password-id";
 
   constructor(private http: HttpClient) {}
 

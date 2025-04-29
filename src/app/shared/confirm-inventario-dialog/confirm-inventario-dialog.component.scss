@@ -76,3 +76,46 @@
 label {
  margin-left: 1%;
 }
+
+
+.loader-container {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  border-radius: 10px;
+  width: fit-content;
+  margin: 30px auto;
+  animation: fadeIn 0.5s ease-in-out;
+
+  .loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.loader-image {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1rem;
+  animation: spin 1.5s linear infinite;
+}
+
+.loader-text {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

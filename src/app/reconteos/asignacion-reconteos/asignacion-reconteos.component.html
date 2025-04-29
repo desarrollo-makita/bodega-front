@@ -1,87 +1,170 @@
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div *ngIf="cantidadReconteo > 0" class="card-header">
-                    <div class="col-md-3 reconteo-box">
-                        <span class="cantidad">{{ cantidadReconteo }}</span>
-                        <p class="message">Ítems de {{tipoItem}} encontrados para recontar</p>
-                     
-                            <!-- Reemplazamos el botón por el texto "Exportar Data" -->
-                            <span class="export-text" (click)="exportToExcel()">
-                                Exportar Datos
-                            </span>
-                       
-                    </div>
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+  
+          <!-- Loader -->
+          <div *ngIf="isLoading" id="loader" class="overlay">
+            <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+          </div>
+  
+          <!-- Contenido reconteo -->
+          <div *ngIf="cantidadReconteo > 0 && !isLoading" class="card-reconteo mat-elevation-z8 animate-fadeIn">
+    
+            <div class="text-box">
+              <h2 *ngIf="showMostrarBody" class="highlight-text">
+                ¡Tienes <span class="cantidad">{{ cantidadReconteo }}</span> ítems de
+                <span class="tipo">{{ tipoItem }}</span> para recontar!
+              </h2>
+              
+              <h2 *ngIf="showMostrarTarjetas" class="highlight-text">
+                ¡El proceso de <span class="cantidad">reconteo {{ reconteosData }}</span> para 
+                <span class="tipo">{{ tipoItem }}</span> esta en ejecución!
+              </h2>
+              <div *ngIf="showMostrarTarjetas" class="progress-container">
+                <div class="progress-text">
+                  <span>Reconteo: <strong>{{ItemsRecibidos}}</strong> de <strong>{{ItemsEnviados}}</strong> ítems</span>
                 </div>
-                <div *ngIf="isLoading" id="loader" class="overlay" style="margin-top: 20%;">
-                    <img src="../../../assets/img/loader-preview.svg" alt="loading" />
-                </div>
-                <div *ngIf="showMostrarBody" class="card-body">
-                    <div *ngIf="cantidadReconteo > 0; else noReconteos">
-                        <!-- Ingresar cantidad de operarios -->
-                        <div class="col-md-3 input-container">
-                            <label for="personasReconteo" style="font-size:100%;">Cantidad de operarios:</label>
-                            <input type="number" id="personasReconteo" class="input-field"
-                                [(ngModel)]="cantidadPersonas" name="cantidadPersonas"
-                                min="1" max="100" required
-                                (change)="actualizarOperarios()">
-                        </div>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="(ItemsRecibidos / ItemsEnviados) * 100"
+                  color="accent"
+                  class="progress-bar"
+                ></mat-progress-bar>
+              </div>
+              <div style="padding-top: 3%;">
+              <!-- <button
+                  mat-raised-button
+                  color="primary"
+                  style="background-color: #00909E;"
+                  (click)="exportToExcel()"
+                  matRipple>
+                  <mat-icon>download</mat-icon> Exportar a Excel
+                </button>-->  
 
-                        <!-- Mostrar campos dinámicos para ingresar los nombres de los operarios -->
-                        <div *ngFor="let operario of operarios; let i = index" class="col-md-3 nombre-editable">
-                            <label style="font-size: 90%;">Operario {{ i + 1 }}:</label>
-                            <select [(ngModel)]="operarios[i].nombre" class="form-control" name="operario{{i}}">
-                              <option value="" disabled selected>Seleccionar operario</option>
-                              <option *ngFor="let persona of operariosAsignados" [value]="persona.nombre">
-                                {{ persona.nombre }}
-                              </option>
-                            </select>
-                          </div>
-
-                          
-                        
-                     
-                    </div>
-                    <ng-template #noReconteos>
-                        <div class="no-reconteo">
-                            <p>No hay ítems pendientes de reconteo</p>
-                        </div>
-                    </ng-template>
-
-                    <!-- Lista de operarios ingresados -->
-                    <div *ngIf="operarios.length > 0">
-                        <div class="col-md-12 nombre-container">
-                            <div class="nombre-card">
-                                <p><strong>Operarios Asignados:</strong></p>
-                                <div class="nombres-grid">
-                                    <div *ngFor="let operario of operarios; let i = index">
-                                        <p>{{ i + 1 }} - {{ operario.nombre }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="add-button"
-                            (click)="agregarNombre()" [disabled]="operarios.length == 0">
-                        Agregar</button>
-                    </div>
-                    <br>
-                    <br>
-                    
-
-                </div>
-                <div class="alert-container">
-                    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
-                        {{ mensaje }}
-                    </div>
-                    <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
-                        {{ mensaje }}
-                    </div>
-                </div>
-            </div>
-         
+                <button
+                  mat-raised-button
+                  color="primary"
+                  style="background-color: #00909E;margin-left: 1%;"
+                  (click)="actualizarDatos()"
+                  matRipple>
+                  <mat-icon>refresh</mat-icon> Actualizar
+              </button>
+              </div>
+          </div>
         </div>
-    </div>
+          
+          <!-- Sección de asignación de operarios -->
+          <div *ngIf="showMostrarBody && !isLoading" class="card-operarios mat-elevation-z4 animate-slideIn">
+
+            <h3 class="titulo-operarios">
+            👷‍♂️ Asigna los operarios para el reconteo
+            </h3>
+        
+            <!-- Selección de cantidad de operarios -->
+            <div class="input-group">
+            <mat-form-field appearance="fill" class="cantidad-operarios-field">
+                <mat-label>Cantidad de operarios</mat-label>
+                <input matInput type="number" [(ngModel)]="cantidadPersonas" (change)="actualizarOperarios()" min="1" max="100">
+            </mat-form-field>
+            </div>
+        
+            <!-- Lista dinámica de select de operarios -->
+            <div class="operarios-list">
+            <div *ngFor="let operario of operarios; let i = index" class="operario-card mat-elevation-z2">
+                <mat-icon>person</mat-icon>
+                <span>Operario {{ i + 1 }}:</span>
+                <mat-form-field appearance="outline" class="select-field">
+                <mat-select [(ngModel)]="operarios[i].nombre" placeholder="Seleccionar operario">
+                    <mat-option *ngFor="let persona of operariosAsignados" [value]="persona.Usuario">
+                    {{ persona.Usuario }}
+                    </mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            </div>
+        
+            <!-- Vista de operarios asignados -->
+            <div *ngIf="operarios.length > 0" class="asignados-container">
+            <mat-card class="mat-elevation-z2 asignados-card">
+                <mat-card-title>✅ Operarios Asignados</mat-card-title>
+                <mat-card-content>
+                <div class="nombres-grid">
+                    <div *ngFor="let operario of operarios; let i = index" class="nombre-item">
+                    <mat-icon>badge</mat-icon>
+                    {{ i + 1 }} - {{ operario.nombre }}
+                    </div>
+                </div>
+                </mat-card-content>
+            </mat-card>
+            </div>
+        
+            <!-- Botón para agregar -->
+            <div class="boton-agregar-container">
+            <button mat-raised-button color="accent" (click)="agregarNombre()" [disabled]="operarios.length == 0">
+                <mat-icon>person_add</mat-icon> Agregar Operario
+            </button>
+            </div>
+          </div>
+  
+          <div *ngIf="showMostrarTarjetas && cantidadReconteo > 0" class="row" style="margin-top: 2%;">
+          <div class="col-md-12">
+              <mat-accordion>
+                  <mat-expansion-panel>
+                      <mat-expansion-panel-header>
+                          <mat-panel-title style="font-weight: bold; color: #00909E;">Detalles de reconteo</mat-panel-title>
+                      </mat-expansion-panel-header>
+
+                      <div class="row">
+                          <div class="col-md-3 mb-3 tarjeta-reconteo" *ngFor="let grupo of groupedByUsuario">
+                              <div class="card-header text-center">
+                                  <p style="margin: 0.5em 0 0 0; font-style: italic; color: #888;">
+                                      Asignado: <strong style="color: #333;">{{ grupo.data[0]?.Usuario }}</strong>
+                                  </p>
+                                 
+                                  <p style="margin: 0; font-weight: bold; color: #004d4d;">
+                                      ESTADO: <span style="color: #009688;">{{ grupo.data[0]?.Estado }}</span>
+                                  </p>
+                                  <p style="margin: 0; font-weight: bold; color: #004d4d;">
+                                    ITEMS: <span style="color: #007bff;">{{ grupo.data.length }}</span>
+                                </p>
+                                 
+                              </div>
+                          </div>
+                      </div>
+                  </mat-expansion-panel>
+              </mat-accordion>
+          </div>
+          </div>
+        
+          <!-- Mensaje de no hay reconteo -->
+          <div *ngIf="cantidadReconteo == 0 && !isLoading" class="card-reconteo mat-elevation-z8 animate-fadeIn">
+          <h2 class="highlight-text">No hay reconteo disponible</h2>
+          </div>
+        
+          <br>
+        
+          <div *ngIf="showMostrarTarjetas"   class="boton-extra-container">
+            <button class="boton-extra" (click)="volverAtras()">
+              Volver
+            </button>
+          
+            <button *ngIf="false" class="boton-extra" (click)="tuFuncionAqui()">
+              Nuevo Reconteo
+            </button>
+          </div>
+          
+          <div class="alert-container">
+            <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+                {{ mensaje }}
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+                {{ mensaje }}
+            </div>
+          </div>
+      
+        </div>
+      </div>
+  </div>
 </div>
+  

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MyDataService } from 'app/services/data/my-data.service';
 import { InventarioService } from 'app/services/inventario/inventario.service';
 import { OPERARIOS } from 'app/shared/constants';
 
@@ -49,7 +50,7 @@ export class AsignarCapturadorComponent {
     { nombre: '04-REPUESTOS' }
   ];
  
-  constructor(private inventarioService : InventarioService) {}
+  constructor(private inventarioService : InventarioService ,  private myDataService: MyDataService) {}
 
   ngOnInit(): void {
     this.selectedPeriodo = new Date().getFullYear().toString();
@@ -151,6 +152,8 @@ export class AsignarCapturadorComponent {
         console.log('Respuesta obtenerAsignaciones  - servidor:', response);
         this.asignaciones = response.data;
         
+
+        this.myDataService.setArrayCap(this.asignaciones); // Actualiza el BehaviorSubject con los datos obtenidos
       },
       error: (error) => {
  

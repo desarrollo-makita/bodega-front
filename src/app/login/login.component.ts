@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('menu');
+    sessionStorage.removeItem('data');
     
   }
 
@@ -52,8 +53,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = true; // Mostrar el loader
       this.loginService.login(usuario, clave).subscribe({
         next: response => {
-         
-         
+          
           // Guarda el token en el localStorage
           sessionStorage.setItem('menu', JSON.stringify(response.data.menu));
           

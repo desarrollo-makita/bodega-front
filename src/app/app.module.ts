@@ -38,13 +38,14 @@ import { GraficoTortaComponent } from './grafico-torta/grafico-torta.component';
 import { ConfirmInventarioDialogComponent } from './shared/confirm-inventario-dialog/confirm-inventario-dialog.component';
 import { MatSelectModule } from '@angular/material/select';
 import { CerrarInventarioDialogComponent } from './shared/cerrar-inventario-dialog/cerrar-inventario-dialog.component';
-import { ReconteosComponent } from './reconteos/reconteos/reconteos.component';
+
 import { AsignacionReconteosComponent } from './reconteos/asignacion-reconteos/asignacion-reconteos.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AlmacenamientoDialogComponent } from './shared/almacenamiento-dialog/almacenamiento-dialog.component';
-
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   imports: [
@@ -68,7 +69,9 @@ import { AlmacenamientoDialogComponent } from './shared/almacenamiento-dialog/al
     NgxPaginationModule,
     MatNativeDateModule,
     MatDatepickerModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatExpansionModule,
+    MatProgressBarModule
 
     
   ],
@@ -89,7 +92,6 @@ import { AlmacenamientoDialogComponent } from './shared/almacenamiento-dialog/al
     GraficoTortaComponent,
     ConfirmInventarioDialogComponent,
     CerrarInventarioDialogComponent,
-    ReconteosComponent,
     AsignacionReconteosComponent,
     AlmacenamientoDialogComponent,
 

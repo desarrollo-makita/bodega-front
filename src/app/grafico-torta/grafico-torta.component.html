@@ -1,5 +1,19 @@
 <div class="grafico-container">
-  <canvas class="canvas-style" #graficoCanvas></canvas>
-  
-  <p style="margin-top: -5em; margin-left: 2%;"><strong>{{ ((conteoTotal / saldoTotal) * 100).toFixed(2) }}% de Avance</strong></p>
+  <div class="grafico-titulo">
+    <h3>Avance de Inventario</h3>
+    <p>Se encontraron <strong>{{ totalItems }}</strong> Items de {{ titulo.substring(3) }}</p>
+  </div>
+
+  <div class="chart-wrapper">
+    <canvas class="canvas-style" #graficoCanvas></canvas>
+    <div class="center-text">
+      <strong>{{ ((conteoRealizado / totalItems) * 100).toFixed(2) }}%</strong>
+    </div>
+  </div>
+
+    <!-- Agregamos el nuevo bloque para mostrar saldo y conteo -->
+    <div class="grafico-info">
+      <p><strong>{{ totalItems }}</strong> item en total, <strong>{{ conteoRealizado }}</strong> item han sido contadas.</p>
+      <p><strong>{{ saldoTotal }}</strong> unidades en total, <strong>{{ conteoTotal }}</strong> han sido contadas.</p>
+    </div>
 </div>

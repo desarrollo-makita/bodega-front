@@ -2,24 +2,33 @@
 
 <mat-dialog-content class="dialog-content">
   <form [formGroup]="inventarioForm" (ngSubmit)="onConfirm()">
-    <div class="mensaje-container">
+    <div *ngIf="!isLoading" class="mensaje-container">
       <p class="mensaje-principal">
         {{data.mensaje}} para el periodo <span class="mensaje-destacado">{{data.mes}} {{data.periodo}}</span>
       </p>
     </div>
     
-    <div class="subtitulo-container">
+    <div *ngIf="!isLoading" class="subtitulo-container">
       <p class="subtitulo-class">¿Desea Iniciar el inventario?</p>
     </div>
+
+    <div *ngIf="isLoading" class="dialog-content loader-container">
+      <div class="loader-content">
+        <h3 class="dialog-title">Cargando saldos...</h3>
+        <img src="../../../assets/img/loader-preview.svg" alt="loading" class="loader-image" />
+        <p class="mensaje-principal">Estamos preparando la información del inventario.</p>
+        <p class="mensaje-destacado">Por favor, espera un momento.</p>
+      </div>
+    </div>
   
-    <div class="leyenda-container">
+    <div *ngIf="!isLoading" class="leyenda-container">
       <p class="leyenda-class">
         Al iniciar el inventario, se actualizarán los saldos de las opciones escogidas.
       </p>
     </div>
 
      <!-- Sección para los checkboxes de categorías -->
-    <div class="checkbox-container">
+    <div *ngIf="!isLoading"  class="checkbox-container">
       <p class="checkbox-title">Seleccione categorías:</p>
       <div class="checkbox-list">
         <div *ngFor="let categoria of categorias" class="form-check">
@@ -39,12 +48,10 @@
 
     <br>
     
-    <div *ngIf="isLoading" id="loader">
-      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
-    </div>
+    
 
      <!-- Contenedor de Combobox con mejor diseño -->
-    <div class="combobox-container">
+    <div *ngIf="!isLoading" class="combobox-container">
       <mat-form-field appearance="outline" class="combobox">
         <mat-label>Seleccionar Local</mat-label>
         <mat-select formControlName="selectedLocal" (selectionChange)="onLocalChange($event)"  [disabled]="desactivarComboBoxLocal">
@@ -68,7 +75,7 @@
       El inventario ya fue iniciado para este periodo, mes, local y grupo.
     </div>
 
-    <mat-dialog-actions class="dialog-actions">
+    <mat-dialog-actions *ngIf="!isLoading" class="dialog-actions">
       <button
         mat-button
         class="cancelar-boton"

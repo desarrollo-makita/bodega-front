@@ -9,11 +9,25 @@ import { LOCALES, MESES, TIPOS_ITEMS } from 'app/shared/constants';
 import { Router } from '@angular/router';
 import { MyDataService } from 'app/services/data/my-data.service';
 import { AlmacenamientoDialogComponent } from 'app/shared/almacenamiento-dialog/almacenamiento-dialog.component';
+import {
+  trigger,
+  transition,
+  style,
+  animate
+} from '@angular/animations';
 
 @Component({
   selector: 'app-inventario',
   templateUrl: './inventario.component.html',
-  styleUrls: ['./inventario.component.scss']
+  styleUrls: ['./inventario.component.scss'],
+  animations: [
+    trigger('fadeSlideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class InventarioComponent implements OnInit {
 
@@ -23,6 +37,7 @@ export class InventarioComponent implements OnInit {
   selectedTipoItem: string;
   selectedLocal: string;
   selectedGrupo: string;
+  mensajeCargado: string = '';
 
   codigoBloqueo: boolean= false;
 
@@ -67,6 +82,7 @@ export class InventarioComponent implements OnInit {
 
   cantidadReconteos2: number = 2;
   almacenamiento: string = 'N';
+  listaRegistros: any[] = [];
 
   constructor(
     private invetarioServices: InventarioService , 
@@ -77,8 +93,11 @@ export class InventarioComponent implements OnInit {
 ) {}
 
   ngOnInit(): void {
-    this.validarInventarioFun();
+    // Luego para obtenerlo de nuevo (cuando lo necesites):
     this.obtenerGrupoLocal();
+    this.recargarDataRegistro()
+    this.validarInventarioFun();
+   
   }
   openDialog(mensaje: string){
     this.mostrarFlecha= false;
@@ -87,7 +106,7 @@ export class InventarioComponent implements OnInit {
   }
  
   openConfirmDialog(mensaje: string): void {
-    console.log("mensaje  : " , mensaje , '-' , this.respuestaValidaInicioInventario);
+    
     const meses = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -106,26 +125,26 @@ export class InventarioComponent implements OnInit {
       
       }
     });
-
     
-  
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
         this.successMessage = true;
-        console.log('Inventario iniciado con éxito:', result.data);
+        
+        this.titulo = result.data.categorias[0];
         this.mensaje = 'Inventario iniciado correctamente';
         this.validarInventarioFun()
+        this.consultaTablaRegistroInicial(result.data)
         setTimeout(() => {
           this.successMessage = false;
           
         }, 2000);
        
       } else if (result?.action === 'cerrar') {
-        console.log("se cierra el modal")
+        
       }else{
         this.errorMessage = true;
         this.mensaje = 'Error al iniciar el inventario';
-        console.log('El usuario canceló o hubo un error');
+        
         this.validarInventarioFun()
         setTimeout(() => {
           this.errorMessage = false;
@@ -136,7 +155,7 @@ export class InventarioComponent implements OnInit {
   }
 
   almacenamientoConfirmDialog(mensaje: string , datosFiltro : any): void {
-    console.log("mensaje  : " , mensaje , '-' , datosFiltro);
+    
     const dialogRef = this.dialog.open(AlmacenamientoDialogComponent, {
       //disableClose: true,
       data: {
@@ -156,7 +175,7 @@ export class InventarioComponent implements OnInit {
         }, 2000);
        
       } else if (result?.action === 'cerrar') {
-        console.log("se cierra el modal")
+        
       }
     });
   }
@@ -166,8 +185,9 @@ export class InventarioComponent implements OnInit {
 
     this.invetarioServices.obtenerBodegas().subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor grupoLocal:', response.data);
+        
         this.grupoList = response.data;
+        sessionStorage.setItem('respuestaGrupo', JSON.stringify(this.grupoList));
       },
       error: (error) => {
       
@@ -184,28 +204,17 @@ export class InventarioComponent implements OnInit {
   onSubmit() {
     this.isLoading = true;
     this.consultaTablaRegistro();
-    // Añadir la clase 'loading' al body para desactivar interacciones
-    
-   /* if(!this.habilitarBoxes){
-      const mensaje = `Usted no ha iniciado el inventario`;
-      this.openConfirmDialog(mensaje);
-      this.isLoading = false;
-      
-    }else{
-      this.consultaTablaRegistro();
-      
-    }*/
     
   }
 
 
   calcularTotales() {
     // Sumamos los valores de "SaldoStock" y "Conteo" de cada fila
-    console.log("Datos del inventario:", this.inventarioData);
+    
     this.saldoTotal = this.inventarioData.reduce((total, row) => total + row.SaldoStock, 0);
     this.conteoTotal = this.inventarioData.reduce((total, row) => total + row.Conteo, 0);
 
-    this.titulo = this.selectedTipoItem;        
+    this.titulo = this.selectedTipoItem ? this.selectedTipoItem : this.titulo; ;        
   }
   mostrarMensaje(texto: string) {
     this.mensaje = texto;
@@ -216,11 +225,11 @@ export class InventarioComponent implements OnInit {
     }, 9000); // Ocultar mensaje después de 2 segundos
   }
 
-  resetFormulario() {   
+  /*resetFormulario() {   
     this.selectedTipoItem = "";
     this.selectedLocal = "";
     this.inventarioData = [];
-  }
+  }*/
 
   formValido(): boolean {
     return !!(this.selectedMes && this.selectedPeriodo && this.selectedTipoItem && this.selectedLocal);
@@ -228,9 +237,13 @@ export class InventarioComponent implements OnInit {
 
   onChange() {
   
-    console.log('Tipo de ítem seleccionado:', this.selectedTipoItem);
-    console.log('Local seleccionado:', this.selectedLocal);
-    console.log('Fecha inicio inventsario:', this.selectedFechaInicio);
+    
+    
+    
+     // Guardar cada valor por separado
+    sessionStorage.setItem('tipoItem', this.selectedTipoItem || '');
+    sessionStorage.setItem('local', this.selectedLocal || '');
+    sessionStorage.setItem('fechaInventario', this.selectedFechaInicio || '');
     
   }
 
@@ -250,50 +263,42 @@ export class InventarioComponent implements OnInit {
   }
 
   actualizarPaginacion() {
-    console.log("Nueva cantidad de elementos por página:", this.itemsPerPage);
+    
     this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
   }
 
   validarInventarioFun(){
-
-    const fechaActual = new Date();
-  // Formatear la fecha al formato YYYY-MM-DD
-    this.formattedDate = fechaActual.toISOString().split('T')[0];
-
-    console.log("Fecha formateada : ", this.formattedDate);
     
+    const fechaActual = new Date();
+    
+    this.formattedDate = fechaActual.toISOString().split('T')[0];
     this.periodo = fechaActual.getFullYear().toString();
-    console.log("periodo ", this.periodo);
     this.mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
-    console.log("mes : ", this.mes);
-
     this.selectedPeriodo = this.periodo;
     this.selectedMes = this.mes;
 
     const token = sessionStorage.getItem("authToken");
     const decodedToken = this.authService.decodeToken(token);
     this.usuario = decodedToken.username;
-    console.log("validarInicioInventario : ", this.formattedDate);
+    
+    
+    
     this.invetarioServices.validarInicioInventario(this.formattedDate).subscribe({
       next: (response) => {
-        console.log("response : ", response);
+        
         if (!response.data) {
-          console.log("Error: response.data es null o undefined." , response);
+          
           this.tiposItems = []; // Evita el error de map() al asignar un array vacío
         } else if (!Array.isArray(response.data)) {
-          console.log("Error: response.data no es un array. Valor recibido:", response.data);
+          
           this.tiposItems = [];
         }else{
           this.respuestaValidaInicioInventario = response.data;
 
           this.tiposItems = response.data;
-        
-        //  this.tiposItems = [...new Map(this.tiposItems.map(item => [item.Tipoitem, item])).values()];
-
-        this.tiposItems= TIPOS_ITEMS;
-        
-  
+          this.tiposItems= TIPOS_ITEMS;
           this.isLoading = true;
+         
           if (response.data.length === 0 ) {
             // Mostrar el pop-up cuando el código sea 0
             const mensaje = `Usted no ha iniciado el inventario`;
@@ -328,10 +333,14 @@ export class InventarioComponent implements OnInit {
   }
 
   actualizarConteo(){ 
+    this.mensajeCargado = 'Se están actualizando los conteos ingresados...'
     this.isLoading = true;
     this.mostrarGrafico = false;
-    const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
-  
+    const localGuardado = sessionStorage.getItem('local') || ''; 
+    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
+   
+    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
+   
     const data = {
         periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
         mes: parseInt(this.selectedMes, 10) || null, 
@@ -341,11 +350,11 @@ export class InventarioComponent implements OnInit {
         fechaInventario: this.selectedFechaInicio,
     };
 
-    console.log("data:", data);
+    
 
     this.invetarioServices.actualizarSaldosSinCierre(data).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor actualizarSaldosSinCierre:', response);
+        
     },
       error: (error) => {
         this.isLoading = false;
@@ -365,9 +374,13 @@ export class InventarioComponent implements OnInit {
           local: this.selectedLocal,
           grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array,
           fechaInventario: this.selectedFechaInicio,
+          
       };
         this.actualizaTabla(dataActualizaTabla);
-        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false;
+          
+        }, 50000);
        
         
       },
@@ -379,13 +392,13 @@ export class InventarioComponent implements OnInit {
    // const fecha = new Date('2025-02-31');
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
-        console.log('Respuesta actualizaTabla:', response);
+        
         this.isLoading = true;
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
           this.successMessage = true;
           this.mostrarMensaje(`DEBE INICIAR INVENTARIO DE ${data.tipoItem}`);
           this.inventarioData = [];
-          this.resetFormulario();
+         // this.resetFormulario();
           this.showTable = false;
         } else {
           this.mensaje = ""; // Limpiar mensaje si hay datos
@@ -403,13 +416,13 @@ export class InventarioComponent implements OnInit {
         this.calcularTotales();
         this.successMessage = true;
         this.mostrarGrafico = true
-        this.isLoading = false;
-        this.successMessage = true;
+     
         this.mensaje = 'Inventario Actualizado correctamente';
         this.consultaTablaRegistro();
         setTimeout(() => {
+          //this.isLoading = false;
           this.successMessage = false;
-        }, 2500);
+        }, 6000);
       },
     })
   }
@@ -433,22 +446,29 @@ export class InventarioComponent implements OnInit {
           fechaInventario: this.selectedFechaInicio
         };
     
+    // Guarda el objeto convertido en string
+    sessionStorage.setItem('data', JSON.stringify(data));
    
+
     this.isLoading = true;
     this.showTable = false;
+    
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
-        console.log('Respuesta consultaInventario:', response);
+        
 
         this.totalItems = response.data.recordset.length;
+        this.listaRegistros = response.data.recordset;
+        
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+       
           this.sinInventarioIniciado =  true;
           this.showTable = false;
           this.errorMessage = true;
           this.mostrarFlecha = true;
           this.mostrarMensaje(`${response.info.mensaje}`);
           this.inventarioData = [];
-          this.resetFormulario();
+         // this.resetFormulario();
           setTimeout(() => {
            this.mostrarFlecha = false;
           }, 8000);
@@ -477,7 +497,7 @@ export class InventarioComponent implements OnInit {
           this.isLoading = false;
         }else{
           this.calcularTotales()
-          console.log("se calcularon los totales");
+          
           this.mostrarGrafico = true;
           this.showTable= true;
           
@@ -492,9 +512,13 @@ export class InventarioComponent implements OnInit {
   }
 
   cerrarInventario(){
+    this.mensajeCargado = 'Cerrando conteo y sumando almacenamiento...'
     this.isLoading = true;
     this.mostrarGrafico = false;
-    const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
+    const localGuardado = sessionStorage.getItem('local') || ''; 
+    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
+   
+    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
   
    const data = {
         periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
@@ -505,11 +529,11 @@ export class InventarioComponent implements OnInit {
         fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
     };
 
-    console.log("data:", data);
+    
 
     this.invetarioServices.cierreInventario(data).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor cierreInventario:', response);
+        
         this.codigoBloqueo = response.codigo === 0 ? true: false;
     },
       error: (error) => {
@@ -533,7 +557,10 @@ export class InventarioComponent implements OnInit {
           fechaInventario: this.selectedFechaInicio,
       };
         this.actualizaTabla(dataActualizaTabla);
-        
+        setTimeout(() => {
+          this.isLoading = false;
+          
+        }, 5000);
         
       },
     });
@@ -541,11 +568,11 @@ export class InventarioComponent implements OnInit {
   }
 
   validarCierreInventario(data: any){
-    console.log("validaaaqaaciereeeee" , data);
+    
     this.isLoading = true;
     this.invetarioServices.validarCierreInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
       next: (response) => {
-        console.log('Respuesta valida cierre inventario:', response);
+        
 
         this.codigoBloqueo = response.data.Estado === 1 ? true : false;
     
@@ -583,7 +610,7 @@ export class InventarioComponent implements OnInit {
   separarFecha(fecha: Date | string | null): { periodo: string, mes: string, dia: number } {
     // Si la fecha es null, retornamos valores predeterminados
     if (fecha === null) {
-      console.log('Error: fecha es null');
+      
       return { periodo: '', mes: '', dia: 0 };
     }
   
@@ -593,19 +620,19 @@ export class InventarioComponent implements OnInit {
       if (typeof fecha === 'string') {
         fecha = new Date(fecha);
       } else {
-        console.log('Error: el parámetro no es una fecha válida');
+        
         return { periodo: '', mes: '', dia: 0 };  // Retorna valores predeterminados si no se puede convertir
       }
     }
   
     // Verificar si la conversión fue exitosa
     if (isNaN(fecha.getTime())) {
-      console.log('Error: la fecha no es válida');
+      
       return { periodo: '', mes: '', dia: 0 };  // Retorna valores predeterminados si la fecha no es válida
     }
   
     // Si la fecha es válida, procesamos el año, mes y día
-    console.log('Tipo de datos de fecha:', typeof fecha);  // Esto te mostrará el tipo de datos
+    
   
     const periodo = fecha.getFullYear().toString();
     const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
@@ -615,22 +642,25 @@ export class InventarioComponent implements OnInit {
   }
 
   reconteo(){
-  
-    console.log("this.cantidadReconteos," , this.cantidadReconteos);
-    const mensaje = `¿Desea sumar el almacenaje?`;
-    const grupoEncontrado = this.grupoList.find(grupo => grupo.NumeroLocal === this.selectedLocal);
+    const localGuardado = sessionStorage.getItem('local') || ''; 
+    const tipoItem = sessionStorage.getItem('tipoItem') || '';
+    const fechaInventario = sessionStorage.getItem('fechaInventario') || '';
     
+    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
+    const mensaje = `¿Desea sumar el almacenaje?`;
+    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
+
     const datosInventario = {
-      tipoItem: this.selectedTipoItem,
-      local: this.selectedLocal,
-      fechaInventario: this.selectedFechaInicio,
+      tipoItem: tipoItem,
+      local: localGuardado,
+      fechaInventario: fechaInventario,
       bodega: grupoEncontrado.GrupoBodega,
       loading: this.isLoading,
       numeroReconteo :  this.cantidadReconteos,
       almacenamiento: this.almacenamiento,
     };
 
-    console.log("datosInventario : ",datosInventario)
+    
 
     this.myDataService.setReconteoData(datosInventario);
 
@@ -652,16 +682,17 @@ export class InventarioComponent implements OnInit {
       next: (response) => {
       
         if (response?.data?.NumeroReconteo !== undefined) {
-          console.log('Entró al IF: NumeroReconteo es', response.data.NumeroReconteo);
+          
   
-          this.ultimo = response.data.NumeroReconteo;
-          this.cantidadReconteos = isNaN(this.ultimo) ? 1 : this.ultimo + 1;
+          this.cantidadReconteos  = response.data.NumeroReconteo;
+          sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
+        
         } else {
-          console.log('Entró al ELSE: Accion es undefined o no existe');
+          
           this.cantidadReconteos = 1;
         }
   
-        console.log('this.cantidadReconteos', this.cantidadReconteos);
+        
       },
       error: (error) => {
         console.error('Error al validar cantidad de reconteos:', error);
@@ -676,9 +707,143 @@ export class InventarioComponent implements OnInit {
   onToggleAlmacenamiento(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.almacenamiento = checked ? 'S' : 'N';
-    console.log('almacenamiento:', this.almacenamiento);
+    
   }
   
+
+  consultaTablaRegistroInicial(dataConsultaTabla: any){
+    
+   
+
+   const data = {
+    tipoItem: dataConsultaTabla.categorias[0],
+    local: dataConsultaTabla.numeroLocal,
+    fechaInventario: dataConsultaTabla.fechaInventario
+    ,
+   }
+
+   
+  this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      next: (response) => {
+        
+        this.totalItems = response.data.recordset.length;
+        this.listaRegistros = response.data.recordset;
+        this.totalItems = response.data.recordset.length;
+        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+          this.sinInventarioIniciado =  true;
+          this.showTable = false;
+          this.errorMessage = true;
+          this.mostrarFlecha = true;
+          this.mostrarMensaje(`${response.info.mensaje}`);
+          this.inventarioData = [];
+         // this.resetFormulario();
+          setTimeout(() => {
+           this.mostrarFlecha = false;
+          }, 8000);
+ 
+        } else {
+          this.sinInventarioIniciado =  false;
+         // this.mensaje = ""; // Limpiar mensaje si hay datos
+          this.inventarioData = response.data.recordset;
+          this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
+          this.showTable = true;
+          this.mostrarFlecha = false;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        
+        console.error('Error en la consulta:', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+      },
+      complete: () => {
+        if(this.sinInventarioIniciado){
+
+          this.showTable= false;
+          this.mostrarGrafico = false
+          this.isLoading = false;
+        }else{
+          this.calcularTotales()
+          
+          this.mostrarGrafico = true;
+          this.showTable= true;
+          
+        
+          this.validarCierreInventario(data);
+          this.validarCantidadReconteos(data);
+        }
+        
+        
+      },
+    });
+  }
+
+  recargarDataRegistro(){
+    
+    const data = JSON.parse(sessionStorage.getItem('data'));
+    
+    
+    if (!data || Object.keys(data).length === 0) {
+      
+      return; // Salir si no hay datos
+    }
+    this.isLoading = true;
+    this.showTable = false;
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      next: (response) => {
+        
+
+        this.totalItems = response.data.recordset.length;
+        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+          this.sinInventarioIniciado =  true;
+          this.showTable = false;
+          this.errorMessage = true;
+          this.mostrarFlecha = true;
+          this.mostrarMensaje(`${response.info.mensaje}`);
+          this.inventarioData = [];
+         // this.resetFormulario();
+          setTimeout(() => {
+           this.mostrarFlecha = false;
+          }, 8000);
+ 
+        } else {
+          this.sinInventarioIniciado =  false;
+         // this.mensaje = ""; // Limpiar mensaje si hay datos
+          this.inventarioData = response.data.recordset;
+          this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
+          this.showTable = true;
+          this.mostrarFlecha = false;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        
+        console.error('Error en la consulta:', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+      },
+      complete: () => {
+        if(this.sinInventarioIniciado){
+
+          this.showTable= false;
+          this.mostrarGrafico = false
+          this.isLoading = false;
+        }else{
+          this.calcularTotales()
+          
+          this.mostrarGrafico = true;
+          this.showTable= true;
+          
+        
+        this.validarCierreInventario(data);
+        this.validarCantidadReconteos(data);
+        }
+        
+        
+      },
+    });
+  }
   
 
 }

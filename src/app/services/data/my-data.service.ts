@@ -15,6 +15,7 @@ export class MyDataService {
   private userObjectSource = new BehaviorSubject<User | null>(null); // Valor inicial para el objeto
   private showEdit = new BehaviorSubject<boolean>(true); // Valor inicial para boolean
   private reconteoDataSource = new BehaviorSubject<ReconteoData | null>(null);
+  private asignacionCapturadoresSource = new BehaviorSubject<any[]>([]); // Valor inicial para array
   
   // Observables expuestos para suscribirse
   stringData$ = this.dataSource.asObservable();
@@ -22,6 +23,7 @@ export class MyDataService {
   userObjectData$ = this.userObjectSource.asObservable();
   booleanData$ = this.showEdit.asObservable();
   reconteoData$ = this.reconteoDataSource.asObservable();
+  asignacionCap$ = this.asignacionCapturadoresSource.asObservable();
 
   
   constructor() { }
@@ -38,6 +40,9 @@ export class MyDataService {
     return this.arrayData$;
   }
 
+  getArrayCap() {
+    return this.asignacionCap$;
+  }
   getUserObjectData() {
     return this.userObjectData$;
   }
@@ -56,6 +61,10 @@ export class MyDataService {
 
   setArrayData(data: any[]) {
     this.arrayDataSource.next(data);
+  }
+
+  setArrayCap(data: any[]) {
+    this.asignacionCapturadoresSource.next(data);
   }
 
   setUserObjectData(data: User) {

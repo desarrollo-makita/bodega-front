@@ -8,10 +8,14 @@ import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 })
 export class GraficoTortaComponent implements AfterViewInit {
   @ViewChild('graficoCanvas') graficoCanvas!: ElementRef;
-  @Input() saldoTotal: number = 0; // Recibimos el total de Saldo Stock
-  @Input() conteoTotal: number = 0; // Recibimos el total de Conteo
-  @Input() titulo: string = ''; // Recibimos el titulo del gráfico
-  @Input() totalItems: number = 0; // Recibimos el total items
+  @Input() saldoTotal: number = 0;
+  @Input() conteoTotal: number = 0;
+  @Input() titulo: string = '';
+  @Input() totalItems: number = 0;
+  @Input() listaRegistros: any;
+
+  private chartInstance: Chart | null = null;
+  conteoRealizado:any
 
   constructor() {
     Chart.register(...registerables);
@@ -22,52 +26,59 @@ export class GraficoTortaComponent implements AfterViewInit {
   }
 
   crearGrafico() {
-    const porcentajeAvance = ((this.conteoTotal / this.saldoTotal) * 100).toFixed(2);
-    const porcentajeSaldo = (100 - parseFloat(porcentajeAvance)).toFixed(2);
-  
-    new Chart(this.graficoCanvas.nativeElement, {
-      type: 'pie',
+    console.log("listaRegistros: ", this.listaRegistros);
+
+    if (!this.listaRegistros || this.listaRegistros.length === 0) {
+      console.warn("No hay datos para mostrar el gráfico.");
+      return;
+    }
+
+    const totalItems = this.listaRegistros.length;
+    this.conteoRealizado = this.listaRegistros.filter(item => parseFloat(item.Conteo) > 0).length;
+    const conteoPendiente = totalItems - this.conteoRealizado;
+
+    const porcentajeRealizado = ((this.conteoRealizado / totalItems) * 100).toFixed(2);
+    const porcentajePendiente = (100 - parseFloat(porcentajeRealizado)).toFixed(2);
+
+    // Destruye el gráfico anterior si existe
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    this.chartInstance = new Chart(this.graficoCanvas.nativeElement, {
+      type: 'doughnut',
       data: {
-        labels: [
-          `Saldo total Stock = ${this.saldoTotal}`, 
-          `Conteo = ${this.conteoTotal}`
-        ],
+        labels: ['Ítems pendientes de contar', 'Conteo de item realizado'],
         datasets: [{
-          data: [porcentajeSaldo, porcentajeAvance], 
-          backgroundColor: ['#ff6347', '#008686'], // Colores para cada sección del gráfico
+          data: [conteoPendiente, this.conteoRealizado],
+          backgroundColor: ['#E0E0E0', '#008686'],
+          borderWidth: 0
         }]
       },
       options: {
-        responsive: true,
+        responsive: false,
         maintainAspectRatio: false,
-        layout: {
-          padding: 5
+        cutout: '70%',
+        animation: {
+          animateRotate: true,
+          duration: 1200,
+          easing: 'easeOutBounce'
         },
         plugins: {
           legend: {
-            position: 'left',
-            align: 'center',
-            labels: {
-              padding: 5,
-              font: {
-                size:20
-              }
-            }
+            display: false,
           },
           title: {
-            display: true, 
-            text: `Se encontraron ${this.totalItems} Items de  ${this.titulo.substring(3)}`,
-            font: {
-              size: 20,
-              weight: 'bold'
-            },
+            display: false
           },
           tooltip: {
             callbacks: {
-              label: function(context) {
-                let value = context.raw;
-                let label = context.label;
-                return `${label}: ${value}%`;
+              label: function (context) {
+                const value = context.raw;
+                const label = context.label;
+                const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                const porcentaje = ((Number(value) / Number(total)) * 100).toFixed(2);
+                return `${label}: ${porcentaje}%`;
               }
             }
           }
@@ -75,7 +86,4 @@ export class GraficoTortaComponent implements AfterViewInit {
       }
     });
   }
-  
-  
-
 }

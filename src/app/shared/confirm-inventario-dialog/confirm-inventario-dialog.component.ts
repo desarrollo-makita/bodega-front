@@ -85,7 +85,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       fechaInventario: this.formattedDate
     }
    
-    
+    console.log("dataInicio", dataInicio);
     if (this.data && this.data.datos) {
       if (this.verificarInventario(this.data.datos, dataInicio)) {
         this.inventarioIniciado = true; // Setea a true si el inventario ya fue iniciado
@@ -117,7 +117,10 @@ export class ConfirmInventarioDialogComponent implements OnInit {
             this.isLoading = false;
             this.desactivarBotonInicio = false;
             this.desactivarBotonCerrar = true;
-            this.dialogRef.close({ success: true, data: dataInicio }); // Enviar datos al padre
+            this.dialogRef.close(
+              { success: true, data: dataInicio }
+            
+            ); // Enviar datos al padre
     
             
           },
@@ -228,6 +231,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       resultado2.categorias.includes(item.Tipoitem)
     );
   
+    console.log("inventarioEncontrado", inventarioEncontrado)
     if (inventarioEncontrado) {
       console.log("Ya fue iniciado el inventario escogido");
       this.desactivarBotonCerrar= false; 
