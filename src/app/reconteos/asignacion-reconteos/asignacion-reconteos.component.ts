@@ -45,7 +45,11 @@ export class AsignacionReconteosComponent implements OnInit {
   
   ItemsRecibidos: number = 0;
   ItemsEnviados: number = 0;
-
+  nuevaCantidad: number = 0;
+  listaRegistros: any[] = [];
+  itemsPerPage: number = 5; // Elementos por página
+  p: number = 1; // Página actual
+  cantidadActual: any;
 
 
   @ViewChildren('inputElement') inputs!: QueryList<ElementRef>;
@@ -58,12 +62,13 @@ export class AsignacionReconteosComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.setCapturadores();
+    this.consultaTablaRegistro();
     // recuperamos la dta que se setea en la pantalla de inventario
     this.dataService.getReconteoData().pipe(take(1)).subscribe({
       next: (response) => {
         this.isLoading = true;
-        this.requestReconteo = response;
-        this.reconteosData = response.numeroReconteo;
+        this.requestReconteo = response; // dato de entrada para servicios
+        this.reconteosData = response.numeroReconteo; // el numeros  ereconteo que vamos
         this.tipoItem = response.tipoItem.substring(3);
       
        
@@ -73,8 +78,7 @@ export class AsignacionReconteosComponent implements OnInit {
         // Lógica de manejo de errores
       },
       complete: () => {
-
-    
+        console.log("responseReconteo", this.requestReconteo);
         if(this.reconteosData === 1 ){
      
           this.iniciarReconteos(this.requestReconteo);
@@ -83,7 +87,9 @@ export class AsignacionReconteosComponent implements OnInit {
         }
       },
     });
-
+    this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
+   
+  
     this.consultarResumenReconteo(this.requestReconteo);
   }
 
@@ -93,18 +99,28 @@ export class AsignacionReconteosComponent implements OnInit {
         this.inputs.first.nativeElement.focus();
     }
 }
-
+actualizarPaginacion() {
+    
+  this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
+}
   obtenerReconteo(data : any ){
     this.invetarioServices.consultarReconteo(data).subscribe({
       next: (response) => {
       
         this.cantidadReconteo = response.data.length;
         this.listaItems= response.data;
+        if(this.cantidadReconteo === 0 ){
+           // Convertir a número y manejar si es null
+          const cantidad = this.cantidadActual ? parseInt(this.cantidadActual, 10) : 0;
+          // Sumar 1
+          this.nuevaCantidad = cantidad + 1;
+          sessionStorage.setItem('cantidadReconteos', this.nuevaCantidad.toString());
+        }
 
         this.listaSinUsuarios = this.listaItems.filter(
           (item: any) => !item.Usuario || item.Usuario.trim() === ''
         );
-      
+      console.log("listaSinUsuarios", this.listaSinUsuarios);
         if(this.listaSinUsuarios.length === 0 ){
 
           this.showMostrarBody = false;
@@ -121,7 +137,7 @@ export class AsignacionReconteosComponent implements OnInit {
         setTimeout(() => {
           this.isLoading = false;
         
-         }, 3000);
+         }, 5000);
         
       },
     });
@@ -139,26 +155,30 @@ export class AsignacionReconteosComponent implements OnInit {
           setTimeout(() => {
             this.isLoading = false;
             this.showMostrarTarjetas = !this.showMostrarBody ? true : false;
-           }, 3000);
+           }, 5000);
         },
     });
   }
 
   siguienteReconteo(data : any ){
+    console.log("Iniciamos el siguiente reconteo")
+    this.isLoading = true;
+    
     this.invetarioServices.siguienteReconteo(data).subscribe({
       next: (response) => {
-     
+     console.log("resouesta de siguienteReconteo", response);
        
       },
-      error: (error) => {},
+      error: (error) => { 
+        console.log("Error : " , error);
+        this.isLoading = false;},
       complete: () => {
-
-        this.obtenerReconteo(data)
+         this.obtenerReconteo(data)
           setTimeout(() => {
             this.isLoading = false;
-            this.showMostrarBody = true;
+            this.showMostrarTarjetas = !this.showMostrarBody ? true : false;
   
-          }, 10000);
+          }, 5000);
       },
     });
   }
@@ -342,17 +362,17 @@ export class AsignacionReconteosComponent implements OnInit {
       this.successMessage = false;
       this.errorMessage = false;
      
-    }, 9000); // Ocultar mensaje después de 2 segundos
+    }, 5000); // Ocultar mensaje después de 2 segundos
   }
   
 
   exportToExcel(): void {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet( this.listaItems);
-    const workbook: XLSX.WorkBook = { Sheets: { 'reconteos': worksheet }, SheetNames: ['reconteos'] };
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet( this.listaRegistros);
+    const workbook: XLSX.WorkBook = { Sheets: { 'inventario-reconteos': worksheet }, SheetNames: ['inventario-reconteos'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
 
     const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-    saveAs(data, 'reconteos.xlsx');
+    saveAs(data, 'inventario-reconteos.xlsx');
   }
   
   agruparItemsPorUsuario(lista: any[]){
@@ -406,8 +426,9 @@ export class AsignacionReconteosComponent implements OnInit {
   }
 
   consultarResumenReconteo(data: any) {
+    console.log("consultarResumenReconteo", data);
     this.isLoading =true;
-    this.showMostrarTarjetas = false;
+    this.showMostrarTarjetas = true;
     this.invetarioServices.consultarResumenReconteo(data).subscribe({
       next: (response) => {
          if (response && response.data) {
@@ -428,9 +449,53 @@ export class AsignacionReconteosComponent implements OnInit {
         this.obtenerReconteo(this.requestReconteo);
         setTimeout(() => {
           this.isLoading = false;
-          this.showMostrarTarjetas = true;
-        }, 3000);
+         // this.showMostrarTarjetas = true;
+        }, 5000);
       },
     });
   }
+
+
+
+  formateaReconteo(){
+    const data = this.requestReconteo;
+    this.siguienteReconteo(data);
+  }
+
+  consultaTablaRegistro(){
+    const requestStorage = JSON.parse(sessionStorage.getItem('data'));
+    
+    if (!requestStorage || Object.keys(requestStorage).length === 0) {
+      
+      return; // Salir si no hay datos
+    }
+    const data = {
+          tipoItem: requestStorage.tipoItem,
+          local: requestStorage.local,
+          fechaInventario: requestStorage.fechaInventario
+        };
+    
+    // Guarda el objeto convertido en string
+    sessionStorage.setItem('data', JSON.stringify(data));
+    
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      next: (response) => {
+        console.log("response consultaInventario pantalla asignacion", response);
+        this.listaRegistros = response.data.recordset;
+      
+      },
+      error: (error) => {
+       
+        
+        console.error('Error en la consulta:', error);
+        this.errorMessage = true;
+        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+      },
+      complete: () => {
+        
+},
+    });
+  }
+
+
 }

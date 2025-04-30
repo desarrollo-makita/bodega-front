@@ -94,7 +94,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
         setTimeout(() => {
           this.inventarioIniciado = false;
           
-        }, 2000);
+        }, 5000);
       }else{
         this.inventarioServices.iniciarInventario(dataInicio).subscribe({
      

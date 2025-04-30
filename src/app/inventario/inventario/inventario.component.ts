@@ -93,10 +93,11 @@ export class InventarioComponent implements OnInit {
 ) {}
 
   ngOnInit(): void {
+    console.log("Iniciamos inventario.component");
     // Luego para obtenerlo de nuevo (cuando lo necesites):
     this.obtenerGrupoLocal();
-    this.recargarDataRegistro()
-    this.validarInventarioFun();
+   // this.recargarDataRegistro()
+    this.validarInventarioFun(); // levanta o no modal
    
   }
   openDialog(mensaje: string){
@@ -137,7 +138,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           this.successMessage = false;
           
-        }, 2000);
+        }, 5000);
        
       } else if (result?.action === 'cerrar') {
         
@@ -149,7 +150,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           this.errorMessage = false;
 
-        }, 2000);
+        }, 5000);
       }
     });
   }
@@ -172,7 +173,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           this.successMessage = false;
           
-        }, 2000);
+        }, 5000);
        
       } else if (result?.action === 'cerrar') {
         
@@ -182,10 +183,11 @@ export class InventarioComponent implements OnInit {
   
   
   obtenerGrupoLocal(){
-
+    console.log("Iniciamos obtenerGrupoLocal()")
+    
     this.invetarioServices.obtenerBodegas().subscribe({
       next: (response) => {
-        
+        console.log("Obtenemos datos de obtenerBodegas", response.data);
         this.grupoList = response.data;
         sessionStorage.setItem('respuestaGrupo', JSON.stringify(this.grupoList));
       },
@@ -222,7 +224,7 @@ export class InventarioComponent implements OnInit {
       this.mensaje = "";
       this.successMessage = false;
       this.errorMessage = false;
-    }, 9000); // Ocultar mensaje después de 2 segundos
+    }, 5000); // Ocultar mensaje después de 2 segundos
   }
 
   /*resetFormulario() {   
@@ -268,7 +270,7 @@ export class InventarioComponent implements OnInit {
   }
 
   validarInventarioFun(){
-    
+    console.log("Iniciamos validarInventarioFun()");
     const fechaActual = new Date();
     
     this.formattedDate = fechaActual.toISOString().split('T')[0];
@@ -282,10 +284,10 @@ export class InventarioComponent implements OnInit {
     this.usuario = decodedToken.username;
     
     
-    
+    console.log("Se llama servicio validarInicioInventario con estos datos de entrada " , this.formattedDate);
     this.invetarioServices.validarInicioInventario(this.formattedDate).subscribe({
       next: (response) => {
-        
+        console.log("Obtenemos datos de validarInicioInventario", response.data);
         if (!response.data) {
           
           this.tiposItems = []; // Evita el error de map() al asignar un array vacío
@@ -380,7 +382,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           this.isLoading = false;
           
-        }, 50000);
+        }, 5000);
        
         
       },
@@ -422,7 +424,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           //this.isLoading = false;
           this.successMessage = false;
-        }, 6000);
+        }, 5000);
       },
     })
   }
@@ -471,7 +473,7 @@ export class InventarioComponent implements OnInit {
          // this.resetFormulario();
           setTimeout(() => {
            this.mostrarFlecha = false;
-          }, 8000);
+          }, 5000);
  
         } else {
           this.sinInventarioIniciado =  false;
@@ -544,7 +546,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           this.errorMessage = false;
 
-        }, 2000);
+        }, 5000);
       },
       complete: () => {
       
@@ -585,7 +587,7 @@ export class InventarioComponent implements OnInit {
         setTimeout(() => {
           this.errorMessage = false;
 
-        }, 10000);
+        }, 5000);
 
       },
       complete: () => {
@@ -598,7 +600,7 @@ export class InventarioComponent implements OnInit {
           setTimeout(() => {
             this.successMessage = false;
   
-          }, 10000);
+          }, 5000);
         }else{
           this.isLoading = false;
         }
