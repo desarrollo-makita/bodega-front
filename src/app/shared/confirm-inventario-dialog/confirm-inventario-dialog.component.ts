@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InventarioService } from 'app/services/inventario/inventario.service';
+import { BateriasDialogComponent } from '../baterias-dialog/baterias-dialog.component';
 
 @Component({
   selector: 'app-confirm-inventario-dialog',
@@ -31,6 +32,8 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   desactivarBotonInicio : boolean = true ;
   desactivarComboBoxLocal : boolean = true;
   desactivarBotonCerrar : boolean = false;
+
+  opcionSeleccionadaAccesorios : any;
   
   // Variable para almacenar el local seleccionado
   selectedLocal: any;  // Puedes inicializar con un valor predeterminado si lo deseas
@@ -40,7 +43,8 @@ export class ConfirmInventarioDialogComponent implements OnInit {
     private fb: FormBuilder,
     private inventarioServices : InventarioService,
     public dialogRef: MatDialogRef<ConfirmInventarioDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { mensaje: string, periodo: string, mes: string , datos: any }
+    @Inject(MAT_DIALOG_DATA) public data: { mensaje: string, periodo: string, mes: string , datos: any },
+     private dialog: MatDialog,
   ) {
     this.inventarioForm = this.fb.group({
       selectedLocal: [''], // Campo obligatorio
@@ -78,14 +82,17 @@ export class ConfirmInventarioDialogComponent implements OnInit {
     
     const dataInicio = { 
       periodo: this.periodo,
+
       mes: this.mes,
       categorias: this.seleccionados,
-      numeroLocal: this.local,
+      numeroLocal: this.local.substring(0, 2),
       grupoBodega: this.grupo,
-      fechaInventario: this.formattedDate
+      fechaInventario: this.formattedDate,
+      categoria : this.opcionSeleccionadaAccesorios  === 'baterias' ? 'BATERIAS' :'',
+
     }
    
-    console.log("dataInicio", dataInicio);
+    
     if (this.data && this.data.datos) {
       if (this.verificarInventario(this.data.datos, dataInicio)) {
         this.inventarioIniciado = true; // Setea a true si el inventario ya fue iniciado
@@ -99,11 +106,9 @@ export class ConfirmInventarioDialogComponent implements OnInit {
         this.inventarioServices.iniciarInventario(dataInicio).subscribe({
      
           next: (response) => {
-            console.log('Respuesta del servidor iniciarInventario:', response);
+            
            // Extraemos los tipos de ítem que llegaron en la respuesta
            
-            
-            this.grupoList = response.data;
           },
           error: (error) => {
             this.isLoading = false;
@@ -131,7 +136,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       this.inventarioServices.iniciarInventario(dataInicio).subscribe({
      
         next: (response) => {
-          console.log('Respuesta del servidor iniciarInventario:', response);
+          
          // Extraemos los tipos de ítem que llegaron en la respuesta
          this.grupoList = response.data;
         },
@@ -165,7 +170,26 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   onCheckboxChange(event: Event, categoria: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
   
+    
+    
+
+    if(isChecked && categoria === '03-ACCESORIOS' ){
+      
+       // 👇 Aquí abres el diálogo
+       const dialogRef = this.dialog.open(BateriasDialogComponent, {
+        width: '400px',
+        data: {}
+      });
+
+      dialogRef.afterClosed().subscribe((resultado: string) => {
+        
+      this.opcionSeleccionadaAccesorios = resultado; // Guardar la opción seleccionada
+      
+        
+      });
+    }
     if (isChecked) {
+      
       this.seleccionados.push(categoria); // Agregar si está marcado
     } else {
       this.seleccionados = this.seleccionados.filter(item => item !== categoria); // Eliminar si se desmarca
@@ -183,13 +207,28 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
 
   obtenerGrupoLocal(){
-
+    
     this.inventarioServices.obtenerBodegas().subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor grupoLocal:', response.data);
-        this.grupoList = response.data;
-
-       
+        
+  
+        // Aquí modificamos NumeroLocal según GrupoBodega
+        this.grupoList = response.data.map((item: any) => {
+          switch (item.GrupoBodega) {
+            case 1:
+              return { ...item, NumeroLocal: '01-ENEA' };
+            case 2:
+              return { ...item, NumeroLocal: '01-ENEA-BATERIAS' };
+            case 3:
+              return { ...item, NumeroLocal: '03-TEMUCO' };
+            case 4:
+              return { ...item, NumeroLocal: '04-ANTOFAGASTA' };
+            case 5:
+              return { ...item, NumeroLocal: '05-COPIAPO' };
+            default:
+              return item; // si no coincide ningún GrupoBodega, se deja como está
+          }
+        });
       },
       error: (error) => {
       
@@ -231,13 +270,14 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       resultado2.categorias.includes(item.Tipoitem)
     );
   
-    console.log("inventarioEncontrado", inventarioEncontrado)
+    
     if (inventarioEncontrado) {
-      console.log("Ya fue iniciado el inventario escogido");
+      
       this.desactivarBotonCerrar= false; 
     }
   
     return inventarioEncontrado;
   }
+
   
 }

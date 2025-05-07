@@ -59,6 +59,7 @@
                         </div>
                         
                         <br>
+                        
                         <div *ngIf="showTable" class="row">
                             <div class="col-md-12">
                                 <div class="table-responsive table-full-width">
@@ -74,6 +75,12 @@
                                         <input type="text" class="custom-input" [(ngModel)]="searchQuery" placeholder="Buscar por Item" (input)="filterItems()">
                                     </div>
                                     <br>
+                                    <div class="custom-check-container mb-2">
+                                        <input type="checkbox" id="checkMostrarCeros" [(ngModel)]="mostrarCeros" class="custom-check-input">
+                                        <label for="checkMostrarCeros" class="custom-check-label">
+                                          Mostrar items con diferencias
+                                        </label>
+                                    </div>
                                     <div style="overflow-x: auto; width:100%;">
                                         <table class="table table-hover table-striped">
                                             <thead>
@@ -82,23 +89,58 @@
                                                     <th>Item</th>
                                                     <th>Saldo Stock</th>
                                                     <th>Conteo</th>
-                                                    <th>Diferencia</th>
+                                                    <th (click)="ordenarPor('Diferencia')"  style="cursor: pointer;">
+                                                        Diferencia
+                                                        <span *ngIf="columnaOrden === 'Diferencia'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                      </th>
                                                     <th *ngIf="cantidadReconteos > 1">Reconteo 1</th>
-                                                    <th *ngIf="cantidadReconteos > 1">Diferencia 1</th>
+                                                    <th *ngIf="cantidadReconteos > 1" (click)="ordenarPor('Diferencia01')" style="cursor: pointer;">
+                                                        Diferencia 1
+                                                        <span *ngIf="columnaOrden === 'Diferencia01'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                    </th>
                                                     <th *ngIf="cantidadReconteos > 2">Reconteo 2</th>
-                                                    <th *ngIf="cantidadReconteos > 2">Diferencia 2</th>
+                                                    <th *ngIf="cantidadReconteos > 2" (click)="ordenarPor('Diferencia02')" style="cursor: pointer;">
+                                                        Diferencia 2
+                                                        <span *ngIf="columnaOrden === 'Diferencia02'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                      </th>
                                                     <th *ngIf="cantidadReconteos > 3">Reconteo 3</th>
-                                                    <th *ngIf="cantidadReconteos > 3">Diferencia 3</th>
+                                                    <th *ngIf="cantidadReconteos > 3" (click)="ordenarPor('Diferencia03')" style="cursor: pointer;">
+                                                        Diferencia 3
+                                                        <span *ngIf="columnaOrden === 'Diferencia03'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                      </th>
                                                     <th *ngIf="cantidadReconteos > 4">Reconteo 4</th>
-                                                    <th *ngIf="cantidadReconteos > 4">Diferencia 4</th>
+                                                    <th *ngIf="cantidadReconteos > 4" (click)="ordenarPor('Diferencia04')" style="cursor: pointer;">
+                                                        Diferencia 4
+                                                        <span *ngIf="columnaOrden === 'Diferencia04'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                      </th>
                                                     <th *ngIf="cantidadReconteos > 5">Reconteo 5</th>
-                                                    <th *ngIf="cantidadReconteos > 5">Diferencia 5</th>
+                                                    <th *ngIf="cantidadReconteos > 5" (click)="ordenarPor('Diferencia05')" style="cursor: pointer;">
+                                                        Diferencia 5
+                                                        <span *ngIf="columnaOrden === 'Diferencia05'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                      </th>
                                                     <th *ngIf="cantidadReconteos > 6">Reconteo 6</th>
-                                                    <th *ngIf="cantidadReconteos > 6">Diferencia 6</th>
+                                                    <th *ngIf="cantidadReconteos > 6" (click)="ordenarPor('Diferencia06')" style="cursor: pointer;">
+                                                        Diferencia 6
+                                                        <span *ngIf="columnaOrden === 'Diferencia06'">
+                                                          {{ direccionOrden === 'asc' ? '▲' : '▼' }}
+                                                        </span>
+                                                      </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr *ngFor="let row of filteredInventarioData | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+                                                <tr *ngFor="let row of obtenerFilasFiltradas() | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
                                                     <td>{{ row.TipoItem.substring(3) }}</td>
                                                     <td>{{ row.Item }}</td>
                                                     <td>{{ row.SaldoStock }}</td>
@@ -133,7 +175,7 @@
                                     </div>
                                     <div *ngIf="!isLoading" @fadeSlideIn>
                                         <div *ngIf="mostrarGrafico" class="row" style="margin-top: 2%;">
-                                            <div *ngIf="!codigoBloqueo"     class="form-group col-md-2">
+                                            <div *ngIf="!codigoBloqueo" class="form-group col-md-2">
                                                 <button class="btn btn-primary btn-sm custom-btn" (click)="actualizarConteo()"  [disabled]="codigoBloqueo">
                                                     <i class="fas fa-sync-alt"></i> Actualizar Conteo
                                                 </button>
@@ -156,7 +198,13 @@
                                         </div>
                                         <br>
                                         <div>
-                                            <app-grafico-torta [saldoTotal]="saldoTotal" [conteoTotal]="conteoTotal" [titulo]="titulo" [totalItems]="totalItems" [listaRegistros]="listaRegistros"></app-grafico-torta>
+                                            <app-grafico-torta 
+                                            [saldoTotal]="saldoTotal" 
+                                            [conteoTotal]="conteoTotal" 
+                                            [titulo]="titulo" 
+                                            [totalItems]="totalItems" 
+                                            [listaRegistros]="listaRegistros"
+                                            [totalDirefencias]="totalDirefencias"></app-grafico-torta>
                                         </div>
                                     </div>
                                 </div>

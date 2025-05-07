@@ -1,0 +1,14 @@
+<div class="modal-contenedor">
+  <h2 class="titulo">Selecciona una opción</h2>
+
+  <mat-radio-group [(ngModel)]="seleccion" class="radio-grupo">
+    <mat-radio-button class="radio-opcion" value="todo">Todo</mat-radio-button>
+    <mat-radio-button class="radio-opcion" value="baterias">Baterías</mat-radio-button>
+  </mat-radio-group>
+
+  <div class="acciones">
+    <button mat-button color="primary" (click)="cerrar()" [disabled]="!seleccion">
+      Aceptar
+    </button>
+  </div>
+</div>

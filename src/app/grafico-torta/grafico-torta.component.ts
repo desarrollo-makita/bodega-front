@@ -12,8 +12,8 @@ export class GraficoTortaComponent implements AfterViewInit {
   @Input() conteoTotal: number = 0;
   @Input() titulo: string = '';
   @Input() totalItems: number = 0;
-  @Input() listaRegistros: any;
-
+  @Input() listaRegistros: any; 
+  @Input() totalDirefencias: number = 0;
   private chartInstance: Chart | null = null;
   conteoRealizado:any
 
@@ -26,8 +26,6 @@ export class GraficoTortaComponent implements AfterViewInit {
   }
 
   crearGrafico() {
-    console.log("listaRegistros: ", this.listaRegistros);
-
     if (!this.listaRegistros || this.listaRegistros.length === 0) {
       console.warn("No hay datos para mostrar el gráfico.");
       return;
@@ -48,7 +46,8 @@ export class GraficoTortaComponent implements AfterViewInit {
     this.chartInstance = new Chart(this.graficoCanvas.nativeElement, {
       type: 'doughnut',
       data: {
-        labels: ['Ítems pendientes de contar', 'Conteo de item realizado'],
+        labels: [ `${this.totalItems} ítems`,
+          `${this.conteoRealizado} ítems contados`],
         datasets: [{
           data: [conteoPendiente, this.conteoRealizado],
           backgroundColor: ['#E0E0E0', '#008686'],

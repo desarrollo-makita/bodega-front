@@ -4,16 +4,20 @@
     <p>Se encontraron <strong>{{ totalItems }}</strong> Items de {{ titulo.substring(3) }}</p>
   </div>
 
-  <div class="chart-wrapper">
-    <canvas class="canvas-style" #graficoCanvas></canvas>
-    <div class="center-text">
-      <strong>{{ ((conteoRealizado / totalItems) * 100).toFixed(2) }}%</strong>
+  <!-- Nuevo contenedor flexible -->
+  <div class="grafico-flex">
+    <div class="chart-wrapper">
+      <canvas class="canvas-style" #graficoCanvas></canvas>
+      <div class="center-text">
+        <strong>{{ ((conteoRealizado / totalItems) * 100).toFixed(2) }}%</strong>
+      </div>
+    </div>
+
+    <!-- Mueves aquí la info al costado -->
+    <div class="grafico-info">
+      <p><strong style="font-size: 30px;">{{ totalDirefencias }}</strong> Items con diferencias en el conteo</p>
+      <p><strong style="font-size: 30px;">{{ totalItems }}</strong> Items en total, <strong style="font-size: 30px;">{{ conteoRealizado }}</strong> Items han sido contadas.</p>
+      <p><strong style="font-size: 30px;">{{ saldoTotal }}</strong> Unidades en total, <strong style="font-size: 30px;">{{ conteoTotal }}</strong> Unidades han sido contadas.</p>
     </div>
   </div>
-
-    <!-- Agregamos el nuevo bloque para mostrar saldo y conteo -->
-    <div class="grafico-info">
-      <p><strong>{{ totalItems }}</strong> item en total, <strong>{{ conteoRealizado }}</strong> item han sido contadas.</p>
-      <p><strong>{{ saldoTotal }}</strong> unidades en total, <strong>{{ conteoTotal }}</strong> han sido contadas.</p>
-    </div>
 </div>

@@ -349,3 +349,35 @@ input:checked + .slider:before {
   50% { opacity: 0; }
   100% { opacity: 1; }
 }
+
+.custom-check-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  border: 1px solid #00909E;
+  border-radius: 8px;
+  background-color: #f0fafa;
+  width: fit-content;
+  cursor: pointer;
+  margin-left: 1.2%;
+  margin-bottom: 2%;
+
+  &:hover {
+    background-color: #e1f1f2;
+  }
+}
+
+.custom-check-input {
+  accent-color: #00909E;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.custom-check-label {
+  color: #00909E;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+}

@@ -63,7 +63,7 @@
 
     p {
       margin: 0;
-      text-align: center;
+     //text-align: center;
       color: #555;
     }
 
@@ -85,4 +85,11 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.grafico-flex {
+  display: flex;
+  align-items: center; /* centra verticalmente */
+  gap: 40px; /* espacio entre gráfico e info */
+  margin-top: 20px;
 }

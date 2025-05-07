@@ -51,6 +51,13 @@ export class AsignacionReconteosComponent implements OnInit {
   p: number = 1; // Página actual
   cantidadActual: any;
 
+  columnaOrden: string = '';
+  direccionOrden: 'asc' | 'desc' = 'asc';
+  filteredInventarioData: any[] = []; // Lista filtrada
+  totalDirefencias: any;
+
+  mostrarCeros: boolean = true;
+
 
   @ViewChildren('inputElement') inputs!: QueryList<ElementRef>;
 
@@ -60,9 +67,12 @@ export class AsignacionReconteosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+   
     this.isLoading = true;
     this.setCapturadores();
+    
     this.consultaTablaRegistro();
+    
     // recuperamos la dta que se setea en la pantalla de inventario
     this.dataService.getReconteoData().pipe(take(1)).subscribe({
       next: (response) => {
@@ -78,7 +88,7 @@ export class AsignacionReconteosComponent implements OnInit {
         // Lógica de manejo de errores
       },
       complete: () => {
-        console.log("responseReconteo", this.requestReconteo);
+        
         if(this.reconteosData === 1 ){
      
           this.iniciarReconteos(this.requestReconteo);
@@ -87,7 +97,7 @@ export class AsignacionReconteosComponent implements OnInit {
         }
       },
     });
-    this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
+   this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
    
   
     this.consultarResumenReconteo(this.requestReconteo);
@@ -98,11 +108,12 @@ export class AsignacionReconteosComponent implements OnInit {
     if (this.inputs.first) {
         this.inputs.first.nativeElement.focus();
     }
-}
-actualizarPaginacion() {
-    
-  this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
-}
+  }
+  actualizarPaginacion() {
+      
+    this.p = 1; // Reinicia la paginación cuando cambia la cantidad de elementos por página
+  }
+  
   obtenerReconteo(data : any ){
     this.invetarioServices.consultarReconteo(data).subscribe({
       next: (response) => {
@@ -120,7 +131,7 @@ actualizarPaginacion() {
         this.listaSinUsuarios = this.listaItems.filter(
           (item: any) => !item.Usuario || item.Usuario.trim() === ''
         );
-      console.log("listaSinUsuarios", this.listaSinUsuarios);
+      
         if(this.listaSinUsuarios.length === 0 ){
 
           this.showMostrarBody = false;
@@ -149,8 +160,9 @@ actualizarPaginacion() {
     
        
       },
-      error: (error) => {console.log("Error : " , error);},
+      error: (error) => {},
       complete: () => {
+        
         this.obtenerReconteo(data)
           setTimeout(() => {
             this.isLoading = false;
@@ -161,18 +173,19 @@ actualizarPaginacion() {
   }
 
   siguienteReconteo(data : any ){
-    console.log("Iniciamos el siguiente reconteo")
+    
     this.isLoading = true;
     
     this.invetarioServices.siguienteReconteo(data).subscribe({
       next: (response) => {
-     console.log("resouesta de siguienteReconteo", response);
+     
        
       },
       error: (error) => { 
-        console.log("Error : " , error);
+        
         this.isLoading = false;},
       complete: () => {
+        
          this.obtenerReconteo(data)
           setTimeout(() => {
             this.isLoading = false;
@@ -230,15 +243,11 @@ actualizarPaginacion() {
         //this.mostrarMensaje("Asignación de reconteo exitosa");
         this.cantidadPersonas = 0;
         this.operarios = [];
-        this.obtenerReconteo(this.requestReconteo);  
         
-        
-        },
-
+        this.obtenerReconteo(this.requestReconteo); 
       
+      },
     });
-
-
   }
   
   actualizarOperarios() {
@@ -392,10 +401,6 @@ actualizarPaginacion() {
       nombre,
       data: agrupadoPorUsuario[nombre]
     }));
-
-    
-
-    
   }
   
 
@@ -426,7 +431,6 @@ actualizarPaginacion() {
   }
 
   consultarResumenReconteo(data: any) {
-    console.log("consultarResumenReconteo", data);
     this.isLoading =true;
     this.showMostrarTarjetas = true;
     this.invetarioServices.consultarResumenReconteo(data).subscribe({
@@ -446,7 +450,9 @@ actualizarPaginacion() {
         
       },
       complete: () => {
+  
         this.obtenerReconteo(this.requestReconteo);
+        this.consultaTablaRegistro();
         setTimeout(() => {
           this.isLoading = false;
          // this.showMostrarTarjetas = true;
@@ -480,8 +486,10 @@ actualizarPaginacion() {
     
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
-        console.log("response consultaInventario pantalla asignacion", response);
+  
         this.listaRegistros = response.data.recordset;
+        this.calcularDiferencias(this.listaRegistros);
+        this.filteredInventarioData = [...this.listaRegistros];
       
       },
       error: (error) => {
@@ -496,6 +504,56 @@ actualizarPaginacion() {
 },
     });
   }
+
+  ordenarPor(columna: string): void {
+    if (this.columnaOrden === columna) {
+      this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.columnaOrden = columna;
+      this.direccionOrden = 'asc';
+    }
+  
+    this.filteredInventarioData.sort((a, b) => {
+      const valorA = a[columna];
+      const valorB = b[columna];
+  
+      if (valorA < valorB) return this.direccionOrden === 'asc' ? -1 : 1;
+      if (valorA > valorB) return this.direccionOrden === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  
+  calcularDiferencias(lista: any[]): void {
+    this.totalDirefencias = lista.filter(item => item.Diferencia !== 0).length;
+    sessionStorage.setItem('totalDirefencias', JSON.stringify(this.totalDirefencias));
+  }
+
+  obtenerFilasFiltradas() {
+    if (this.mostrarCeros) {
+      return this.filteredInventarioData;
+    } else {
+      return this.filteredInventarioData.filter(row => {
+        // Siempre verificar 'Diferencia'
+        if (row.Diferencia !== 0) {
+          return true;
+        }
+  
+        // Verificar las otras diferencias si existen
+        for (let i = 1; i <= this.cantidadActual - 1; i++) {
+          const key = 'Diferencia0' + i;
+          if (row[key] !== 0) {
+            return true;
+          }
+        }
+  
+        return false; // si todas son 0
+      });
+    }
+  }
+
+
+  
 
 
 }

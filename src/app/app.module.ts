@@ -46,6 +46,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AlmacenamientoDialogComponent } from './shared/almacenamiento-dialog/almacenamiento-dialog.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { BateriasDialogComponent } from './shared/baterias-dialog/baterias-dialog.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   imports: [
@@ -71,7 +73,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatDatepickerModule,
     MatAutocompleteModule,
     MatExpansionModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatRadioModule
 
     
   ],
@@ -94,6 +97,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     CerrarInventarioDialogComponent,
     AsignacionReconteosComponent,
     AlmacenamientoDialogComponent,
+    BateriasDialogComponent,
 
     
     

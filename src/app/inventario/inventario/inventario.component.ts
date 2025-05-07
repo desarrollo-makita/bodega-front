@@ -84,6 +84,13 @@ export class InventarioComponent implements OnInit {
   almacenamiento: string = 'N';
   listaRegistros: any[] = [];
 
+  columnaOrden: string = '';
+  direccionOrden: 'asc' | 'desc' = 'asc';
+
+  totalDirefencias : number = 0 ;
+  mostrarCeros: boolean = true;
+
+
   constructor(
     private invetarioServices: InventarioService , 
     private dialog: MatDialog,
@@ -93,13 +100,10 @@ export class InventarioComponent implements OnInit {
 ) {}
 
   ngOnInit(): void {
-    console.log("Iniciamos inventario.component");
-    // Luego para obtenerlo de nuevo (cuando lo necesites):
     this.obtenerGrupoLocal();
-   // this.recargarDataRegistro()
-    this.validarInventarioFun(); // levanta o no modal
-   
+    this.validarInventarioFun();
   }
+  
   openDialog(mensaje: string){
     this.mostrarFlecha= false;
     this.openConfirmDialog(mensaje);
@@ -107,7 +111,6 @@ export class InventarioComponent implements OnInit {
   }
  
   openConfirmDialog(mensaje: string): void {
-    
     const meses = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -180,15 +183,14 @@ export class InventarioComponent implements OnInit {
       }
     });
   }
-  
-  
+
   obtenerGrupoLocal(){
-    console.log("Iniciamos obtenerGrupoLocal()")
     
     this.invetarioServices.obtenerBodegas().subscribe({
       next: (response) => {
-        console.log("Obtenemos datos de obtenerBodegas", response.data);
+        
         this.grupoList = response.data;
+        
         sessionStorage.setItem('respuestaGrupo', JSON.stringify(this.grupoList));
       },
       error: (error) => {
@@ -218,6 +220,7 @@ export class InventarioComponent implements OnInit {
 
     this.titulo = this.selectedTipoItem ? this.selectedTipoItem : this.titulo; ;        
   }
+  
   mostrarMensaje(texto: string) {
     this.mensaje = texto;
     setTimeout(() => {
@@ -270,7 +273,8 @@ export class InventarioComponent implements OnInit {
   }
 
   validarInventarioFun(){
-    console.log("Iniciamos validarInventarioFun()");
+   
+    
     const fechaActual = new Date();
     
     this.formattedDate = fechaActual.toISOString().split('T')[0];
@@ -284,10 +288,10 @@ export class InventarioComponent implements OnInit {
     this.usuario = decodedToken.username;
     
     
-    console.log("Se llama servicio validarInicioInventario con estos datos de entrada " , this.formattedDate);
+    
     this.invetarioServices.validarInicioInventario(this.formattedDate).subscribe({
       next: (response) => {
-        console.log("Obtenemos datos de validarInicioInventario", response.data);
+        
         if (!response.data) {
           
           this.tiposItems = []; // Evita el error de map() al asignar un array vacío
@@ -335,6 +339,7 @@ export class InventarioComponent implements OnInit {
   }
 
   actualizarConteo(){ 
+    
     this.mensajeCargado = 'Se están actualizando los conteos ingresados...'
     this.isLoading = true;
     this.mostrarGrafico = false;
@@ -406,6 +411,7 @@ export class InventarioComponent implements OnInit {
           this.mensaje = ""; // Limpiar mensaje si hay datos
           this.inventarioData = response.data.recordset;
           this.showTable = true;
+        
         }
       },
       error: (error) => {
@@ -461,6 +467,7 @@ export class InventarioComponent implements OnInit {
 
         this.totalItems = response.data.recordset.length;
         this.listaRegistros = response.data.recordset;
+        this.calcularDiferencias(this.listaRegistros);
         
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
        
@@ -682,16 +689,27 @@ export class InventarioComponent implements OnInit {
     
     this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
+        
       
-        if (response?.data?.NumeroReconteo !== undefined) {
+        if (response?.data?.NumeroReconteo !== undefined && response?.enProceso === 0) {
           
   
-          this.cantidadReconteos  = response.data.NumeroReconteo;
+          this.cantidadReconteos  = response.data.NumeroReconteo + 1;
+          sessionStorage.removeItem('cantidadReconteos');
           sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
-        
-        } else {
           
+        
+        } else if(response?.data?.NumeroReconteo !== undefined && response?.enProceso != 1) {
+          
+          this.cantidadReconteos = response.data.NumeroReconteo;
+          sessionStorage.removeItem('cantidadReconteos');
+          sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
+          
+        
+        }else{
           this.cantidadReconteos = 1;
+          sessionStorage.removeItem('cantidadReconteos');
+          sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
         }
   
         
@@ -714,72 +732,70 @@ export class InventarioComponent implements OnInit {
   
 
   consultaTablaRegistroInicial(dataConsultaTabla: any){
+    const data = {
+      tipoItem: dataConsultaTabla.categorias[0],
+      local: dataConsultaTabla.numeroLocal,
+      fechaInventario: dataConsultaTabla.fechaInventario
+      ,
+    }
     
-   
-
-   const data = {
-    tipoItem: dataConsultaTabla.categorias[0],
-    local: dataConsultaTabla.numeroLocal,
-    fechaInventario: dataConsultaTabla.fechaInventario
-    ,
-   }
-
-   
-  this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
-      next: (response) => {
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+        next: (response) => {
+          
+          this.totalItems = response.data.recordset.length;
+          this.listaRegistros = response.data.recordset;
         
-        this.totalItems = response.data.recordset.length;
-        this.listaRegistros = response.data.recordset;
-        this.totalItems = response.data.recordset.length;
-        if (response.data && response.data.recordset && response.data.recordset.length === 0) {
-          this.sinInventarioIniciado =  true;
-          this.showTable = false;
-          this.errorMessage = true;
-          this.mostrarFlecha = true;
-          this.mostrarMensaje(`${response.info.mensaje}`);
-          this.inventarioData = [];
-         // this.resetFormulario();
-          setTimeout(() => {
-           this.mostrarFlecha = false;
-          }, 8000);
- 
-        } else {
-          this.sinInventarioIniciado =  false;
-         // this.mensaje = ""; // Limpiar mensaje si hay datos
-          this.inventarioData = response.data.recordset;
-          this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
-          this.showTable = true;
-          this.mostrarFlecha = false;
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        
-        console.error('Error en la consulta:', error);
-        this.errorMessage = true;
-        this.mostrarMensaje("Ocurrió un error al obtener los datos.");
-      },
-      complete: () => {
-        if(this.sinInventarioIniciado){
-
-          this.showTable= false;
-          this.mostrarGrafico = false
+          this.totalItems = response.data.recordset.length;
+          this.calcularDiferencias(this.listaRegistros);
+          if (response.data && response.data.recordset && response.data.recordset.length === 0) {
+            this.sinInventarioIniciado =  true;
+            this.showTable = false;
+            this.errorMessage = true;
+            this.mostrarFlecha = true;
+            this.mostrarMensaje(`${response.info.mensaje}`);
+            this.inventarioData = [];
+          // this.resetFormulario();
+            setTimeout(() => {
+            this.mostrarFlecha = false;
+            }, 8000);
+  
+          } else {
+            this.sinInventarioIniciado =  false;
+          // this.mensaje = ""; // Limpiar mensaje si hay datos
+            this.inventarioData = response.data.recordset;
+            this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
+            this.showTable = true;
+            this.mostrarFlecha = false;
+          }
+        },
+        error: (error) => {
           this.isLoading = false;
-        }else{
-          this.calcularTotales()
           
-          this.mostrarGrafico = true;
-          this.showTable= true;
+          console.error('Error en la consulta:', error);
+          this.errorMessage = true;
+          this.mostrarMensaje("Ocurrió un error al obtener los datos.");
+        },
+        complete: () => {
+          if(this.sinInventarioIniciado){
+
+            this.showTable= false;
+            this.mostrarGrafico = false
+            this.isLoading = false;
+          }else{
+            this.calcularTotales()
+            
+            this.mostrarGrafico = true;
+            this.showTable= true;
           
-        
-          this.validarCierreInventario(data);
-          this.validarCantidadReconteos(data);
-        }
-        
-        
-      },
-    });
-  }
+            this.validarCierreInventario(data);
+            this.validarCantidadReconteos(data);
+           // this.actualizarConteo();
+          }
+          
+          
+        },
+      });
+    }
 
   recargarDataRegistro(){
     
@@ -846,6 +862,66 @@ export class InventarioComponent implements OnInit {
       },
     });
   }
+
+
+  ordenarPor(columna: string): void {
+    
+    if (this.columnaOrden === columna) {
+      this.direccionOrden = this.direccionOrden === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.columnaOrden = columna;
+      this.direccionOrden = 'asc';
+    }
+  
+    this.filteredInventarioData.sort((a, b) => {
+      const valorA = a[columna];
+      const valorB = b[columna];
+  
+      if (valorA < valorB) return this.direccionOrden === 'asc' ? -1 : 1;
+      if (valorA > valorB) return this.direccionOrden === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  calcularDiferencias(lista: any[]): void {
+    this.totalDirefencias = lista.filter(item => item.Diferencia !== 0).length;
+    
+    
+
+    if(this.totalDirefencias === 0){
+      this.totalDirefencias = this.totalItems;
+    }
+
+    sessionStorage.setItem('totalDirefencias', JSON.stringify(this.totalDirefencias));
+  }
+
+  obtenerFilasFiltradas() {
+    if (!this.mostrarCeros) {
+      return this.filteredInventarioData;
+    } else {
+      return this.filteredInventarioData.filter(row => {
+        // Verificar si 'Diferencia' es distinta de 0
+        if (row.Diferencia !== 0) {
+          return true;
+        }
+  
+        // Verificar las otras diferencias si existen
+        for (let i = 1; i <= this.cantidadReconteos - 1; i++) {
+          const key = 'Diferencia0' + i;
+          if (row[key] !== 0) {
+            return true;
+          }
+        }
+  
+        return false; // todas son 0
+      });
+    }
+  }
+  
+  
+  
+  
+  
   
 
 }
