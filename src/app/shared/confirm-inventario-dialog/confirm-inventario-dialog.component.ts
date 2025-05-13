@@ -91,6 +91,10 @@ export class ConfirmInventarioDialogComponent implements OnInit {
       categoria : this.opcionSeleccionadaAccesorios  === 'baterias' ? 'BATERIAS' :'',
 
     }
+
+    console.log("ACCESORIOS-01" , dataInicio);
+    console.log("ACCESORIOS-02" , this.data);
+    console.log("ACCESORIOS-03" , this.verificarInventario(this.data.datos, dataInicio));
    
     
     if (this.data && this.data.datos) {
@@ -107,7 +111,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
      
           next: (response) => {
             
-           // Extraemos los tipos de ítem que llegaron en la respuesta
+          console.log("Respuesta de iniciarInventario:", response);
            
           },
           error: (error) => {
@@ -137,7 +141,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
      
         next: (response) => {
           
-         // Extraemos los tipos de ítem que llegaron en la respuesta
+          console.log("Respuesta de iniciarInventario:", response);
          this.grupoList = response.data;
         },
         error: (error) => {

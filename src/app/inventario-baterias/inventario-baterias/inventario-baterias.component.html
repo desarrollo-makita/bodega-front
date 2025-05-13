@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Avance de Inventario</h4>
+                        <h4 class="title">Inventario De Baterias</h4>
                     </div>
                     <div class="content">
                         <form (ngSubmit)="onSubmit()" #form="ngForm">
@@ -185,13 +185,8 @@
                                                      <i class="fas fa-file-excel"></i> Exportar a Excel
                                                 </button>
                                             </div>
-                                            <div *ngIf="!codigoBloqueo" class="form-group col-md-2">
-                                                <button class="btn btn-primary btn-sm custom-btn-cerrar" (click)="cerrarInventario()" [disabled]="codigoBloqueo">
-                                                    <i class="fas fa-lock"></i> Terminar Conteo
-                                                </button>
-                                            </div>
-                                            <div *ngIf="codigoBloqueo" class="form-group col-md-2">
-                                                <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()" [disabled]="inventarioCerrado">
+                                            <div class="form-group col-md-2">
+                                                <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()">
                                                     <i class="fas fa-list-ol"></i> {{textBoton}}
                                                 </button>
                                             </div>

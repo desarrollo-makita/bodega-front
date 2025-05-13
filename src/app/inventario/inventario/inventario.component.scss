@@ -381,3 +381,19 @@ input:checked + .slider:before {
   font-size: 1rem;
   cursor: pointer;
 }
+
+
+.custom-btn-cerrar-inventario {
+  background-color: #f42738;
+  border: none;
+  border-radius: 30px;
+  padding: 10px;
+  margin-left: 10%;
+  margin-top: 50%;
+  width: 100%; /* Ajustar el ancho del botón según el contenido */
+}
+
+
+.custom-btn-cerrar-inventario:hover{
+  background-color: #f42738;
+} 

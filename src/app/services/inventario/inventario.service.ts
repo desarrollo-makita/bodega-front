@@ -24,6 +24,7 @@ export class InventarioService {
   private siguienteReconteoURL = 'http://172.16.1.206:3024/api/siguiente-reconteo';
   private almacenammientoUrl = 'http://172.16.1.206:3024/api/obtener-almacenamiento';
   private consultarResumenReconteoUrl = 'http://172.16.1.206:3024/api/obtener-resumen-reconteo';
+  private terminarInventarioUrl  = 'http://172.16.1.206:3024/api/finalizar-inventario';
 
 
   constructor(private http: HttpClient) {}
@@ -130,4 +131,7 @@ export class InventarioService {
   }
 
 
+  terminarInventario(data: any): Observable<any> {
+    return this.http.post(this.terminarInventarioUrl, data);
+  }
 }

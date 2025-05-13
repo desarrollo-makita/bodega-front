@@ -40,16 +40,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {      
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('menu');
-    sessionStorage.removeItem('data');
-    sessionStorage.removeItem('cantidadReconteos');    
-    sessionStorage.removeItem('fechaInventario');
-    sessionStorage.removeItem('local');
-    sessionStorage.removeItem('respuestaGrupo');
-    sessionStorage.removeItem('siguienteReconteo');
-    sessionStorage.removeItem('tipoItem');
-    sessionStorage.removeItem('totalDirefencias');  }
+    sessionStorage.clear();}
+  
 
   onSubmit() {
     if (this.loginForm.valid) {

@@ -1,0 +1,373 @@
+/* Loader */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    img {
+      width: 100px;
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Tarjeta Reconteo */
+  .card-reconteo {
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 134, 134, 0.15);
+    border-left: 6px solid #008686;
+    animation: fadeIn 0.6s ease-in-out;
+    transition: all 0.3s ease;
+  
+    &:hover {
+      transform: scale(1.01);
+      box-shadow: 0 12px 30px rgba(0, 134, 134, 0.25);
+    }
+  }
+  
+  .icon-box {
+    margin-right: 2rem;
+    .big-icon {
+      font-size: 60px;
+      color: #008686;
+    }
+  }
+  
+  .text-box {
+    flex: 1;
+  
+    .highlight-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+  
+      .cantidad {
+        color: #008686;
+        font-size: 32px;
+      }
+  
+      .tipo {
+        color: #ff9800;
+      }
+    }
+  
+    .barra-reconteo {
+      margin-top: 1rem;
+      height: 8px;
+      border-radius: 4px;
+      background-color: #eeeeee;
+    }
+  
+    .porcentaje-text {
+      margin: 0.5rem 0;
+      font-weight: 600;
+      color: #555;
+    }
+  
+    .export-btn {
+      margin-top: 1rem;
+      background-color: #008686;
+      color: white;
+  
+      &:hover {
+        background-color: #006d6d;
+      }
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .card-operarios {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+    animation: fadeIn 0.7s ease;
+  }
+  
+  .titulo-operarios {
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .operarios-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .operario-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+  }
+  
+  .select-field {
+    flex: 1;
+  }
+  
+  .asignados-container {
+    margin-top: 25px;
+  }
+  
+  .asignados-card {
+    padding: 15px;
+    background-color: #f0f9f4;
+  }
+  
+  .nombres-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 0;
+  }
+  
+  .nombre-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .boton-agregar-container {
+    margin-top: 20px;
+    text-align: right;
+  }
+  
+  .alert-success {
+    background-color: rgba(0, 144, 158, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+    margin-top: 50%;
+  }
+  
+  .alert-danger{
+    background-color: rgba(235, 35, 35, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+    margin-top: 50%;
+  }
+  
+  
+  
+  .tarjeta-reconteo {
+    border: 1px solid #ddd;
+    border-radius: 1em;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #ffffff, #f3f3f3);
+    padding: 1em 1.2em;
+    margin: 1em;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+    cursor: pointer;
+    min-width: 250px;
+  }
+  
+  .tarjeta-reconteo:hover {
+    transform: scale(1.08) translateY(-6px);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .boton-extra-container {
+    margin-top: 20px;
+    display: flex; /* Usamos flexbox para alinear los botones */
+    justify-content: flex-start; /* Alinea los botones a la izquierda */
+    gap: 50px; /* Espacio entre los botones */
+    font-weight: 500;
+  }
+  .boton-extra {
+    border: none;
+    background-color: #00909E;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    //font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #006d6d;
+    }
+  
+    mat-icon {
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+  }
+  
+  
+  .progress-container {
+    margin-top: 16px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    animation: fadeIn 1s ease;
+  }
+  
+  .progress-text {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .progress-bar {
+    height: 20px;
+    border-radius: 10px;
+    background-color: #e0e0e0;
+  }
+  
+  ::ng-deep .mat-progress-bar-fill::after {
+    background-color: #006d6d !important;
+    border-radius: 10px;
+  }
+  
+  
+  .table {
+    /* Ajustar el tamaño de la tabla según el contenido */
+    margin: 0 auto; /* Centrar la tabla */
+    table-layout: auto; /* Distribuir las columnas según el contenido */
+    border-collapse: collapse; /* Eliminar espacios entre las celdas */
+  
+    width:auto; /* Ajustar el tamaño de la tabla según el contenido */
+    margin: 0 0 0 1em; /* Centrar la tabla */
+    table-layout: auto; /* Distribuir las columnas según el contenido */
+    border-collapse:  collapse; /* Eliminar espacios entre las celdas */;
+  }
+  
+  
+    /* Estilo del encabezado */
+    .table thead th {
+      background-color: #00909E; /* Fondo de color de la empresa */
+      color: white; /* Texto en blanco para contraste */
+      text-align: start; /* Alineación centrada del texto */
+      padding: 8px; /* Espaciado interno */
+      white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+    }
+  
+  
+     /* Estilo de las filas de la tabla */
+     .table tbody tr {
+      transition: background-color 0.3s; /* Efecto de transición para el fondo */
+    }
+  
+     /* Hover sobre las filas */
+     .table tbody tr:hover {
+      background-color: #b0d9db; /* Color más claro al pasar el cursor por encima */
+    }
+  
+  
+     /* Estilo de las celdas */
+     .table tbody td {
+      
+      color: #00909E; /* Texto de color de la empresa */
+      text-align: start; /* Alineación centrada del texto */
+      padding: 8px; /* Espaciado interno */
+      text-overflow: ellipsis; /* Agregar puntos suspensivos si el contenido es demasiado largo */
+      
+    }
+  
+      /* Limitar el ancho de las columnas */
+      .table tbody td {
+        
+        max-width: auto; /* Limitar el ancho de las columnas */
+        overflow: hidden; /* Ocultar el contenido que desborde */
+        text-overflow: ellipsis; /* Agregar puntos suspensivos si el contenido es demasiado largo */
+      }  
+      .pagination-controls-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .ngx-pagination {
+        display: flex;
+        list-style: none;
+      }
+      
+      .ngx-pagination li {
+        margin: 0 5px;
+      }
+      
+      .ngx-pagination a {
+        text-decoration: none;
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        color: #008686;
+      }
+      
+      .ngx-pagination .current {
+        background-color: #008686;
+        color: white;
+      }
+  
+      .custom-check-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 10px;
+        border: 1px solid #00909E;
+        border-radius: 8px;
+        background-color: #f0fafa;
+        width: fit-content;
+        cursor: pointer;
+        margin-left: 1.2%;
+        margin-bottom: 2%;
+      
+        &:hover {
+          background-color: #e1f1f2;
+        }
+      }
+      
+      .custom-check-input {
+        accent-color: #00909E;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+      
+      .custom-check-label {
+        color: #00909E;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      

@@ -48,6 +48,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BateriasDialogComponent } from './shared/baterias-dialog/baterias-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { InventarioBateriasComponent } from './inventario-baterias/inventario-baterias/inventario-baterias.component';
+import { AsignacionRerconteosBateriasComponent } from './reconteo-baterias/asignacion-rerconteos-baterias/asignacion-rerconteos-baterias.component';
 
 @NgModule({
   imports: [
@@ -98,6 +100,8 @@ import { MatRadioModule } from '@angular/material/radio';
     AsignacionReconteosComponent,
     AlmacenamientoDialogComponent,
     BateriasDialogComponent,
+    InventarioBateriasComponent,
+    AsignacionRerconteosBateriasComponent,
 
     
     

@@ -8,13 +8,12 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
 @Component({
-  selector: 'app-asignacion-reconteos',
-  templateUrl: './asignacion-reconteos.component.html',
-  styleUrls: ['./asignacion-reconteos.component.scss']
+  selector: 'app-asignacion-rerconteos-baterias',
+  templateUrl: './asignacion-rerconteos-baterias.component.html',
+  styleUrls: ['./asignacion-rerconteos-baterias.component.scss']
 })
-export class AsignacionReconteosComponent implements OnInit {
-
-  successMessage: boolean = false;
+export class AsignacionRerconteosBateriasComponent implements OnInit {
+successMessage: boolean = false;
   errorMessage: boolean = false;
   requestReconteo: any;
   nuevoNombre: string = '';
@@ -97,7 +96,9 @@ export class AsignacionReconteosComponent implements OnInit {
         // Lógica de manejo de errores
       },
       complete: () => {
-        
+        console.log("this.requestReconteo-baterias", this.requestReconteo );
+        console.log("reconteosData******", this.reconteosData);
+    
         if(this.reconteosData === 1 ){
      
           this.iniciarReconteos(this.requestReconteo);
@@ -125,6 +126,9 @@ export class AsignacionReconteosComponent implements OnInit {
   obtenerReconteo(data : any ){
     
     console.log("data", data) ;
+    data.bodega = 2;
+    data.numeroReconteo = sessionStorage.getItem('numeroReconteoOriginal');
+    console.log("data023", data) ;
     this.invetarioServices.consultarReconteo(data).subscribe({
       next: (response) => {
       
@@ -135,15 +139,15 @@ export class AsignacionReconteosComponent implements OnInit {
         this.reconteoTotal = response.reconteoTotal;
 
         console.log("CANTIDAD DE RECONTEOS",this.cantidadReconteo)
-        if(this.itemsContados === this.reconteoTotal){          
-          this.nuevaCantidad = parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10) ;
-          const cantidad = parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10) + 1;
-          console.log("*************************" , cantidad);
+        if(this.itemsContados === this.reconteoTotal){
+          this.nuevaCantidad = parseInt(sessionStorage.getItem('cantidadReconteos'), 10) ;
+          const cantidad = parseInt(sessionStorage.getItem('cantidadReconteos'), 10) + 1;
+         
          // sessionStorage.setItem('cantidadReconteos', this.nuevaCantidad.toString());
           sessionStorage.setItem('proximoReconteoBaterias', cantidad.toString());
           sessionStorage.setItem('cantidadReconteosBaterias', cantidad.toString());
        
-          return;
+          
           // Sumar 1
          
         }
@@ -164,7 +168,7 @@ export class AsignacionReconteosComponent implements OnInit {
       },
       error: (error) => {},
       complete: () => {
-        this.nuevaCantidad =  parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10);
+        this.nuevaCantidad =  parseInt(sessionStorage.getItem('cantidadReconteos'), 10);
         this.agruparItemsPorUsuario(this.listaItems)
         setTimeout(() => {
           this.isLoading = false;
@@ -176,10 +180,12 @@ export class AsignacionReconteosComponent implements OnInit {
   }
 
   iniciarReconteos(data : any ){
+    data.bodega = 2;
+    console.log("dataaaaaaaaaA:" ,data)
     this.invetarioServices.iniciarReconteo(data).subscribe({
       next: (response) => {
     
-        console.log("Error : B: :" , response);
+        console.log("response : ******* Baterias: :" , response);
        
       },
       error: (error) => {  console.log("Error : C: :" , error);},
@@ -199,9 +205,9 @@ export class AsignacionReconteosComponent implements OnInit {
     
     this.isLoading = true;
     
-    data.numeroReconteo = sessionStorage.getItem('cantidadReconteosBaterias');
+    data.numeroReconteo = sessionStorage.getItem('cantidadReconteos');
 
-    this.reconteosData = parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10);
+    this.reconteosData = parseInt(sessionStorage.getItem('cantidadReconteos'), 10);
     this.invetarioServices.siguienteReconteo(data).subscribe({
       next: (response) => {
         console.log("siguiente reconteo ...", response);
@@ -365,7 +371,7 @@ export class AsignacionReconteosComponent implements OnInit {
       const itemsAsignados = listaItems.slice(itemIndex, fin);
       
       resultado.push({
-        cantidad : sessionStorage.getItem('cantidadReconteosBaterias'),
+        cantidad : sessionStorage.getItem('cantidadReconteos'),
         nombre: nombre.nombre,
         data: itemsAsignados
       });
@@ -433,6 +439,8 @@ export class AsignacionReconteosComponent implements OnInit {
       nombre,
       data: agrupadoPorUsuario[nombre]
     }));
+
+    console.log(" this.groupedByUsuario ", this.groupedByUsuario);
   }
   
 
@@ -476,7 +484,7 @@ export class AsignacionReconteosComponent implements OnInit {
   }
 
   consultaTablaRegistro(){
-    this.cantidadActual = sessionStorage.getItem('cantidadReconteosBaterias');
+    this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
     console.log("cantidadActual01", this.cantidadActual);
     const requestStorage = JSON.parse(sessionStorage.getItem('data'));
     
@@ -591,6 +599,7 @@ export class AsignacionReconteosComponent implements OnInit {
     }
   }
   
+
 
 
 }

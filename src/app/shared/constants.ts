@@ -18,9 +18,14 @@ export const MESES = [
     {Tipoitem : "03-ACCESORIOS"},
     {Tipoitem : "04-REPUESTOS"}
   ];
+
+  export const TIPOS_ACCESORIOS = [
+    {Tipoitem : "03-ACCESORIOS"},
+  ];
   
   export const LOCALES = [
     { descripcion: 'Casa Matriz ENEA', codigo: '01' },
+    { descripcion: 'Casa Matriz ENEA BATERIAS', codigo: '02' },
     { descripcion: 'Serv. Tecnico Temuco', codigo: '03' },
     { descripcion: 'Centro de Servicios Antofagasta', codigo: '04' },
     { descripcion: 'Centro de Servicios Copiapo', codigo: '05' }

@@ -88,7 +88,11 @@ export class InventarioComponent implements OnInit {
   direccionOrden: 'asc' | 'desc' = 'asc';
 
   totalDirefencias : number = 0 ;
-  mostrarCeros: boolean = true;
+  mostrarCeros: boolean = false;
+  inventarioCerrado: boolean = false;
+
+  textBoton: string = '';
+  proximoReconteo: number = 0;
 
 
   constructor(
@@ -241,11 +245,6 @@ export class InventarioComponent implements OnInit {
   }
 
   onChange() {
-  
-    
-    
-    
-     // Guardar cada valor por separado
     sessionStorage.setItem('tipoItem', this.selectedTipoItem || '');
     sessionStorage.setItem('local', this.selectedLocal || '');
     sessionStorage.setItem('fechaInventario', this.selectedFechaInicio || '');
@@ -464,9 +463,9 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         
-
         this.totalItems = response.data.recordset.length;
         this.listaRegistros = response.data.recordset;
+        console.log("this.lista" , this.listaRegistros)
         this.calcularDiferencias(this.listaRegistros);
         
         if (response.data && response.data.recordset && response.data.recordset.length === 0) {
@@ -665,12 +664,13 @@ export class InventarioComponent implements OnInit {
       fechaInventario: fechaInventario,
       bodega: grupoEncontrado.GrupoBodega,
       loading: this.isLoading,
-      numeroReconteo :  this.cantidadReconteos,
+      numeroReconteo :  this.proximoReconteo,
       almacenamiento: this.almacenamiento,
     };
 
+    console.log("datosInventario" , datosInventario);
     
-
+    sessionStorage.setItem('datosInventario', JSON.stringify(datosInventario));
     this.myDataService.setReconteoData(datosInventario);
 
     if(this.cantidadReconteos === 1){
@@ -692,24 +692,35 @@ export class InventarioComponent implements OnInit {
         
       
         if (response?.data?.NumeroReconteo !== undefined && response?.enProceso === 0) {
+          this.cantidadReconteos  = response.data.NumeroReconteo;
           
-  
-          this.cantidadReconteos  = response.data.NumeroReconteo + 1;
-          sessionStorage.removeItem('cantidadReconteos');
-          sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
+          this.proximoReconteo = this.cantidadReconteos + 1;
+
+          sessionStorage.setItem('cantidadReconteos', this.proximoReconteo.toString());
+          sessionStorage.setItem('proximoReconteo', this.proximoReconteo.toString());
+
+          this.textBoton =  `Ir a  Reconteo${this.proximoReconteo}`;
           
         
-        } else if(response?.data?.NumeroReconteo !== undefined && response?.enProceso != 1) {
+        } else if(response?.data?.NumeroReconteo !== undefined && response?.enProceso != 0) {
           
           this.cantidadReconteos = response.data.NumeroReconteo;
-          sessionStorage.removeItem('cantidadReconteos');
+
+          this.textBoton =  `Ir a  Reconteo${this.cantidadReconteos}`;
+
+          this.proximoReconteo = this.cantidadReconteos;
+
+          sessionStorage.setItem('proximoReconteo', this.proximoReconteo.toString());
           sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
-          
+       
         
         }else{
           this.cantidadReconteos = 1;
-          sessionStorage.removeItem('cantidadReconteos');
+          
+          this.textBoton =  `Ir a Reconteo ${this.cantidadReconteos}`;
+          this.proximoReconteo = this.cantidadReconteos;
           sessionStorage.setItem('cantidadReconteos', this.cantidadReconteos.toString());
+          sessionStorage.setItem('proximoReconteo', this.proximoReconteo.toString());
         }
   
         
@@ -719,7 +730,7 @@ export class InventarioComponent implements OnInit {
         // this.cantidadReconteos = 1;
       },
       complete: () => {
-        // Aquí puedes hacer algo adicional si es necesario
+        this.obtenerReconteo();
       },
     });
   }
@@ -741,7 +752,7 @@ export class InventarioComponent implements OnInit {
     
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
         next: (response) => {
-          
+          console.log("responseee : " , response);
           this.totalItems = response.data.recordset.length;
           this.listaRegistros = response.data.recordset;
         
@@ -897,28 +908,91 @@ export class InventarioComponent implements OnInit {
 
   obtenerFilasFiltradas() {
     if (!this.mostrarCeros) {
+     
       return this.filteredInventarioData;
     } else {
-      return this.filteredInventarioData.filter(row => {
-        // Verificar si 'Diferencia' es distinta de 0
-        if (row.Diferencia !== 0) {
-          return true;
-        }
+      // Determinar cuál es la última columna de diferencia visible
+      const keyUltimaDiferencia = this.cantidadReconteos === 1 
+        ? 'Diferencia' 
+        : 'Diferencia0' + (this.cantidadReconteos - 1);
   
-        // Verificar las otras diferencias si existen
-        for (let i = 1; i <= this.cantidadReconteos - 1; i++) {
-          const key = 'Diferencia0' + i;
-          if (row[key] !== 0) {
-            return true;
-          }
-        }
-  
-        return false; // todas son 0
+      const filtradas = this.filteredInventarioData.filter(row => {
+        const valor = row[keyUltimaDiferencia];
+        console.log(`Revisando ${keyUltimaDiferencia}:`, valor);
+        return valor !== 0;
       });
+  
+      console.log("Filas resultantes:", filtradas);
+      return filtradas;
     }
   }
   
   
+
+  obtenerReconteo(){
+    const data = JSON.parse(sessionStorage.getItem('data'));
+
+    data.numeroReconteo = this.cantidadReconteos;
+    console.log("data-obtenerReconteo" , data);
+    
+    /*  this.invetarioServices.consultarReconteo(data).subscribe({
+      next: (response) => {
+        console.log("responseeeee :"  , response);
+ 
+      },
+      error: (error) => {},
+      complete: () => {
+       
+        
+      },
+    });*/
+  }
+
+  terminarInventario(){
+    this.isLoading = true;
+    const localGuardado = sessionStorage.getItem('local') || ''; 
+    const tipoItem = sessionStorage.getItem('tipoItem') || '';
+    const fechaInventario = sessionStorage.getItem('fechaInventario') || '';
+
+    const partes = fechaInventario.split('-');
+    let agno = partes[0]; // "2025"
+    let mes = partes[1];  // "05"
+    let dia = partes[2];  // "09"
+    
+    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
+  
+    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
+
+    const dataCierre = {
+      agno: agno,
+      mes: mes,
+      fechaInventario: fechaInventario,
+      tipoItem: tipoItem,
+      local: localGuardado,
+      grupoBodega: grupoEncontrado.GrupoBodega,
+    };
+
+    console.log("requestCierre" , dataCierre);
+
+    this.invetarioServices.terminarInventario(dataCierre).subscribe({
+     
+      next: (response) => {
+        
+       console.log("Respouesta al terminar el inventario" , response);
+       
+      },
+      error: (error) => {
+        console.log("Error al terminar el inventario" , error);
+        this.isLoading = false;
+       
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.inventarioCerrado = true;
+        
+      },
+    });
+  }
   
   
   

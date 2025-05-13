@@ -208,10 +208,11 @@
   display: flex; /* Usamos flexbox para alinear los botones */
   justify-content: flex-start; /* Alinea los botones a la izquierda */
   gap: 50px; /* Espacio entre los botones */
+  font-weight: 500;
 }
 .boton-extra {
   border: none;
-  background-color: #008686;
+  background-color: #00909E;
   color: white;
   border-radius: 8px;
   padding: 10px 20px;
@@ -337,3 +338,36 @@
       background-color: #008686;
       color: white;
     }
+
+    .custom-check-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 10px;
+      border: 1px solid #00909E;
+      border-radius: 8px;
+      background-color: #f0fafa;
+      width: fit-content;
+      cursor: pointer;
+      margin-left: 1.2%;
+      margin-bottom: 2%;
+    
+      &:hover {
+        background-color: #e1f1f2;
+      }
+    }
+    
+    .custom-check-input {
+      accent-color: #00909E;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    
+    .custom-check-label {
+      color: #00909E;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    

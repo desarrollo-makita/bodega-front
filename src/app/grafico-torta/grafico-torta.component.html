@@ -12,12 +12,19 @@
         <strong>{{ ((conteoRealizado / totalItems) * 100).toFixed(2) }}%</strong>
       </div>
     </div>
-
-    <!-- Mueves aquí la info al costado -->
-    <div class="grafico-info">
-      <p><strong style="font-size: 30px;">{{ totalDirefencias }}</strong> Items con diferencias en el conteo</p>
-      <p><strong style="font-size: 30px;">{{ totalItems }}</strong> Items en total, <strong style="font-size: 30px;">{{ conteoRealizado }}</strong> Items han sido contadas.</p>
-      <p><strong style="font-size: 30px;">{{ saldoTotal }}</strong> Unidades en total, <strong style="font-size: 30px;">{{ conteoTotal }}</strong> Unidades han sido contadas.</p>
-    </div>
+  </div>
+  <div class="col-md-12">
+    <mat-accordion>
+        <mat-expansion-panel style="margin-top: 2%;">
+          <mat-expansion-panel-header>
+                <mat-panel-title style="color: #00909E; font-size: 2em; height: 1em; font-weight: 500;">Detalles Conteo Inicial</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="grafico-info">
+            <p><strong style="font-size: 30px;">{{ totalDirefencias }}</strong> Items con diferencias en el conteo</p>
+            <p><strong style="font-size: 30px;">{{ totalItems }}</strong> Items en total, <strong style="font-size: 30px;">{{ conteoRealizado }}</strong> Items contados.</p>
+            <p><strong style="font-size: 30px;">{{ saldoTotal }}</strong> Unidades en total, <strong style="font-size: 30px;">{{ conteoTotal }}</strong> Unidades han sido contadas.</p>
+          </div>
+        </mat-expansion-panel>
+    </mat-accordion>
   </div>
 </div>
