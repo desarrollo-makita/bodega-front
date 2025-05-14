@@ -106,7 +106,7 @@ export class AsignacionReconteosComponent implements OnInit {
         }
       },
     });
-   this.cantidadActual = sessionStorage.getItem('cantidadReconteosBaterias');
+   this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
    console.log("cantidadActual02", this.cantidadActual);
    
   }
@@ -136,12 +136,12 @@ export class AsignacionReconteosComponent implements OnInit {
 
         console.log("CANTIDAD DE RECONTEOS",this.cantidadReconteo)
         if(this.itemsContados === this.reconteoTotal){          
-          this.nuevaCantidad = parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10) ;
-          const cantidad = parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10) + 1;
+          this.nuevaCantidad = parseInt(sessionStorage.getItem('cantidadReconteos'), 10) ;
+          const cantidad = parseInt(sessionStorage.getItem('cantidadReconteos'), 10) + 1;
           console.log("*************************" , cantidad);
          // sessionStorage.setItem('cantidadReconteos', this.nuevaCantidad.toString());
-          sessionStorage.setItem('proximoReconteoBaterias', cantidad.toString());
-          sessionStorage.setItem('cantidadReconteosBaterias', cantidad.toString());
+          sessionStorage.setItem('proximoReconteo', cantidad.toString());
+          sessionStorage.setItem('cantidadReconteos', cantidad.toString());
        
           return;
           // Sumar 1
@@ -164,7 +164,7 @@ export class AsignacionReconteosComponent implements OnInit {
       },
       error: (error) => {},
       complete: () => {
-        this.nuevaCantidad =  parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10);
+        this.nuevaCantidad =  parseInt(sessionStorage.getItem('cantidadReconteos'), 10);
         this.agruparItemsPorUsuario(this.listaItems)
         setTimeout(() => {
           this.isLoading = false;
@@ -199,9 +199,9 @@ export class AsignacionReconteosComponent implements OnInit {
     
     this.isLoading = true;
     
-    data.numeroReconteo = sessionStorage.getItem('cantidadReconteosBaterias');
+    data.numeroReconteo = sessionStorage.getItem('cantidadReconteos');
 
-    this.reconteosData = parseInt(sessionStorage.getItem('cantidadReconteosBaterias'), 10);
+    this.reconteosData = parseInt(sessionStorage.getItem('cantidadReconteos'), 10);
     this.invetarioServices.siguienteReconteo(data).subscribe({
       next: (response) => {
         console.log("siguiente reconteo ...", response);
@@ -234,7 +234,7 @@ export class AsignacionReconteosComponent implements OnInit {
       console.log("listaItemsasasasas", this.listaItems);
     const resultado = this.dividirReconteos(this.listaItems, this.listaNombres);
     
-    
+    console.log("resultado", resultado);
 
     this.invetarioServices.asignarReconteos(resultado ).subscribe({
       next: (response) => {
@@ -365,7 +365,7 @@ export class AsignacionReconteosComponent implements OnInit {
       const itemsAsignados = listaItems.slice(itemIndex, fin);
       
       resultado.push({
-        cantidad : sessionStorage.getItem('cantidadReconteosBaterias'),
+        cantidad : sessionStorage.getItem('cantidadReconteos'),
         nombre: nombre.nombre,
         data: itemsAsignados
       });
@@ -476,7 +476,7 @@ export class AsignacionReconteosComponent implements OnInit {
   }
 
   consultaTablaRegistro(){
-    this.cantidadActual = sessionStorage.getItem('cantidadReconteosBaterias');
+    this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
     console.log("cantidadActual01", this.cantidadActual);
     const requestStorage = JSON.parse(sessionStorage.getItem('data'));
     
@@ -568,11 +568,10 @@ export class AsignacionReconteosComponent implements OnInit {
   }
 
   obtenerFilasFiltradas() {
-    console.log("mostrarCeros:", this.mostrarCeros);
-    console.log("cantidadReconteos:", this.nuevaCantidad);
+    
   
     if (!this.mostrarCeros) {
-      console.log("Mostrando todos los datos sin filtrar.");
+   
       return this.filteredInventarioData;
     } else {
       // Determinar cuál es la última columna de diferencia visible
@@ -586,7 +585,7 @@ export class AsignacionReconteosComponent implements OnInit {
         return valor !== 0;
       });
   
-      console.log("Filas resultantes:", filtradas);
+     
       return filtradas;
     }
   }

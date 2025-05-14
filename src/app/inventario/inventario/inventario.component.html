@@ -191,7 +191,7 @@
                                                 </button>
                                             </div>
                                             <div *ngIf="codigoBloqueo" class="form-group col-md-2">
-                                                <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()" [disabled]="inventarioCerrado">
+                                                <button class="btn btn-primary btn-sm custom-btn" (click)="reconteo()" [disabled]="inventarioTerminado">
                                                     <i class="fas fa-list-ol"></i> {{textBoton}}
                                                 </button>
                                             </div>
@@ -207,7 +207,7 @@
                                             [totalDirefencias]="totalDirefencias"></app-grafico-torta>
                                         </div>
                                         <div  *ngIf="cantidadReconteos > 1 " class="form-group col-md-2">
-                                            <button class="btn btn-primary btn-sm custom-btn-cerrar-inventario" (click)="terminarInventario()">
+                                            <button class="btn btn-primary btn-sm custom-btn-cerrar-inventario" (click)="terminarInventario()" [disabled]="botonInventarioTerminado">
                                                 <i class="fas fa-lock"></i> Terminar Inventario
                                             </button>
                                         </div>

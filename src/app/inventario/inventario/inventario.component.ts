@@ -38,6 +38,8 @@ export class InventarioComponent implements OnInit {
   selectedLocal: string;
   selectedGrupo: string;
   mensajeCargado: string = '';
+  inventarioTerminado: boolean = false;
+  botonInventarioTerminado: boolean  = false;
 
   codigoBloqueo: boolean= false;
 
@@ -106,6 +108,7 @@ export class InventarioComponent implements OnInit {
   ngOnInit(): void {
     this.obtenerGrupoLocal();
     this.validarInventarioFun();
+    
   }
   
   openDialog(mensaje: string){
@@ -512,6 +515,7 @@ export class InventarioComponent implements OnInit {
         
           this.validarCierreInventario(data);
           this.validarCantidadReconteos(data);
+          this.validarTerminoInventario(data);
         }
         
         
@@ -603,6 +607,42 @@ export class InventarioComponent implements OnInit {
           this.isLoading = false;
           this.mostrarMensaje(`Inventario Cerrado , Solo puede Exportar los datos a Exel e iniciar el reconteo.`);
          
+          setTimeout(() => {
+            this.successMessage = false;
+  
+          }, 5000);
+        }else{
+          this.isLoading = false;
+        }
+       
+      },
+    });
+  }
+  validarTerminoInventario(data: any){
+    
+    this.isLoading = true;
+    this.invetarioServices.validarTerminoInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
+      next: (response) => {
+        console.log("Validando Inventario Terminado ... " , response);
+        this.botonInventarioTerminado =  response.estado === 1 ?  true : false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.mostrarMensaje(`Error al validar el termino de inventario`);
+       
+        setTimeout(() => {
+          this.errorMessage = false;
+
+        }, 5000);
+
+      },
+      complete: () => {
+
+        if(this.botonInventarioTerminado){
+          this.successMessage = true; 
+          this.isLoading = false;
+          this.mostrarMensaje(`Inventario Terminado , Solo puede Exportar los datos.`);
+          this.inventarioTerminado = true
           setTimeout(() => {
             this.successMessage = false;
   
@@ -918,11 +958,11 @@ export class InventarioComponent implements OnInit {
   
       const filtradas = this.filteredInventarioData.filter(row => {
         const valor = row[keyUltimaDiferencia];
-        console.log(`Revisando ${keyUltimaDiferencia}:`, valor);
+       
         return valor !== 0;
       });
   
-      console.log("Filas resultantes:", filtradas);
+    
       return filtradas;
     }
   }
@@ -971,14 +1011,14 @@ export class InventarioComponent implements OnInit {
       local: localGuardado,
       grupoBodega: grupoEncontrado.GrupoBodega,
     };
-
     console.log("requestCierre" , dataCierre);
-
-    this.invetarioServices.terminarInventario(dataCierre).subscribe({
+    
+    this.invetarioServices.terminarInventario({dataCierre}).subscribe({
      
       next: (response) => {
+        this.inventarioTerminado = true;
         
-       console.log("Respouesta al terminar el inventario" , response);
+        console.log("Respuesta al terminar el inventario" , response);
        
       },
       error: (error) => {
@@ -989,6 +1029,7 @@ export class InventarioComponent implements OnInit {
       complete: () => {
         this.isLoading = false;
         this.inventarioCerrado = true;
+        this.botonInventarioTerminado = true;
         
       },
     });
