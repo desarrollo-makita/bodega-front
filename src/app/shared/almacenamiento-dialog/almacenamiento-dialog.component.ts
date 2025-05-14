@@ -30,7 +30,7 @@ export class AlmacenamientoDialogComponent implements OnInit {
   ngOnInit(): void {
     console.log("OBTENEMOS DATOS DE INVENTARIO : ", this.data.datos)
     this.almacenamientoForm = this.fb.group({
-      almacenamiento: [this.almacenamiento] // puedes añadir validadores si quieres
+      almacenamiento: [this.almacenamiento]
     });
 
 
@@ -70,5 +70,7 @@ export class AlmacenamientoDialogComponent implements OnInit {
     
     this.showInfoAlmacenamiento = checked;
   }
+
+  
 
 }

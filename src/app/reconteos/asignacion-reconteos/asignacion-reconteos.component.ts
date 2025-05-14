@@ -6,6 +6,8 @@ import { LOCALES, MESES, OPERARIOS, TIPOS_ITEMS } from 'app/shared/constants';
 import { take } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { AlmacenamientoDialogComponent } from 'app/shared/almacenamiento-dialog/almacenamiento-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-asignacion-reconteos',
@@ -69,6 +71,7 @@ export class AsignacionReconteosComponent implements OnInit {
   @ViewChildren('inputElement') inputs!: QueryList<ElementRef>;
 
   constructor(private dataService: MyDataService,
+              private dialog: MatDialog,
               private invetarioServices: InventarioService,
              private myDataService: MyDataService,
   ) { }
@@ -102,7 +105,8 @@ export class AsignacionReconteosComponent implements OnInit {
      
           this.iniciarReconteos(this.requestReconteo);
         }else{
-          this.siguienteReconteo(this.requestReconteo);
+          
+         this.siguienteReconteo(this.requestReconteo);
         }
       },
     });
@@ -196,6 +200,9 @@ export class AsignacionReconteosComponent implements OnInit {
   }
 
   siguienteReconteo(data : any ){
+    
+    const mensaje = `¿Desea sumar el almacenaje?`;
+    this.almacenamientoConfirmDialog(mensaje, data);
     
     this.isLoading = true;
     
@@ -472,7 +479,8 @@ export class AsignacionReconteosComponent implements OnInit {
   
   formateaReconteo(){
     const data = this.requestReconteo;
-    this.siguienteReconteo(data);
+    const mensaje = `¿Desea sumar el almacenaje?`;
+    this.almacenamientoConfirmDialog(mensaje, data);
   }
 
   consultaTablaRegistro(){
@@ -581,13 +589,36 @@ export class AsignacionReconteosComponent implements OnInit {
   
       const filtradas = this.filteredInventarioData.filter(row => {
         const valor = row[keyUltimaDiferencia];
-        console.log(`Revisando ${keyUltimaDiferencia}:`, valor);
+       
         return valor !== 0;
       });
   
      
       return filtradas;
     }
+  }
+
+  almacenamientoConfirmDialog(mensaje: string , datosFiltro : any): void {
+    console.log("XXXXXXXXXXXXXXXXXXXentrando" , );
+    const dialogRef = this.dialog.open(AlmacenamientoDialogComponent, {
+      data: {
+        mensaje: mensaje,       
+        datos: datosFiltro
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.success) {
+        this.successMessage = true;
+  
+        // Aquí haces la llamada al siguiente reconteo después de que el usuario aceptó
+        this.siguienteReconteo(datosFiltro);
+  
+        setTimeout(() => {
+          this.successMessage = false;
+        }, 5000);
+      }
+    });
   }
   
 
