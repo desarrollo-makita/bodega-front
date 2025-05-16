@@ -229,6 +229,20 @@
     margin-right: 8px;
   }
 }
+.custom-btn-cerrar-inventario {
+  background-color: #f42738;
+  border: none;
+  color: white;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+
+}
+
+
+.custom-btn-cerrar-inventario:hover{
+  background-color: #f83b4b;
+} 
 
 
 .progress-container {

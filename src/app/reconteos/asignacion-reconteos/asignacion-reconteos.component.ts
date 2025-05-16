@@ -28,6 +28,7 @@ export class AsignacionReconteosComponent implements OnInit {
   mensaje: string = ''; // Mensaje para el usuario
   reconteosData: any;
   isLoading: boolean = false;
+  reconteosRecibidos:any
 
   cantidadReconteo: number = 0; // 
   cantidadPersonas: number = 1; // 
@@ -67,6 +68,10 @@ export class AsignacionReconteosComponent implements OnInit {
   itemsContados: number = 0;
   reconteoTotal: number = 0;
 
+  inventarioTerminado: boolean = false;
+  botonInventarioTerminado: boolean  = false;
+  inventarioCerrado: boolean = false;
+
 
   @ViewChildren('inputElement') inputs!: QueryList<ElementRef>;
 
@@ -92,7 +97,7 @@ export class AsignacionReconteosComponent implements OnInit {
         this.requestReconteo = response; // dato de entrada para servicios
         this.reconteosData = response.numeroReconteo; // el numeros  ereconteo que vamos
         this.tipoItem = response.tipoItem.substring(3);
-      
+       this.reconteosRecibidos =  sessionStorage.getItem('itemsRecibidos')
        
       },
       error: (error) => {
@@ -100,14 +105,19 @@ export class AsignacionReconteosComponent implements OnInit {
         // Lógica de manejo de errores
       },
       complete: () => {
-        
-        if(this.reconteosData === 1 ){
      
-          this.iniciarReconteos(this.requestReconteo);
+        if(this.reconteosRecibidos != 0){
+          if(this.reconteosData === 1 ){
+     
+            this.iniciarReconteos(this.requestReconteo);
+          }else{
+            
+           this.siguienteReconteo(this.requestReconteo);
+          }
         }else{
-          
-         this.siguienteReconteo(this.requestReconteo);
+          this.obtenerReconteo(this.requestReconteo);
         }
+        
       },
     });
    this.cantidadActual = sessionStorage.getItem('cantidadReconteos');
@@ -159,6 +169,7 @@ export class AsignacionReconteosComponent implements OnInit {
         if(this.listaSinUsuarios.length === 0 ){
 
           this.showMostrarBody = false;
+          this.showMostrarTarjetas = true;
          
         }else{
           this.showMostrarBody = true;
@@ -201,9 +212,6 @@ export class AsignacionReconteosComponent implements OnInit {
 
   siguienteReconteo(data : any ){
     
-    const mensaje = `¿Desea sumar el almacenaje?`;
-    this.almacenamientoConfirmDialog(mensaje, data);
-    
     this.isLoading = true;
     
     data.numeroReconteo = sessionStorage.getItem('cantidadReconteos');
@@ -214,7 +222,14 @@ export class AsignacionReconteosComponent implements OnInit {
         console.log("siguiente reconteo ...", response);
       },
       error: (error) => { 
-        console.error("Error ...", error);
+        console.error("Error recibido:", error);
+
+        // Extraer mensaje si viene del backend
+        const mensaje = error?.error?.message || "Error desconocido";
+
+        // Mostrar el mensaje
+        this.mostrarMensaje(mensaje);
+        this.errorMessage = true;
         this.isLoading = false;},
       complete: () => {
         
@@ -618,6 +633,54 @@ export class AsignacionReconteosComponent implements OnInit {
           this.successMessage = false;
         }, 5000);
       }
+    });
+  }
+
+
+  terminarInventario(){
+    this.isLoading = true;
+    const localGuardado = sessionStorage.getItem('local') || ''; 
+    const tipoItem = sessionStorage.getItem('tipoItem') || '';
+    const fechaInventario = sessionStorage.getItem('fechaInventario') || '';
+
+    const partes = fechaInventario.split('-');
+    let agno = partes[0]; // "2025"
+    let mes = partes[1];  // "05"
+    let dia = partes[2];  // "09"
+    
+    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
+  
+    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
+
+    const dataCierre = {
+      agno: agno,
+      mes: mes,
+      fechaInventario: fechaInventario,
+      tipoItem: tipoItem,
+      local: localGuardado,
+      grupoBodega: grupoEncontrado.GrupoBodega,
+    };
+    console.log("requestCierre" , dataCierre);
+    
+    this.invetarioServices.terminarInventario({dataCierre}).subscribe({
+     
+      next: (response) => {
+        this.inventarioTerminado = true;
+        
+        console.log("Respuesta al terminar el inventario" , response);
+       
+      },
+      error: (error) => {
+        console.log("Error al terminar el inventario" , error);
+        this.isLoading = false;
+       
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.inventarioCerrado = true;
+        this.botonInventarioTerminado = true;
+        
+      },
     });
   }
   

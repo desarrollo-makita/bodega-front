@@ -15,6 +15,7 @@ import {
   style,
   animate
 } from '@angular/animations';
+import { ReconteoData } from 'app/models/user.model';
 
 @Component({
   selector: 'app-inventario',
@@ -466,8 +467,9 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         
-        this.totalItems = response.data.recordset.length;
-        this.listaRegistros = response.data.recordset;
+        this.totalItems = response.data.recordset.filter(producto => producto.SaldoStock !== 0).length;
+        this.listaRegistros =  response.data.recordset.filter(producto => producto.SaldoStock !== 0);
+       
         console.log("this.lista" , this.listaRegistros)
         this.calcularDiferencias(this.listaRegistros);
         
@@ -487,7 +489,7 @@ export class InventarioComponent implements OnInit {
         } else {
           this.sinInventarioIniciado =  false;
          // this.mensaje = ""; // Limpiar mensaje si hay datos
-          this.inventarioData = response.data.recordset;
+          this.inventarioData = this.listaRegistros;
           this.filteredInventarioData = [...this.inventarioData]; // Copia para el filtrado
           this.showTable = true;
           this.mostrarFlecha = false;
@@ -697,19 +699,19 @@ export class InventarioComponent implements OnInit {
     const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
     const mensaje = `¿Desea sumar el almacenaje?`;
     const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
-
-    const datosInventario = {
+      
+    
+    const datosInventario: ReconteoData = {
       tipoItem: tipoItem,
       local: localGuardado,
       fechaInventario: fechaInventario,
       bodega: grupoEncontrado.GrupoBodega,
       loading: this.isLoading,
-      numeroReconteo :  this.proximoReconteo,
-      almacenamiento: this.almacenamiento,
-    };
+      numeroReconteo: this.proximoReconteo,
 
-    console.log("datosInventario" , datosInventario);
+    };
     
+   
     sessionStorage.setItem('datosInventario', JSON.stringify(datosInventario));
     this.myDataService.setReconteoData(datosInventario);
 
@@ -731,6 +733,7 @@ export class InventarioComponent implements OnInit {
       next: (response) => {
         
       
+        sessionStorage.setItem("itemsRecibidos" , response.itemsRecibidos ) ;
         if (response?.data?.NumeroReconteo !== undefined && response?.enProceso === 0) {
           this.cantidadReconteos  = response.data.NumeroReconteo;
           
@@ -740,9 +743,8 @@ export class InventarioComponent implements OnInit {
           sessionStorage.setItem('proximoReconteo', this.proximoReconteo.toString());
 
           this.textBoton =  `Ir a  Reconteo${this.proximoReconteo}`;
-          
         
-        } else if(response?.data?.NumeroReconteo !== undefined && response?.enProceso != 0) {
+        } else if(response?.data?.NumeroReconteo !== undefined && response?.enProceso != 0  ) {
           
           this.cantidadReconteos = response.data.NumeroReconteo;
 
@@ -793,10 +795,10 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
         next: (response) => {
           console.log("responseee : " , response);
-          this.totalItems = response.data.recordset.length;
-          this.listaRegistros = response.data.recordset;
-        
-          this.totalItems = response.data.recordset.length;
+          
+          this.totalItems = response.data.recordset.filter(producto => producto.SaldoStock !== 0).length;
+          this.listaRegistros =  response.data.recordset.filter(producto => producto.SaldoStock !== 0);
+          
           this.calcularDiferencias(this.listaRegistros);
           if (response.data && response.data.recordset && response.data.recordset.length === 0) {
             this.sinInventarioIniciado =  true;
