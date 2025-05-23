@@ -98,6 +98,12 @@ export class InventarioComponent implements OnInit {
   proximoReconteo: number = 0;
 
 
+  dataActualiza: any = {};
+  dataActualizaTabla: any = {};
+  dataCerrarConteo: any = {};
+  dataActualizaTablaCierre : any ={};
+  datosInventarioReconteo: ReconteoData;
+
   constructor(
     private invetarioServices: InventarioService , 
     private dialog: MatDialog,
@@ -350,21 +356,36 @@ export class InventarioComponent implements OnInit {
     const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
    
     const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
-   
-    const data = {
-        periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
-        mes: parseInt(this.selectedMes, 10) || null, 
-        tipoItem: this.selectedTipoItem,
-        local: this.selectedLocal,
-        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array
-        fechaInventario: this.selectedFechaInicio,
-    };
-
     
+    if(localGuardado === '02'){
+      this.dataActualiza = {
+          periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+          mes: parseInt(this.selectedMes, 10) || null, 
+          tipoItem: this.selectedTipoItem,
+          local: '01',
+          grupo: 2,
+          fechaInventario: this.selectedFechaInicio,
+      };
 
-    this.invetarioServices.actualizarSaldosSinCierre(data).subscribe({
+    }else{
+      console.log("grupoListRecuperado : " , grupoListRecuperado);
+     
+   
+      this.dataActualiza = {
+          periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+          mes: parseInt(this.selectedMes, 10) || null, 
+          tipoItem: this.selectedTipoItem,
+          local: this.selectedLocal,
+          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array
+          fechaInventario: this.selectedFechaInicio,
+      };
+    }
+    
+    console.log("[actualizarSaldosSinCierre] para actualizar los datos de la tabal inverntario: " , this.dataActualiza);
+
+    this.invetarioServices.actualizarSaldosSinCierre(this.dataActualiza).subscribe({
       next: (response) => {
-        
+        console.log("response actualizarSaldosSinCierre : " , response);
     },
       error: (error) => {
         this.isLoading = false;
@@ -376,17 +397,27 @@ export class InventarioComponent implements OnInit {
         }, 2000);
       },
       complete: () => {
-      
-        const dataActualizaTabla = {
-          periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
-          mes: parseInt(this.selectedMes, 10) || null, 
-          tipoItem: this.selectedTipoItem,
-          local: this.selectedLocal,
-          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array,
-          fechaInventario: this.selectedFechaInicio,
-          
-      };
-        this.actualizaTabla(dataActualizaTabla);
+        if(localGuardado === '02'){
+          this.dataActualizaTabla = {
+            periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+            mes: parseInt(this.selectedMes, 10) || null, 
+            tipoItem: this.selectedTipoItem,
+            local: '02',
+            grupo: 2,
+            fechaInventario: this.selectedFechaInicio,
+          };
+       }else{
+          this.dataActualizaTabla = {
+            periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+            mes: parseInt(this.selectedMes, 10) || null, 
+            tipoItem: this.selectedTipoItem,
+            local: this.selectedLocal,
+            grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array,
+            fechaInventario: this.selectedFechaInicio,
+          };
+       }
+        
+        this.actualizaTabla(this.dataActualizaTabla);
         setTimeout(() => {
           this.isLoading = false;
           
@@ -514,10 +545,13 @@ export class InventarioComponent implements OnInit {
           this.mostrarGrafico = true;
           this.showTable= true;
           
-        
-          this.validarCierreInventario(data);
-          this.validarCantidadReconteos(data);
-          this.validarTerminoInventario(data);
+        setTimeout(() => {
+         
+            this.validarCierreInventario(data);
+            this.validarCantidadReconteos(data);
+            this.validarTerminoInventario(data);
+          }, 1500);
+         
         }
         
         
@@ -534,21 +568,32 @@ export class InventarioComponent implements OnInit {
    
     const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
   
-   const data = {
+    if(localGuardado === '02'){
+      this.dataCerrarConteo = {
+        periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
+        mes: parseInt(this.selectedMes, 10) || null, 
+        tipoItem: this.selectedTipoItem,
+        local: '01',
+        grupo: 2,
+        fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
+      };
+    }else{
+      this.dataCerrarConteo = {
         periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
         mes: parseInt(this.selectedMes, 10) || null, 
         tipoItem: this.selectedTipoItem,
         local: this.selectedLocal,
         grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null,
         fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
-    };
+      };
 
+    }
     
-
-    this.invetarioServices.cierreInventario(data).subscribe({
+    this.invetarioServices.cierreInventario(this.dataCerrarConteo).subscribe({
       next: (response) => {
         
         this.codigoBloqueo = response.codigo === 0 ? true: false;
+        console.log("response cierreInventario [cierreInventario] : " ,  this.codigoBloqueo);
     },
       error: (error) => {
         this.isLoading = false;
@@ -560,21 +605,33 @@ export class InventarioComponent implements OnInit {
 
         }, 5000);
       },
-      complete: () => {
-      
-        const dataActualizaTabla = {
-          periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
-          mes: parseInt(this.selectedMes, 10) || null, 
-          tipoItem: this.selectedTipoItem,
-          local: this.selectedLocal,
-          grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array
-          fechaInventario: this.selectedFechaInicio,
-      };
-        this.actualizaTabla(dataActualizaTabla);
+      complete: () =>  {
+        if(localGuardado === '02'){
+          this.dataActualizaTablaCierre = {
+            periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+            mes: parseInt(this.selectedMes, 10) || null, 
+            tipoItem: this.selectedTipoItem,
+            local: '02',
+            grupo: 2,
+            fechaInventario: this.selectedFechaInicio,
+          };
+       }else{
+          this.dataActualizaTablaCierre = {
+            periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+            mes: parseInt(this.selectedMes, 10) || null, 
+            tipoItem: this.selectedTipoItem,
+            local: this.selectedLocal,
+            grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array,
+            fechaInventario: this.selectedFechaInicio,
+          };
+       }
+        
+        this.actualizaTabla(this.dataActualizaTablaCierre);
         setTimeout(() => {
           this.isLoading = false;
           
         }, 5000);
+       
         
       },
     });
@@ -582,7 +639,7 @@ export class InventarioComponent implements OnInit {
   }
 
   validarCierreInventario(data: any){
-    
+      data.local = data.local === '02' ? '01' : data.local;
     this.isLoading = true;
     this.invetarioServices.validarCierreInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
       next: (response) => {
@@ -590,6 +647,7 @@ export class InventarioComponent implements OnInit {
 
         this.codigoBloqueo = response.data.Estado === 1 ? true : false;
     
+        console.log("Validando Inventario Cerrado [validarCierreInventario] ... " ,  this.codigoBloqueo);
        
       },
       error: (error) => {
@@ -621,7 +679,7 @@ export class InventarioComponent implements OnInit {
     });
   }
   validarTerminoInventario(data: any){
-    
+    data.local = data.local === '02' ? '01' : data.local;
     this.isLoading = true;
     this.invetarioServices.validarTerminoInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
       next: (response) => {
@@ -700,25 +758,33 @@ export class InventarioComponent implements OnInit {
     const mensaje = `¿Desea sumar el almacenaje?`;
     const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
       
+    if(localGuardado === '02'){
+      this.datosInventarioReconteo = {
+        tipoItem: tipoItem,
+        local: '01',
+        fechaInventario: fechaInventario,
+        bodega: 2,
+        loading: this.isLoading,
+        numeroReconteo: this.proximoReconteo,
+      };
+    }else{
+      this.datosInventarioReconteo = {
+        tipoItem: tipoItem,
+        local: localGuardado,
+        fechaInventario: fechaInventario,
+        bodega: grupoEncontrado.GrupoBodega,
+        loading: this.isLoading,
+        numeroReconteo: this.proximoReconteo,
+      };
+    }
     
-    const datosInventario: ReconteoData = {
-      tipoItem: tipoItem,
-      local: localGuardado,
-      fechaInventario: fechaInventario,
-      bodega: grupoEncontrado.GrupoBodega,
-      loading: this.isLoading,
-      numeroReconteo: this.proximoReconteo,
-
-    };
-    
-   
-    sessionStorage.setItem('datosInventario', JSON.stringify(datosInventario));
-    this.myDataService.setReconteoData(datosInventario);
+    sessionStorage.setItem('datosInventario', JSON.stringify(this.datosInventarioReconteo));
+    this.myDataService.setReconteoData(this.datosInventarioReconteo);
 
     if(this.cantidadReconteos === 1){
       this.router.navigate(['/asignacion-reconteos']);
     }else{
-      this.almacenamientoConfirmDialog(mensaje, datosInventario);
+      this.almacenamientoConfirmDialog(mensaje, this.datosInventarioReconteo);
     }
 
     // this.almacenamientoConfirmDialog(mensaje, datosInventario);
@@ -728,7 +794,7 @@ export class InventarioComponent implements OnInit {
 
 
   validarCantidadReconteos(data: any) {
-    
+    data.local = data.local === '02' ? '01' : data.local;
     this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         
@@ -785,13 +851,15 @@ export class InventarioComponent implements OnInit {
   
 
   consultaTablaRegistroInicial(dataConsultaTabla: any){
+    console.log("con esta data consultamos la tabla invenytario : " , dataConsultaTabla);
     const data = {
       tipoItem: dataConsultaTabla.categorias[0],
-      local: dataConsultaTabla.numeroLocal,
+      local: dataConsultaTabla.grupoBodega === 2  ?  "02" : dataConsultaTabla.numeroLocal,
       fechaInventario: dataConsultaTabla.fechaInventario
       ,
     }
     
+    console.log("dataaaaaaaaaaaaaaaaaaaa : " , data);
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
         next: (response) => {
           console.log("responseee : " , response);

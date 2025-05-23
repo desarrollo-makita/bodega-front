@@ -92,12 +92,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
 
     }
 
-    console.log("ACCESORIOS-01" , dataInicio);
-    console.log("ACCESORIOS-02" , this.data);
-    console.log("ACCESORIOS-03" , this.verificarInventario(this.data.datos, dataInicio));
-   
-    
-    if (this.data && this.data.datos) {
+ if (this.data && this.data.datos) {
       if (this.verificarInventario(this.data.datos, dataInicio)) {
         this.inventarioIniciado = true; // Setea a true si el inventario ya fue iniciado
       
@@ -211,13 +206,9 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
 
   obtenerGrupoLocal(){
-    
-    this.inventarioServices.obtenerBodegas().subscribe({
+   this.inventarioServices.obtenerBodegas().subscribe({
       next: (response) => {
-        
-  
-        // Aquí modificamos NumeroLocal según GrupoBodega
-        this.grupoList = response.data.map((item: any) => {
+       this.grupoList = response.data.map((item: any) => {
           switch (item.GrupoBodega) {
             case 1:
               return { ...item, NumeroLocal: '01-ENEA' };
@@ -265,19 +256,29 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   }
   
   verificarInventario(resultado1: any[], resultado2: any): boolean {
-    
-    const inventarioEncontrado = resultado1.some(item =>
-      item.Agno.toString() === resultado2.periodo &&
-      item.Mes.toString().padStart(2, '0') === resultado2.mes &&
-      item.Local === resultado2.numeroLocal &&
-      item.GrupoBodega === resultado2.grupoBodega &&
-      resultado2.categorias.includes(item.Tipoitem)
-    );
+   const inventarioEncontrado = resultado1.some(item => {
+      const fechaItem = new Date(item.FechaInventario).toISOString().split('T')[0]; // "2025-05-15"
+      const fechaCoincide = fechaItem === resultado2.fechaInventario;
   
-    
-    if (inventarioEncontrado) {
+      const cumple = 
+        item.Agno.toString() === resultado2.periodo &&
+        item.Mes.toString().padStart(2, '0') === resultado2.mes &&
+        item.Local === resultado2.numeroLocal &&
+        item.GrupoBodega === resultado2.grupoBodega &&
+        resultado2.categorias.includes(item.Tipoitem) &&
+        fechaCoincide;
+  
+      // Log para ver qué está evaluando
       
-      this.desactivarBotonCerrar= false; 
+  
+      return cumple;
+    });
+  
+    if (inventarioEncontrado) {
+      this.desactivarBotonCerrar = false;
+      
+    } else {
+      
     }
   
     return inventarioEncontrado;
