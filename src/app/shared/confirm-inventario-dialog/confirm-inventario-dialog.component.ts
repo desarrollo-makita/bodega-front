@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InventarioService } from 'app/services/inventario/inventario.service';
 import { BateriasDialogComponent } from '../baterias-dialog/baterias-dialog.component';
+import { BODEGAS } from '../constants';
 
 @Component({
   selector: 'app-confirm-inventario-dialog',
@@ -208,22 +209,21 @@ export class ConfirmInventarioDialogComponent implements OnInit {
   obtenerGrupoLocal(){
    this.inventarioServices.obtenerBodegas().subscribe({
       next: (response) => {
-       this.grupoList = response.data.map((item: any) => {
-          switch (item.GrupoBodega) {
-            case 1:
-              return { ...item, NumeroLocal: '01-ENEA' };
-            case 2:
-              return { ...item, NumeroLocal: '01-ENEA-BATERIAS' };
-            case 3:
-              return { ...item, NumeroLocal: '03-TEMUCO' };
-            case 4:
-              return { ...item, NumeroLocal: '04-ANTOFAGASTA' };
-            case 5:
-              return { ...item, NumeroLocal: '05-COPIAPO' };
-            default:
-              return item; // si no coincide ningún GrupoBodega, se deja como está
-          }
-        });
+        console.log("obtener Bodegas:", response.data);  
+        response.data.forEach(element => {
+        const coincide = BODEGAS.some(filtro =>
+        filtro.NumeroLocal === element.NumeroLocal &&
+        filtro.GrupoBodega === element.GrupoBodega &&
+        filtro.Codigo === element.Codigo
+  );
+
+  if (coincide) {
+    element.NumeroLocalDes = element.NombreGrupoBodega;
+    this.grupoList.push(element);
+  }
+});
+
+               
       },
       error: (error) => {
       
@@ -239,22 +239,20 @@ export class ConfirmInventarioDialogComponent implements OnInit {
 
    // Método para manejar el cambio en el combobox
   onLocalChange(event: any): void {
-    // Aquí puedes agregar la lógica para manejar el cambio en la selección del local
-    this.selectedLocal = this.inventarioForm.get('selectedLocal')?.value;
-  
-    if (this.selectedLocal) {
-      this.local = this.selectedLocal.NumeroLocal;
-      this.grupo = this.selectedLocal.GrupoBodega;
+    const selected = event.value;
+    this.selectedLocal = selected;
 
-      // Setear el grupo de bodega automáticamente
-      this.inventarioForm.get('selectedGrupoBodega')?.setValue(this.selectedLocal.NombreGrupoBodega);
-    
+    console.log("Seleccionado:", selected);
+
+    if (selected) {
+      this.local = selected.NumeroLocal;
+      this.grupo = selected.GrupoBodega;
+
+      this.inventarioForm.get('selectedGrupoBodega')?.setValue(selected.NombreGrupoBodega);
     }
-   
-    this.desactivarBotonInicio = this.selectedLocal.NumeroLocal ? false: true;
-    
+
+    this.desactivarBotonInicio = selected?.NumeroLocal ? false : true;
   }
-  
   verificarInventario(resultado1: any[], resultado2: any): boolean {
    const inventarioEncontrado = resultado1.some(item => {
       const fechaItem = new Date(item.FechaInventario).toISOString().split('T')[0]; // "2025-05-15"

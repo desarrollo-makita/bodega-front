@@ -32,6 +32,32 @@ export const MESES = [
   ];
 
 
+  export const BODEGAS = [
+  { NumeroLocal: '01', GrupoBodega: 1, Codigo: '02' },
+  { NumeroLocal: '01', GrupoBodega: 2, Codigo: '02' },
+  { NumeroLocal: '01', GrupoBodega: 4, Codigo: '30' },
+  { NumeroLocal: '01', GrupoBodega: 5, Codigo: '26' },
+  { NumeroLocal: '01', GrupoBodega: 6, Codigo: '29' },
+  { NumeroLocal: '01', GrupoBodega: 7, Codigo: '1' },
+  { NumeroLocal: '01', GrupoBodega: 8, Codigo: '50' },
+  { NumeroLocal: '01', GrupoBodega: 9, Codigo: '15' },
+  { NumeroLocal: '01', GrupoBodega: 10, Codigo: '53' },
+  { NumeroLocal: '01', GrupoBodega: 11, Codigo: '9' },
+  { NumeroLocal: '01', GrupoBodega: 12, Codigo: '63' },
+  { NumeroLocal: '01', GrupoBodega: 13, Codigo: '90' },
+  { NumeroLocal: '01', GrupoBodega: 14, Codigo: '45' },
+  { NumeroLocal: '01', GrupoBodega: 15, Codigo: '55' },
+  { NumeroLocal: '01', GrupoBodega: 16, Codigo: '40' },
+  { NumeroLocal: '01', GrupoBodega: 17, Codigo: '65' },
+  { NumeroLocal: '01', GrupoBodega: 18, Codigo: '60' },
+  { NumeroLocal: '01', GrupoBodega: 19, Codigo: '27' },
+  { NumeroLocal: '03', GrupoBodega: 3,  Codigo: '40' },
+  { NumeroLocal: '04', GrupoBodega: 4,  Codigo: '50' },
+  { NumeroLocal: '05', GrupoBodega: 5,  Codigo: '60' },
+
+];
+
+
   export const OPERARIOS = [
     { "nombre": "ALAN SALAS" },
     { "nombre": "ALVARO JARA" },

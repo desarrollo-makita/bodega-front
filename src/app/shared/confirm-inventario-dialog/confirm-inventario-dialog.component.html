@@ -56,7 +56,7 @@
         <mat-label>Seleccionar Local</mat-label>
         <mat-select formControlName="selectedLocal" (selectionChange)="onLocalChange($event)"  [disabled]="desactivarComboBoxLocal">
           <mat-option *ngFor="let local of grupoList" [value]="local">
-            {{ local.NumeroLocal }}
+            {{ local.NumeroLocalDes }}
           </mat-option>
         </mat-select>
       </mat-form-field>

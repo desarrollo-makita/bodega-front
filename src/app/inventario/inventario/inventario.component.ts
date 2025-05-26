@@ -639,7 +639,7 @@ export class InventarioComponent implements OnInit {
   }
 
   validarCierreInventario(data: any){
-      data.local = data.local === '02' ? '01' : data.local;
+    data.local = data.local === '02' ? '01' : data.local;
     this.isLoading = true;
     this.invetarioServices.validarCierreInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
       next: (response) => {
@@ -798,9 +798,10 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         
-      
+      console.log("Validando Cantidad de Reconteos ... " , response);
         sessionStorage.setItem("itemsRecibidos" , response.itemsRecibidos ) ;
         if (response?.data?.NumeroReconteo !== undefined && response?.enProceso === 0) {
+          
           this.cantidadReconteos  = response.data.NumeroReconteo;
           
           this.proximoReconteo = this.cantidadReconteos + 1;
@@ -838,7 +839,7 @@ export class InventarioComponent implements OnInit {
         // this.cantidadReconteos = 1;
       },
       complete: () => {
-        this.obtenerReconteo();
+       // this.obtenerReconteo();
       },
     });
   }
@@ -1042,7 +1043,7 @@ export class InventarioComponent implements OnInit {
   obtenerReconteo(){
     const data = JSON.parse(sessionStorage.getItem('data'));
 
-    data.numeroReconteo = this.cantidadReconteos;
+    //data.numeroReconteo = this.cantidadReconteos;
     console.log("data-obtenerReconteo" , data);
     
     /*  this.invetarioServices.consultarReconteo(data).subscribe({
