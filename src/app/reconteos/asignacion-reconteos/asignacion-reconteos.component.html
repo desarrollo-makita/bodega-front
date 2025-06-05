@@ -68,7 +68,7 @@
             <div class="input-group">
             <mat-form-field appearance="fill" class="cantidad-operarios-field">
                 <mat-label><strong>Cantidad de operarios</strong> </mat-label>
-                <input matInput type="number" [(ngModel)]="cantidadPersonas" (change)="actualizarOperarios()" min="1" max="100">
+                <input matInput type="number" [(ngModel)]="cantidadPersonas" (change)="actualizarOperarios()" min="1" max="100" [disabled]="botonInventarioTerminado">
             </mat-form-field>
             </div>
         
@@ -104,9 +104,10 @@
         
             <!-- Botón para agregar -->
             <div class="boton-agregar-container">
-            <button mat-raised-button color="accent" (click)="agregarNombre()" [disabled]="operarios.length == 0">
-                <mat-icon>person_add</mat-icon> Asignar Reconteo
-            </button>
+              <button mat-raised-button color="accent" (click)="agregarNombre()" [disabled]="operarios.length == 0" [disabled]="botonInventarioTerminado">
+                  <mat-icon>person_add</mat-icon> Asignar Reconteo
+              </button>
+            
             </div>
           </div>
   
@@ -302,6 +303,12 @@
             </button>
 
             <button *ngIf="itemsContados === reconteoTotal && !isLoading"   class="btn btn-primary btn-sm custom-btn-cerrar-inventario" (click)="terminarInventario()"  [disabled]="botonInventarioTerminado">
+              <i class="fas fa-lock"></i> Terminar Inventario
+            </button>
+          </div>
+
+          <div *ngIf="showMostrarBody && !isLoading" class="boton-extra-container">
+            <button class="btn btn-primary btn-sm custom-btn-cerrar-inventario" (click)="terminarInventario()"  [disabled]="botonInventarioTerminado">
               <i class="fas fa-lock"></i> Terminar Inventario
             </button>
           </div>

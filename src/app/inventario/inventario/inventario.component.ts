@@ -1065,22 +1065,24 @@ export class InventarioComponent implements OnInit {
     const tipoItem = sessionStorage.getItem('tipoItem') || '';
     const fechaInventario = sessionStorage.getItem('fechaInventario') || '';
 
+    console.log("001 localGuardado : " , localGuardado);
+    
     const partes = fechaInventario.split('-');
     let agno = partes[0]; // "2025"
     let mes = partes[1];  // "05"
     let dia = partes[2];  // "09"
     
     const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
-  
+    console.log("002 grupoListRecuperado : " , grupoListRecuperado);
     const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
-
+    console.log("003 grupoEncontrado  : " , grupoEncontrado);
     const dataCierre = {
       agno: agno,
       mes: mes,
       fechaInventario: fechaInventario,
       tipoItem: tipoItem,
-      local: localGuardado,
-      grupoBodega: grupoEncontrado.GrupoBodega,
+      local: localGuardado === '02' ? '01' : localGuardado,
+      grupoBodega: grupoEncontrado === undefined  ? 2 :  grupoEncontrado.GrupoBodega,
     };
     console.log("requestCierre" , dataCierre);
     

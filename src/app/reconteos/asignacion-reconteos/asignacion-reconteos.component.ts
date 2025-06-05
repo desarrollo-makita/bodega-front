@@ -657,8 +657,8 @@ export class AsignacionReconteosComponent implements OnInit {
       mes: mes,
       fechaInventario: fechaInventario,
       tipoItem: tipoItem,
-      local: localGuardado,
-      grupoBodega: grupoEncontrado.GrupoBodega,
+     local: localGuardado === '02' ? '01' : localGuardado,
+       grupoBodega: grupoEncontrado === undefined  ? 2 :  grupoEncontrado.GrupoBodega,
     };
     console.log("requestCierre" , dataCierre);
     
