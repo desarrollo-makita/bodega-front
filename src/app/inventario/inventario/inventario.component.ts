@@ -498,8 +498,8 @@ export class InventarioComponent implements OnInit {
     this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
       next: (response) => {
         
-        this.totalItems = response.data.recordset.filter(producto => producto.SaldoStock !== 0).length;
-        this.listaRegistros =  response.data.recordset.filter(producto => producto.SaldoStock !== 0);
+        this.totalItems = response.data.recordset.length;
+        this.listaRegistros =  response.data.recordset;
        
         console.log("this.lista" , this.listaRegistros)
         this.calcularDiferencias(this.listaRegistros);
@@ -865,8 +865,8 @@ export class InventarioComponent implements OnInit {
         next: (response) => {
           console.log("responseee : " , response);
           
-          this.totalItems = response.data.recordset.filter(producto => producto.SaldoStock !== 0).length;
-          this.listaRegistros =  response.data.recordset.filter(producto => producto.SaldoStock !== 0);
+          this.totalItems = response.data.recordset.length;
+          this.listaRegistros =  response.data.recordset;
           
           this.calcularDiferencias(this.listaRegistros);
           if (response.data && response.data.recordset && response.data.recordset.length === 0) {
