@@ -1,0 +1,86 @@
+<div class="modal-backdrop" (click)="cerrarModal()"></div>
+
+<div class="modal-container mat-elevation-z8">
+  <header class="modal-header">
+    <h3>Garantía</h3>
+  </header>
+
+<nav class="tabs">
+  <button
+    [class.active]="tabSeleccionada === 'general'"
+    (click)="tabSeleccionada = 'general'">
+    <span class="material-icons">info</span> Información General
+  </button>
+
+  <button
+    [class.active]="tabSeleccionada === 'detalle'"
+    (click)="tabSeleccionada = 'detalle'">
+    <span class="material-icons">inventory_2</span> Detalle Repuestos
+  </button>
+
+  <button
+    [class.active]="tabSeleccionada === 'anexos'"
+    (click)="tabSeleccionada = 'anexos'">
+    <span class="material-icons">attach_file</span> Anexos
+  </button>
+</nav>
+
+
+  <section class="modal-body">
+    <div *ngIf="tabSeleccionada === 'general'" class="tab-content">
+      <div class="info-row" *ngFor="let dato of datosGenerales">
+        <span class="label">{{ dato.label }}:</span>
+        <span class="value">{{ dato.value }}</span>
+      </div>
+    </div>
+    <div *ngIf="tabSeleccionada === 'general' && mostrarMotivos" class="tab-content">
+      <label for="comentario" style="padding-top: 3%;"><strong>Motivos / Observaciones:</strong></label>
+        <textarea
+          id="comentario"
+          [(ngModel)]="comentarios"
+          (ngModelChange)="validarComentario()"
+          placeholder="Motivos del rechazo......."
+          rows="5"
+          style="width: 100%; resize: vertical; padding: 0.5rem; font-size: 14px; border-radius: 8px; border: 1px solid #ccc;">
+        </textarea>
+    </div>
+
+    <div *ngIf="tabSeleccionada === 'general'"  class="botones-acciones">
+      <button class="btn-aprobar" (click)="aprobar()">Aprobar</button>
+      <button
+        class="btn-rechazar"
+        [disabled]="mostrarMotivos && !comentarios.trim()"
+        [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
+        (click)="rechazar()">
+        {{ botonRechazar }}
+      </button>
+    </div>
+    
+    <div *ngIf="tabSeleccionada === 'detalle'" class="tab-content">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Cantidad</th>
+            <th>Descripción</th>
+            <th>Ubicación</th>
+            <th>Stock</th>
+            <th>Bodega</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let repuesto of data.detalle">
+            <td>{{ repuesto.itemRepuesto }}</td>
+            <td>{{ repuesto.Cantidad }}</td>
+            <td>{{ repuesto.Descripcion  }}</td>
+            <td>{{ repuesto.Ubicacion }}</td>
+            <td>{{ repuesto.StockFinal }}</td>
+            <td>{{ repuesto.Bodega }}</td>
+          
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

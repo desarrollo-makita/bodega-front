@@ -50,6 +50,9 @@ import { BateriasDialogComponent } from './shared/baterias-dialog/baterias-dialo
 import { MatRadioModule } from '@angular/material/radio';
 import { InventarioBateriasComponent } from './inventario-baterias/inventario-baterias/inventario-baterias.component';
 import { AsignacionRerconteosBateriasComponent } from './reconteo-baterias/asignacion-rerconteos-baterias/asignacion-rerconteos-baterias.component';
+import { GarantiasComponent } from './garantias/garantias/garantias.component';
+import { GarantiaDetalleDialogComponent } from './shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
+import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingresar-garantias.component';
 
 @NgModule({
   imports: [
@@ -102,6 +105,9 @@ import { AsignacionRerconteosBateriasComponent } from './reconteo-baterias/asign
     BateriasDialogComponent,
     InventarioBateriasComponent,
     AsignacionRerconteosBateriasComponent,
+    GarantiasComponent,
+    GarantiaDetalleDialogComponent,
+    IngresarGarantiasComponent,
 
     
     

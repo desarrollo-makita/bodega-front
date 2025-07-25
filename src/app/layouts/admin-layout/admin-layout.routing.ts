@@ -10,6 +10,8 @@ import { AsignarCapturadorComponent } from 'app/asignar-capturador/asignar-captu
 import { AsignacionReconteosComponent } from 'app/reconteos/asignacion-reconteos/asignacion-reconteos.component';
 import { InventarioBateriasComponent } from 'app/inventario-baterias/inventario-baterias/inventario-baterias.component';
 import { AsignacionRerconteosBateriasComponent } from 'app/reconteo-baterias/asignacion-rerconteos-baterias/asignacion-rerconteos-baterias.component';
+import { GarantiasComponent } from 'app/garantias/garantias/garantias.component';
+import { IngresarGarantiasComponent } from 'app/garantias/ingresar-garantias/ingresar-garantias.component';
 
 
 
@@ -24,6 +26,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'asignacion-reconteos', component: AsignacionReconteosComponent },
     { path: 'inventario-baterias', component: InventarioBateriasComponent },
     { path: 'asignacion-reconteos-baterias', component: AsignacionRerconteosBateriasComponent },
+    { path: 'garantias', component: GarantiasComponent},
+    { path: 'ingresar-garantias', component: IngresarGarantiasComponent},
   
 
 ];

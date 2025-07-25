@@ -1,0 +1,197 @@
+/* Loader - reutiliza el mismo estilo que tienes */
+
+/* Card Garantias */
+.card-garantias {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border-left: 6px solid #008686;
+  box-shadow: 0 10px 25px rgba(0, 134, 134, 0.15);
+  animation: fadeIn 0.6s ease-in-out;
+
+  .highlight-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+
+    .cantidad {
+      color: #008686;
+      font-size: 28px;
+      margin-right: 1rem;
+    }
+
+    .estado {
+      margin-left: 1rem;
+      font-size: 18px;
+      font-weight: 600;
+
+      &.pendiente {
+        color: #ff9800; /* Naranja */
+      }
+
+      &.aprobado {
+        color: #00909E; /* Azul institucional */
+      }
+
+      &.rechazado {
+        color: #e53935; /* Rojo */
+      }
+    }
+  }
+}
+
+.table>thead>tr>th {
+    border-bottom-width: 1px;
+    font-size: 12px;
+    text-transform: uppercase;
+     color: white !important;
+    font-weight: 400;
+    padding-bottom: 5px;
+}
+
+/* Tabla */
+.table-container {
+  margin-top: 1rem;
+  overflow-x: auto;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+    thead {
+        background-color: #00909E;
+        color: white !important;
+    th {
+        padding: 0.75rem;
+        text-align: left;
+        white-space: nowrap;
+        width: 1rem;
+      }
+    }
+
+    tbody {
+      tr {
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #b0d9db;
+          cursor: pointer;
+        }
+      }
+
+      td {
+        padding: 0.75rem;
+        color: #00909E;
+        white-space: nowrap;
+         width: 1rem;
+
+        span.pendiente {
+          color: #ff9800;
+          font-weight: bold;
+        }
+        span.aprobado {
+          color: #00909E;
+          font-weight: bold;
+        }
+        span.rechazado {
+          color: #e53935;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+/* Botones */
+button[mat-icon-button] {
+  margin-right: 0.5rem;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgba(0, 144, 158, 0.2);
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.icono-verde {
+  color: green;
+  background-color: white;
+  border-radius: 50%;
+}
+
+
+.filtro-combo {
+  min-width: 250px;
+
+  ::ng-deep .mat-form-field-outline {
+    border-color: #00909E !important;
+  }
+
+  ::ng-deep .mat-form-field-label {
+    color: #00909E !important;
+    
+  }
+
+  ::ng-deep .mat-select-arrow {
+    color: #00909E !important;
+  }
+
+  ::ng-deep .mat-select-value {
+    color: #00909E !important;
+    
+  }
+
+  ::ng-deep .mat-option {
+    color: #00909E !important;
+    font-weight: 500;
+  }
+}
+
+
+.card-garantias-tabla {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 134, 134, 0.15);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.clickable-cell {
+  cursor: pointer;
+  color: #007a85;
+  text-decoration: underline;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #005e66;
+  }
+}
+
+
+::ng-deep .custom-dialog-container .mat-dialog-container {
+  padding: 0 !important; /* para que no quede padding extra */
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 80vh !important;
+  height: auto !important;
+}
+
+::ng-deep .custom-dialog-container .modal-container {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+}

@@ -1,0 +1,202 @@
+.modal-backdrop {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1050;
+}
+
+.modal-container {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  max-width: 850px;
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 15px 40px rgba(0, 134, 134, 0.3);
+  overflow-y: auto;
+  z-index: 1100;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: slideDownFadeIn 0.4s ease forwards;
+}
+
+.modal-header {
+  display: flex; justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h3 {
+    font-weight: 700;
+    color: #008686;
+    font-size: 3rem;
+  }
+
+  .btn-cerrar {
+    font-size: 2rem;
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #008686;
+    }
+  }
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #008686;
+  margin-bottom: 1rem;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    font-size: 100%;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+
+    &.active {
+      color: #008686;
+      border-bottom-color: #008686;
+      font-weight: 500;
+    }
+
+    .material-icons {
+      font-size: 20px;
+      vertical-align: middle;
+    }
+
+    &:hover:not(.active) {
+      color: #005e66;
+    }
+  }
+}
+
+.modal-body {
+  .tab-content {
+     background: transparent !important; /* para evitar fondo blanco extra */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #eee;
+        font-size: 1.8rem;
+
+      .label {
+        font-weight: 500;
+        color: #007a85;
+        max-width: 50%;
+        word-wrap: break-word;
+      }
+      .value {
+        color: #444;
+        max-width: 65%;
+        word-wrap: break-word;
+        font-weight: 100;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.5rem;
+
+      thead {
+        background-color: #008686;
+        color: white;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 0.5rem 0.8rem;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+        font-weight: 400;
+      }
+
+      tbody tr:hover {
+        background-color: #b0d9db;
+      }
+    }
+  }
+}
+
+.botones-acciones {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  button {
+    padding: 0.7rem 1.8rem;
+    font-size: 1.6rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+.btn-aprobar {
+  background-color: #008686; // Verde institucional Makita
+  color: white;
+
+  &:hover {
+    background-color: #006f6f;
+  }
+}
+
+.btn-rechazar {
+  background-color: #c62828; // Rojo fuerte
+  color: white;
+
+  &:hover {
+    background-color: #a61e1e;
+  }
+   &:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+}
+}
+
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  font-size: 14px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+
+/* Animación */
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

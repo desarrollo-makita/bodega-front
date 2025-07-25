@@ -79,6 +79,14 @@ export class NavbarComponent implements OnInit{
             this.title = 'Asignacion de Reconteos-Baterias';
             this.showIcons = false;
         }
+        else if (title === '/garantias') {
+            this.title = 'Garantías';
+            this.showIcons = false;
+        }
+        else if (title === '/ingresar-garantia') {
+            this.title = 'Ingresar Garantías';
+            this.showIcons = false;
+        }
       }
 
     
