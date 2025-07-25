@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -6,17 +6,22 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   templateUrl: './garantia-detalle-dialog.component.html',
   styleUrls: ['./garantia-detalle-dialog.component.scss']
 })
-export class GarantiaDetalleDialogComponent {
+export class GarantiaDetalleDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<GarantiaDetalleDialogComponent>
-  ) {}
+  ) {
+    console.log('DATA RECIBIDA EN MODAL:', this.data);
+  }
+  ngOnInit() {console.log('DATA RECIBIDA EN MODAL ngOnInit:', this.data);
+  }                      
 
-tabSeleccionada: 'general' | 'detalle' | 'anexos' = 'general';
-comentarios: string = '';
-mostrarMotivos: boolean = false;
-botonRechazar: string = 'Rechazar';
-confirmarRechazoHabilitado: boolean = false;
+  tabSeleccionada: 'general' | 'detalle' | 'anexos' = 'general';
+  comentarios: string = '';
+  mostrarMotivos: boolean = false;
+  botonRechazar: string = 'Rechazar';
+  botonAprobar: string = 'Aprobar';
+  confirmarRechazoHabilitado: boolean = false;
 
   get datosGenerales() {
     if (!this.data) return [];
@@ -50,12 +55,13 @@ confirmarRechazoHabilitado: boolean = false;
   aprobar() {
     this.mostrarMotivos = false;
     this.botonRechazar = 'Rechazar';
+       this.botonAprobar = 'Aprobar';
   }
 
   rechazar() {
     this.mostrarMotivos = true;
     this.botonRechazar = 'Enviar rechazo';
-console.log("apreta")
+    this.botonAprobar = 'Cancelar';
   }
 
   validarComentario() {

@@ -106,6 +106,32 @@
       }
     }
 
+     ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 1rem;
+
+      li {
+        margin-bottom: 0.8rem;
+
+        a {
+          color: #008686;
+          font-weight: 600;
+          font-size: 1.6rem;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: color 0.2s;
+
+          &:hover {
+            color: #005e66;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;

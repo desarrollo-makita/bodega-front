@@ -1,1 +1,96 @@
-<p>ingresar-garantias works!</p>
+<div class="card-garantias">
+  <form (ngSubmit)="onSubmit()" [formGroup]="garantiaForm">
+
+    <div class="form-grid">
+
+      <!-- Fecha -->
+      <div class="form-group">
+        <label for="fecha">Fecha Digitalización</label>
+        <input type="date" id="fecha" formControlName="FechaDigitalizacionOs" />
+      </div>
+
+      <!-- Tipo Documento -->
+      <div class="form-group">
+        <label for="tipoDoc">Tipo Documento</label>
+        <select id="tipoDoc" formControlName="TipoDocumento">
+          <option value="" disabled>Selecciona tipo</option>
+          <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <!-- Modelo -->
+      <div class="form-group">
+        <label for="modelo">Modelo</label>
+        <input type="text" id="modelo" formControlName="Modelo" />
+      </div>
+
+      <!-- Serie -->
+      <div class="form-group">
+        <label for="serie">Serie</label>
+        <input type="text" id="serie" formControlName="serie" />
+      </div>
+
+      <!-- Número Documento -->
+      <div class="form-group">
+        <label for="numDoc">Número Documento</label>
+        <input type="text" id="numDoc" formControlName="NumeroDocumento" />
+      </div>
+
+      <!-- Revendedor -->
+      <div class="form-group">
+        <label for="revendedor">Vendedor</label>
+        <input type="text" id="revendedor" formControlName="Revendedor" />
+      </div>
+
+      <!-- Rut Servicio Técnico -->
+      <div class="form-group">
+        <label for="rutServ">Rut Servicio Técnico</label>
+        <input type="text" id="rutServ" formControlName="RutServicioTecnico" />
+      </div>
+
+      <!-- Nombre Servicio Autorizado -->
+      <div class="form-group">
+        <label for="nomServ">Nombre Servicio Autorizado</label>
+        <input type="text" id="nomServ" formControlName="NombreServicioAut" />
+      </div>
+
+      <!-- Nombre Consumidor -->
+      <div class="form-group">
+        <label for="nomConsumidor">Nombre Consumidor</label>
+        <input type="text" id="nomConsumidor" formControlName="NombreConsumidor" />
+      </div>
+
+      <!-- Dirección Consumidor -->
+      <div class="form-group">
+        <label for="dirConsumidor">Dirección Consumidor</label>
+        <input type="text" id="dirConsumidor" formControlName="DireccionConsumidor" />
+      </div>
+
+      <!-- Ciudad Consumidor -->
+      <div class="form-group">
+        <label for="ciudadConsumidor">Ciudad Consumidor</label>
+        <input type="text" id="ciudadConsumidor" formControlName="CiudadConsumidor" />
+      </div>
+
+      <!-- Región Consumidor -->
+      <div class="form-group">
+        <label for="regionConsumidor">Región Consumidor</label>
+        <input type="text" id="regionConsumidor" formControlName="RegionConsumidor" />
+      </div>
+
+      <!-- Rut Consumidor -->
+      <div class="form-group">
+        <label for="rutConsumidor">Rut Consumidor</label>
+        <input type="text" id="rutConsumidor" formControlName="RutConsumidor" />
+      </div>
+
+      <!-- Informe Técnico -->
+      <div class="form-group full-width">
+        <label for="informeTec">Informe Técnico</label>
+        <textarea id="informeTec" rows="3" formControlName="InformeTecnico"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="garantiaForm.invalid">Guardar</button>
+  </form>
+</div>
