@@ -21,19 +21,18 @@ export class IngresarGarantiasComponent implements OnInit {
     this.garantiaForm = this.fb.group({
       FechaDigitalizacionOs: [new Date(), Validators.required],
       TipoDocumento: ['', Validators.required],
-      InformeTecnico: [''],
-      Modelo: [''],
-      serie: [''],
-      NumeroDocumento: [''],
-      Observacion: [''],
-      Revendedor: [''],
-      RutServicioTecnico: [''],
-      NombreServicioAut: [''],
-      NombreConsumidor: [''],
-      DireccionConsumidor: [''],
-      CiudadConsumidor: [''],
-      RegionConsumidor: [''],
-      RutConsumidor: ['']
+      InformeTecnico: ['' , Validators.required],
+      Modelo: ['', Validators.required],
+      serie: ['', Validators.required],
+      NumeroDocumento: ['', Validators.required],
+      Revendedor: ['', Validators.required],
+      RutServicioTecnico: ['', Validators.required],
+      NombreServicioAut: ['', Validators.required],
+      NombreConsumidor: ['', Validators.required],
+      DireccionConsumidor: ['', Validators.required],
+      CiudadConsumidor: ['', Validators.required],
+      RegionConsumidor: ['', Validators.required],
+      RutConsumidor: ['', Validators.required]
     });
   }
 

@@ -51,7 +51,7 @@
         class="btn-rechazar"
         [disabled]="mostrarMotivos && !comentarios.trim()"
         [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
-        (click)="rechazar()">
+        (click)="rechazar(data)">
         {{ botonRechazar }}
       </button>
     </div>

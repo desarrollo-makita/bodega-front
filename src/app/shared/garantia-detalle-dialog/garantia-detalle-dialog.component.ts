@@ -11,10 +11,10 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<GarantiaDetalleDialogComponent>
   ) {
-    console.log('DATA RECIBIDA EN MODAL:', this.data);
+   
   }
-  ngOnInit() {console.log('DATA RECIBIDA EN MODAL ngOnInit:', this.data);
-  }                      
+  ngOnInit() {};
+           
 
   tabSeleccionada: 'general' | 'detalle' | 'anexos' = 'general';
   comentarios: string = '';
@@ -58,13 +58,15 @@ export class GarantiaDetalleDialogComponent implements OnInit {
        this.botonAprobar = 'Aprobar';
   }
 
-  rechazar() {
+  rechazar(datosGarantia: any) {
+    console.log("dato:", datosGarantia);
     this.mostrarMotivos = true;
     this.botonRechazar = 'Enviar rechazo';
     this.botonAprobar = 'Cancelar';
   }
 
   validarComentario() {
+    console.log(this.comentarios)
     this.confirmarRechazoHabilitado = this.comentarios.trim().length > 0;
   }
 
