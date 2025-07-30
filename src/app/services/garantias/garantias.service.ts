@@ -8,12 +8,40 @@ import { Observable } from 'rxjs';
 })
 export class GarantiasService {
 
-  private obtenerGarantiasEstadoURL = "http://localhost:3026/api/obtener-garantias-estado";
+    private obtenerGarantiasEstadoURL = "http://localhost:3026/api/obtener-garantias-estado";
+    private obtenerGarantiasIntranet = "http://localhost:3026/api/obtener-garantias-estado-intranet";
+    private insertarGarantiasIntranet = "http://localhost:3026/api/insertar-garantias-intranet";
+    private buscarItemURL = "http://localhost:3026/api/buscar-item-formulario";
+    private buscarComunasURL = "http://localhost:3026/api/obtener-comunas";
+
 
   constructor(private http: HttpClient) {}
 
   getGarantiasPorEstado(estado: string): Observable<any> {
     const url = `${this.obtenerGarantiasEstadoURL}/${estado}`;
     return this.http.get<any>(url);
+  }  
+  
+  getGarantiasPorEstadoIntranet(estado: string): Observable<any> {
+    const url = `${this.obtenerGarantiasIntranet}/${estado}`;
+    return this.http.get<any>(url);
   }
+
+  
+  insertarGarantiaIntranet(data : any): Observable<any> {
+    return this.http.post<any>(this.insertarGarantiasIntranet, { data });
+  }
+
+  buscarItems(filtro: string): Observable<any> {
+    const url = `${this.buscarItemURL}`;
+    const params = new HttpParams().set('query', filtro);
+    return this.http.get<any>(url, { params });
+  }
+
+   getComunas(codigo: number): Observable<any> {
+    const url = `${this.buscarComunasURL}/${codigo}`;
+    return this.http.get<any>(url);
+  } 
+
+  
 }

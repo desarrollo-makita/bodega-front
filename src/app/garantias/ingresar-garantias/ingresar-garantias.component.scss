@@ -25,7 +25,8 @@
 }
 
 label {
-  font-weight: 700;
+   text-transform: uppercase;
+  font-weight: 600;
   color: #008686;
   margin-bottom: 0.5rem;
   font-size: 14px;
@@ -37,6 +38,7 @@ input[type="text"],
 input[type="date"],
 select,
 textarea {
+   text-transform: uppercase;
   background: #f9f9f9;
   border: none;
   border-bottom: 2px solid #b0d9db;
@@ -106,3 +108,35 @@ button:disabled {
 button:hover:not(:disabled) {
   background-color: #00695c;
 }
+
+
+.seccion-titulo {
+  margin: 2rem 0 1rem;
+  color: #777;
+  font-weight: bold;
+  font-size: 2rem;
+  border-bottom: 2px solid #008686;
+  padding-bottom: 0.3rem;
+  
+}
+
+
+  .text-danger {
+    color: #dc3545;
+    font-weight: bold;
+    
+  }
+
+  .alert-success {
+    background-color: rgba(0, 144, 158, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+  }
+
+  .alert-danger{
+    background-color: rgba(235, 35, 35, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+  }

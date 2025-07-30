@@ -20,10 +20,14 @@ interface Garantia {
 export class GarantiasComponent implements OnInit {
   isLoading = true;
   garantiaData: Garantia[] = [];
+  garantiaDataIntranet: Garantia[] = [];
   garantiaPendiente = 0;
   garantiaAprobada = 0;
   garantiaRechazada = 0;
   estadoSeleccionado: string = 'pendientes'; // Valor por defecto
+  showIntranet: boolean = false; // Controla la visibilidad de la tabla de intranet
+    
+
 
     constructor(
       private garantiasServices: GarantiasService,
@@ -35,12 +39,12 @@ export class GarantiasComponent implements OnInit {
 
   ngOnInit(): void {
     // Simular carga
-    setTimeout(() => {
+
       this.filtrarGarantias();
       
     //  this.actualizarConteos();
       this.isLoading = false;
-    }, 1200);
+
   }
 
   actualizarConteos() {
@@ -60,19 +64,40 @@ export class GarantiasComponent implements OnInit {
   }
 
   obtenerGarantiasEstado(estado: string){
-    this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
-      next: (response) => {
-        this.garantiaData = response.pedidosValidos;
-        console.log("this.garantiaData", this.garantiaData); 
-      },
-      error: (error) => {
-        console.error('Error en la consulta:', error);
-      },
-      
-      complete: () => {
-      
-      },
-    });
+    this.isLoading = true;
+    if(estado === 'ingresadas'){
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+          next: (response) => {
+            this.garantiaData = response.pedidosValidos.data;
+            
+            if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
+          },
+          error: (error) => {
+            console.error('Error en la consulta:', error);
+        },
+          complete: () => {
+            setTimeout(() => {
+              this.isLoading = false;
+            }, 1000);
+          },
+      });
+    }else{
+       this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
+          next: (response) => {
+            this.garantiaData = response.pedidosValidos;
+            this.showIntranet = false;
+          },
+          error: (error) => {
+            console.error('Error en la consulta:', error);
+        },
+          complete: () => {
+            setTimeout(() => {
+              this.isLoading = false;
+            }, 1000);
+          },
+      });
+    }
+   
   }
 
   filtrarGarantias() {

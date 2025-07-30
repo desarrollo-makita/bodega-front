@@ -195,3 +195,6 @@ button[mat-icon-button] {
   flex: 1 1 auto !important;
   overflow-y: auto !important;
 }
+::ng-deep .boton-agregar {
+  color: rgb(0, 144, 158);
+}

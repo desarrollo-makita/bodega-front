@@ -1,15 +1,13 @@
 <div class="card-garantias">
   <form (ngSubmit)="onSubmit()" [formGroup]="garantiaForm">
 
-    <div class="form-grid">
 
-      <!-- Fecha -->
+    <h3 class="seccion-titulo">Detalles del Producto</h3>
+    <div class="form-grid">
       <div class="form-group">
-        <label for="fecha">Fecha Digitalización</label>
+        <label for="fecha">Fecha Ingreso</label>
         <input type="date" id="fecha" formControlName="FechaDigitalizacionOs" />
       </div>
-
-      <!-- Tipo Documento -->
       <div class="form-group">
         <label for="tipoDoc">Tipo Documento</label>
         <select id="tipoDoc" formControlName="TipoDocumento">
@@ -17,80 +15,120 @@
           <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
         </select>
       </div>
-
-      <!-- Modelo -->
-      <div class="form-group">
+      <div class="form-group" style="position: relative;">
         <label for="modelo">Modelo</label>
-        <input type="text" id="modelo" formControlName="Modelo" />
-      </div>
+        <input
+          type="text"
+          id="modelo"
+          formControlName="Modelo"
+          (input)="buscarModelos()"
+          (blur)="ocultarListaConDelay()"
+          (focus)="buscarModelos()" />
 
-      <!-- Serie -->
+          <!-- Lista de sugerencias -->
+          <ul
+            class="sugerencias"
+            *ngIf="modelosFiltrados.length > 0 && mostrarSugerencias"
+            style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+            
+            <li
+              *ngFor="let item of modelosFiltrados"
+              (mousedown)="seleccionarModelo(item)"
+              style="padding: 5px; cursor: pointer;">
+              {{ item.ItemCode }} - {{ item.ItemName }}
+            </li>
+          </ul>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <input type="text" id="descripcion" formControlName="Descripcion" disabled  />
+      </div>
       <div class="form-group">
         <label for="serie">Serie</label>
         <input type="text" id="serie" formControlName="serie" />
       </div>
+    </div>
 
-      <!-- Número Documento -->
+   
+    <h3 class="seccion-titulo">Servicio Técnico Autorizado</h3>
+    <div class="form-grid">
       <div class="form-group">
-        <label for="numDoc">Número Documento</label>
-        <input type="text" id="numDoc" formControlName="NumeroDocumento" />
-      </div>
-
-      <!-- Revendedor -->
-      <div class="form-group">
-        <label for="revendedor">Vendedor</label>
+        <label for="revendedor">Técnico</label>
         <input type="text" id="revendedor" formControlName="Revendedor" />
       </div>
-
-      <!-- Rut Servicio Técnico -->
       <div class="form-group">
         <label for="rutServ">Rut Servicio Técnico</label>
         <input type="text" id="rutServ" formControlName="RutServicioTecnico" />
       </div>
-
-      <!-- Nombre Servicio Autorizado -->
-      <div class="form-group">
+      <div class="form-group full-width">
         <label for="nomServ">Nombre Servicio Autorizado</label>
         <input type="text" id="nomServ" formControlName="NombreServicioAut" />
       </div>
+    </div>
 
-      <!-- Nombre Consumidor -->
+   
+    <h3 class="seccion-titulo">Datos del Cliente</h3>
+    <div class="form-grid">
       <div class="form-group">
-        <label for="nomConsumidor">Nombre Consumidor</label>
+        <label for="nomConsumidor">Nombre Cliente</label>
         <input type="text" id="nomConsumidor" formControlName="NombreConsumidor" />
       </div>
-
-      <!-- Dirección Consumidor -->
       <div class="form-group">
-        <label for="dirConsumidor">Dirección Consumidor</label>
+        <label for="telCliente">Teléfono Cliente</label>
+        <input
+          type="text"
+          id="telCliente"
+          formControlName="TelCliente"
+          [value]="garantiaForm.get('TelCliente')?.value"
+          (input)="onTelefonoInput($event)" 
+          maxlength="12"
+        />
+        
+        <div class="error" *ngIf="garantiaForm.get('TelCliente')?.hasError('pattern')" style="color: red;">
+          El número debe empezar con +569 y contener 8 dígitos numéricos.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="regionConsumidor">Región Cliente</label>
+        <select id="regionConsumidor" formControlName="RegionConsumidor">
+          <option value="">Seleccione una región</option>
+          <option *ngFor="let region of dataRegiones" [value]="region.nombre">{{ region.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="comunaConsumidor">Comuna Cliente</label>
+        <select id="comunaConsumidor" formControlName="ComunaConsumidor">
+          <option value="">Seleccione una comuna</option>
+          <option *ngFor="let comuna of dataComunas" [value]="comuna.nombre">{{ comuna.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="dirConsumidor">Dirección Cliente</label>
         <input type="text" id="dirConsumidor" formControlName="DireccionConsumidor" />
       </div>
-
-      <!-- Ciudad Consumidor -->
       <div class="form-group">
-        <label for="ciudadConsumidor">Ciudad Consumidor</label>
-        <input type="text" id="ciudadConsumidor" formControlName="CiudadConsumidor" />
-      </div>
-
-      <!-- Región Consumidor -->
-      <div class="form-group">
-        <label for="regionConsumidor">Región Consumidor</label>
-        <input type="text" id="regionConsumidor" formControlName="RegionConsumidor" />
-      </div>
-
-      <!-- Rut Consumidor -->
-      <div class="form-group">
-        <label for="rutConsumidor">Rut Consumidor</label>
+        <label for="rutConsumidor">Rut Cliente</label>
         <input type="text" id="rutConsumidor" formControlName="RutConsumidor" />
-      </div>
-
-      <!-- Informe Técnico -->
-      <div class="form-group full-width">
-        <label for="informeTec">Informe Técnico</label>
-        <textarea id="informeTec" rows="3" formControlName="InformeTecnico"></textarea>
       </div>
     </div>
 
+    <div *ngIf="isLoading" id="loader">
+      <img src="../../assets/img/loader-preview.svg" alt="loading" />
+    </div>
+    <h3 class="seccion-titulo">Informe Técnico</h3>
+    <div class="form-group full-width">
+      <textarea id="informeTec" rows="3" formControlName="InformeTecnico" placeholder="Describe el diagnóstico..."></textarea>
+    </div>
+
     <button type="submit" [disabled]="garantiaForm.invalid">Guardar</button>
+    <br>
+    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+        {{ mensaje }}
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ mensaje }}
+    </div>
+   
   </form>
+
 </div>
