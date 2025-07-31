@@ -1,0 +1,105 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+}
+
+.modal-container {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 900px;
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0, 134, 134, 0.3);
+  z-index: 1100;
+  animation: slideDownFadeIn 0.4s ease forwards;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.modal-header {
+  margin-bottom: 1.5rem;
+
+  h3 {
+    font-size: 2.4rem;
+    font-weight: 500;
+    color: #008686;
+    margin: 0;
+  }
+}
+
+.modal-body {
+  .fila-repuesto {
+    margin-bottom: 1rem;
+  }
+
+  .campos-repuesto {
+    display: grid;
+    grid-template-columns: 2fr 4fr 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .boton-agregar {
+    margin-top: 2rem;
+    border-color: #008686;
+    color: #008686;
+    font-weight: 500;
+  }
+
+  .botones-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      font-size: 1.4rem;
+      padding: 0.6rem 1.5rem;
+    }
+    
+  }
+}
+
+.boton-guardar-custom {
+  background-color: #008686 !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+.boton-guardar-habilitado {
+  background-color: #008686 !important;
+  color: white !important;
+}
+
+.boton-guardar-deshabilitado {
+  background-color: rgba(0, 134, 134, 0.4) !important; // tono apagado
+  color: white !important;
+  cursor: not-allowed;
+}
+
+
+input[formcontrolname="codigo"] {
+  text-transform: uppercase;
+}
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

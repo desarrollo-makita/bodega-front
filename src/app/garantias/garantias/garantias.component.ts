@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
+import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
 import { GarantiaDetalleDialogComponent } from 'app/shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 
 interface Garantia {
@@ -11,6 +12,7 @@ interface Garantia {
   servicioLlamada:number;
   estado: 'Pendiente' | 'Aprobado' | 'Rechazado';
 }
+
 
 @Component({
   selector: 'app-garantias',
@@ -26,7 +28,7 @@ export class GarantiasComponent implements OnInit {
   garantiaRechazada = 0;
   estadoSeleccionado: string = 'pendientes'; // Valor por defecto
   showIntranet: boolean = false; // Controla la visibilidad de la tabla de intranet
-    
+  bloquearCombo: boolean = false;  
 
 
     constructor(
@@ -65,7 +67,8 @@ export class GarantiasComponent implements OnInit {
 
   obtenerGarantiasEstado(estado: string){
     this.isLoading = true;
-    if(estado === 'ingresadas'){
+    this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+    if(estado === 'ingresada'){
         this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
           next: (response) => {
             this.garantiaData = response.pedidosValidos.data;
@@ -78,23 +81,25 @@ export class GarantiasComponent implements OnInit {
           complete: () => {
             setTimeout(() => {
               this.isLoading = false;
+              this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
             }, 1000);
           },
       });
     }else{
-       this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
-          next: (response) => {
-            this.garantiaData = response.pedidosValidos;
-            this.showIntranet = false;
-          },
-          error: (error) => {
-            console.error('Error en la consulta:', error);
+      this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
+        next: (response) => {
+          this.garantiaData = response.pedidosValidos;
+          this.showIntranet = false;
         },
-          complete: () => {
-            setTimeout(() => {
-              this.isLoading = false;
-            }, 1000);
-          },
+        error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+        complete: () => {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+          }, 1000);
+        },
       });
     }
    
@@ -119,4 +124,19 @@ export class GarantiasComponent implements OnInit {
       panelClass: 'custom-dialog-container' // opcional para estilos extra
     });
   }
+
+  abrirModalAgregarRepuesto(garantia: any): void {
+  const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
+    width: '900px',
+    data: garantia,
+    panelClass: 'custom-dialog-container'
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      console.log('Repuestos agregados:', result);
+      // Aquí puedes hacer algo con los datos (guardar, actualizar vista, etc.)
+    }
+  });
+}
 }

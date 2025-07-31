@@ -1,0 +1,64 @@
+<div class="modal-backdrop" (click)="cerrar()"></div>
+
+<div class="modal-container mat-elevation-z8">
+  <header class="modal-header">
+    <h3>Agregar Repuestos</h3>
+  </header>
+
+  <section class="modal-body">
+    <form [formGroup]="formularioRepuestos">
+      <div formArrayName="repuestos">
+        <div *ngFor="let repuesto of repuestos.controls; let i = index" [formGroupName]="i" class="fila-repuesto">
+          <div class="campos-repuesto">
+            <mat-form-field appearance="fill">
+              <mat-label>Código *</mat-label>
+              <input
+                matInput
+                formControlName="codigo"
+                [matAutocomplete]="auto"
+                (input)="buscarRepuestos($event.target.value, i)"
+              />
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarModelo(i, $event.option.value)">
+                <mat-option *ngFor="let item of modelosFiltrados[i]" [value]="item.ItemCode">
+                  {{ item.ItemCode }} - {{ item.ItemName }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            
+
+            <mat-form-field appearance="fill">
+              <mat-label>Descripción *</mat-label>
+              <input matInput formControlName="descripcion" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Cantidad *</mat-label>
+              <input matInput type="number" formControlName="cantidad" />
+            </mat-form-field>
+
+            <button mat-icon-button color="warn" (click)="eliminarRepuesto(i)" matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+      </div>
+
+      <button mat-stroked-button color="primary" type="button" (click)="agregarRepuesto()" class="boton-agregar">
+        <mat-icon>add</mat-icon> Agregar otro repuesto
+      </button>
+    </form>
+
+    <div class="botones-acciones">
+      <button mat-button (click)="cerrar()">Cancelar</button>
+      <button
+        mat-flat-button
+        [disabled]="formularioRepuestos.invalid"
+        [ngClass]="{ 'boton-guardar-habilitado': formularioRepuestos.valid, 'boton-guardar-deshabilitado': formularioRepuestos.invalid }"
+        (click)="guardar()"
+      >
+        Guardar
+      </button>
+    </div>
+  </section>
+</div>

@@ -25,7 +25,10 @@ export class IngresarGarantiasComponent implements OnInit {
   errorMessage: boolean = false;
   formularioData:{};
   modelosFiltrados: any[] = [];
+  clientesFiltrados: any[] = [];
+  
   mostrarSugerencias = false;
+  mostrarSugerenciasClientes = false;
   dataRegiones:any;
   selectedRegion: any = null;
   dataComunas:any;
@@ -69,8 +72,9 @@ export class IngresarGarantiasComponent implements OnInit {
       ComunaConsumidor: ['', Validators.required],
       RutConsumidor: ['', Validators.required],
       TelCliente: ['+569', [Validators.required, Validators.pattern(/^\+569[0-9]{8}$/)]],
-      Descripcion: [{ value: '', disabled: true }, Validators.required],
+      Descripcion: ['', Validators.required], 
     });   
+   
     
     this.garantiaForm.get('Modelo')?.valueChanges.subscribe((valor) => {
       if (!valor) {
@@ -95,8 +99,9 @@ export class IngresarGarantiasComponent implements OnInit {
   onSubmit(): void {
     if (this.garantiaForm.valid) {
       const formValue = this.garantiaForm.value;
-      const data = this.mapFormularioARequest(formValue);
-
+      let data = this.garantiaForm.getRawValue();
+      data = this.mapFormularioARequest(formValue);
+      
       this.isLoading = true; // Mostrar el loader
       this.garantiasServices.insertarGarantiaIntranet(data).subscribe({
           next: (response) => {
@@ -158,7 +163,7 @@ export class IngresarGarantiasComponent implements OnInit {
       ciudadConsumidor: formValue.CiudadConsumidor,
       regionConsumidor: formValue.RegionConsumidor,
       referencia: formValue.Modelo || '', // si tienes este campo, si no elimínalo
-      descripcionHerramienta: formValue.DescripcionHerramienta || 'se debe agregar',
+      descripcionHerramienta: formValue.Descripcion || 'se debe agregar',
       serie: formValue.serie,
       nombreConsumidor: formValue.NombreConsumidor,
       rutConsumidor: formValue.RutConsumidor,
@@ -247,6 +252,7 @@ export class IngresarGarantiasComponent implements OnInit {
   ocultarListaConDelay() {
     setTimeout(() => {
       this.mostrarSugerencias = false;
+      this.mostrarSugerenciasClientes = false;
     }, 200); // espera para permitir click
   }
 
@@ -262,5 +268,32 @@ export class IngresarGarantiasComponent implements OnInit {
     });
   }
 
+  buscarClientes() {
+    let valor = this.garantiaForm.get('RutServicioTecnico')?.value;
+    if (valor && valor.length >= 2) {
+      valor = valor.toUpperCase();
+      
+      this.garantiasServices.getClientes(valor).subscribe({
+        next: (data) => {
+       
+          this.clientesFiltrados = data.cliente;
+          this.mostrarSugerenciasClientes = true;
+        },
+        error: (err) => console.error('Error en búsqueda de modelos', err)
+      });
+    } else {
+      this.clientesFiltrados = [];
+      this.mostrarSugerenciasClientes = false;
+    }
+  }
 
+   seleccionarCliente(item: any) {
+    this.garantiaForm.patchValue({ 
+      RutServicioTecnico: item.CardCode ,
+      NombreServicioAut: item.CardName
+    });
+    this.clientesFiltrados = [];
+    this.mostrarSugerenciasClientes = false;
+  }
+  
 }

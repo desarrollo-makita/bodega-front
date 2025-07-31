@@ -58,15 +58,38 @@
       </div>
       <div class="form-group">
         <label for="rutServ">Rut Servicio Técnico</label>
-        <input type="text" id="rutServ" formControlName="RutServicioTecnico" />
-      </div>
-      <div class="form-group full-width">
-        <label for="nomServ">Nombre Servicio Autorizado</label>
-        <input type="text" id="nomServ" formControlName="NombreServicioAut" />
-      </div>
-    </div>
+        <input 
+          type="text" 
+          id="rutServ" 
+          formControlName="RutServicioTecnico"
+          (input)="buscarClientes()"
+          (blur)="ocultarListaConDelay()"
+          (focus)="buscarClientes()"  />
 
-   
+          <ul
+            class="sugerencias"
+            *ngIf="clientesFiltrados.length > 0 && mostrarSugerenciasClientes"
+            style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+            
+            <li
+              *ngFor="let item of clientesFiltrados"
+               (click)="seleccionarCliente(item)"
+              style="padding: 5px; cursor: pointer;">
+              {{ item.CardCode }} - {{ item.CardName }}
+            </li>
+          </ul>
+      </div>
+      <div class="form-group" style="position: relative;">
+        <label for="nomServ">Nombre Servicio Autorizado</label>
+        <input 
+          type="text" 
+          id="nomServ" 
+          formControlName="NombreServicioAut"
+          />
+      </div>
+      
+    </div>
+    
     <h3 class="seccion-titulo">Datos del Cliente</h3>
     <div class="form-grid">
       <div class="form-group">

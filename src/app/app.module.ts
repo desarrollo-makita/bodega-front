@@ -53,6 +53,7 @@ import { AsignacionRerconteosBateriasComponent } from './reconteo-baterias/asign
 import { GarantiasComponent } from './garantias/garantias/garantias.component';
 import { GarantiaDetalleDialogComponent } from './shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingresar-garantias.component';
+import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
 
 @NgModule({
   imports: [
@@ -108,6 +109,7 @@ import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingre
     GarantiasComponent,
     GarantiaDetalleDialogComponent,
     IngresarGarantiasComponent,
+    AgregarRepuestosDialogComponent,
 
     
     

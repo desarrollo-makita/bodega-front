@@ -14,12 +14,12 @@
           <div class="filtro-estado mb-3">
             <mat-form-field appearance="outline" class="filtro-combo">
               <mat-label>Filtrar por estado</mat-label>
-              <mat-select [(value)]="estadoSeleccionado" (selectionChange)="filtrarGarantias()">
+              <mat-select [(value)]="estadoSeleccionado" (selectionChange)="filtrarGarantias()"  [disabled]="bloquearCombo">
              
                 <mat-option value="pendientes">Pendientes</mat-option>
                 <mat-option value="aprobadas">Aprobadas</mat-option>
                 <mat-option value="rechazadas">Rechazadas</mat-option>
-                <mat-option value="ingresadas">Ingresadas</mat-option>
+                <mat-option value="ingresada">Ingresadas</mat-option>
                
               </mat-select>
             </mat-form-field>

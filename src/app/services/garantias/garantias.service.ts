@@ -13,6 +13,8 @@ export class GarantiasService {
     private insertarGarantiasIntranet = "http://localhost:3026/api/insertar-garantias-intranet";
     private buscarItemURL = "http://localhost:3026/api/buscar-item-formulario";
     private buscarComunasURL = "http://localhost:3026/api/obtener-comunas";
+    private buscarClientesURL = "http://localhost:3026/api/obtener-clientes";
+    private buscarRepuestosAccesoriosURL = "http://localhost:3026/api/buscar-item-repuesto-accesorio";
 
 
   constructor(private http: HttpClient) {}
@@ -38,8 +40,20 @@ export class GarantiasService {
     return this.http.get<any>(url, { params });
   }
 
+   buscarRepuestosAccesorios(filtro: string): Observable<any> {
+    const url = `${this.buscarRepuestosAccesoriosURL}`;
+    const params = new HttpParams().set('query', filtro);
+    return this.http.get<any>(url, { params });
+  }
+
    getComunas(codigo: number): Observable<any> {
     const url = `${this.buscarComunasURL}/${codigo}`;
+    return this.http.get<any>(url);
+  } 
+
+
+  getClientes(codigo: number): Observable<any> {
+    const url = `${this.buscarClientesURL}/${codigo}`;
     return this.http.get<any>(url);
   } 
 
