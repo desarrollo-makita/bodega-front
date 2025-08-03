@@ -15,6 +15,8 @@ export class GarantiasService {
     private buscarComunasURL = "http://localhost:3026/api/obtener-comunas";
     private buscarClientesURL = "http://localhost:3026/api/obtener-clientes";
     private buscarRepuestosAccesoriosURL = "http://localhost:3026/api/buscar-item-repuesto-accesorio";
+    private insertarPedidosIntranetURL = "http://localhost:3026/api/insertar-pedido-garantia-intranet"
+    private obtenerDetalleGarantiasIntranetURL = "http://localhost:3026/api/obtener-detalle-garantia-intranet";
 
 
   constructor(private http: HttpClient) {}
@@ -56,6 +58,18 @@ export class GarantiasService {
     const url = `${this.buscarClientesURL}/${codigo}`;
     return this.http.get<any>(url);
   } 
+
+
+  insertarPedidosIntranet(data : any): Observable<any> {
+    return this.http.post<any>(this.insertarPedidosIntranetURL, { data });
+  }
+
+
+    getGarantiasDetallesIntranet(idPedido: string): Observable<any> {
+      const url = `${this.obtenerDetalleGarantiasIntranetURL}/${idPedido}`;
+      return this.http.get<any>(url);
+    }
+
 
   
 }

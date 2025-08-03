@@ -91,6 +91,7 @@
               <thead>
                 <tr>
                   <th>Folio</th>
+                  <th>Pedido</th>
                   <th>Nombre Cliente</th>
                   <th>Descripción Item</th>
                   <th>Item Modelo</th>
@@ -103,6 +104,9 @@
                 <tr *ngFor="let garantia of garantiaData">
                   <td >
                     {{ garantia.Folio }}
+                  </td>
+                  <td >
+                    {{ garantia.Id_Pedido }}
                   </td>
                   <td >
                     {{ garantia.NombreConsumidor }}
@@ -131,10 +135,16 @@
           </div>
           
         </div>
-
         <div *ngIf="!isLoading && garantiaData.length === 0" class="card-garantias mat-elevation-z8 animate-fadeIn">
           <h2 class="highlight-text">No hay garantías registradas</h2>
         </div>
+       
+         <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+              {{ mensaje }}
+          </div>
+          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+              {{ mensaje }}
+          </div>
       
       </div>
     </div>

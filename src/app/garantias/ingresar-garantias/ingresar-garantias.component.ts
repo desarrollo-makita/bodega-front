@@ -160,7 +160,7 @@ export class IngresarGarantiasComponent implements OnInit {
       fonoConsumidor: formValue.TelCliente,
       emailConsumidor: formValue.EmailConsumidor || '',
       direccionConsumidor: formValue.DireccionConsumidor,
-      ciudadConsumidor: formValue.CiudadConsumidor,
+      comunaConsumidor: formValue.ComunaConsumidor,
       regionConsumidor: formValue.RegionConsumidor,
       referencia: formValue.Modelo || '', // si tienes este campo, si no elimínalo
       descripcionHerramienta: formValue.Descripcion || 'se debe agregar',
@@ -289,7 +289,7 @@ export class IngresarGarantiasComponent implements OnInit {
 
    seleccionarCliente(item: any) {
     this.garantiaForm.patchValue({ 
-      RutServicioTecnico: item.CardCode ,
+      RutServicioTecnico: item.CardCode.startsWith('C') ? item.CardCode.substring(1) : item.CardCode,
       NombreServicioAut: item.CardName
     });
     this.clientesFiltrados = [];

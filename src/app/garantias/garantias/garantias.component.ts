@@ -29,6 +29,12 @@ export class GarantiasComponent implements OnInit {
   estadoSeleccionado: string = 'pendientes'; // Valor por defecto
   showIntranet: boolean = false; // Controla la visibilidad de la tabla de intranet
   bloquearCombo: boolean = false;  
+  mensajeGuardar: string;
+  guardarExitoso: boolean;
+  mensaje:any;
+  tipoMensaje: string; // 'exito' o 'error'
+  successMessage: boolean = false;
+  errorMessage: boolean = false;
 
 
     constructor(
@@ -71,6 +77,7 @@ export class GarantiasComponent implements OnInit {
     if(estado === 'ingresada'){
         this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
           next: (response) => {
+           
             this.garantiaData = response.pedidosValidos.data;
             
             if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
@@ -88,6 +95,7 @@ export class GarantiasComponent implements OnInit {
     }else{
       this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
         next: (response) => {
+       
           this.garantiaData = response.pedidosValidos;
           this.showIntranet = false;
         },
@@ -110,7 +118,7 @@ export class GarantiasComponent implements OnInit {
     if (this.estadoSeleccionado === 'pendientes') {
       this.obtenerGarantiasEstado('EnProcesoAprobacion');
     }else if(this.estadoSeleccionado === 'rechazadas'){
-      this.obtenerGarantiasEstado('Pendiente');
+      this.obtenerGarantiasEstado('Rechazadas');
     }else{
       this.obtenerGarantiasEstado(this.estadoSeleccionado);
     }
@@ -126,17 +134,40 @@ export class GarantiasComponent implements OnInit {
   }
 
   abrirModalAgregarRepuesto(garantia: any): void {
-  const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
-    width: '900px',
-    data: garantia,
-    panelClass: 'custom-dialog-container'
-  });
+    
+    const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
+      data: garantia,
+      width: '900px',
+      maxHeight: '80vh',
+      panelClass: 'custom-dialog-container',
+      disableClose: true
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      console.log('Repuestos agregados:', result);
-      // Aquí puedes hacer algo con los datos (guardar, actualizar vista, etc.)
-    }
-  });
-}
+    dialogRef.afterClosed().subscribe((resultado) => {
+      if (resultado) {
+        // Mostrar mensaje en el componente padre
+        if (resultado.exito) {
+          this.obtenerGarantiasEstado(this.estadoSeleccionado);
+          this.successMessage= true
+          this.mensaje = resultado.mensaje;
+         
+        } else {
+          this.errorMessage = true
+          this.mensaje = resultado.mensaje;
+         
+        }
+
+        // Mostrar el mensaje por unos segundos (opcional)
+        setTimeout(() => {
+          this.mensaje = '';
+          this.successMessage = false;
+          this.errorMessage = false;
+        }, 5000);
+      }
+    });
+  }
+
+
+
+
 }

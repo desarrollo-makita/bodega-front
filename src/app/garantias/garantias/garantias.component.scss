@@ -198,3 +198,24 @@ button[mat-icon-button] {
 ::ng-deep .boton-agregar {
   color: rgb(0, 144, 158);
 }
+
+
+  .text-danger {
+    color: #dc3545;
+    font-weight: bold;
+    
+  }
+
+  .alert-success {
+    background-color: rgba(0, 144, 158, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+  }
+
+  .alert-danger{
+    background-color: rgba(235, 35, 35, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+  }
