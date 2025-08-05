@@ -96,13 +96,14 @@
                   <th>Descripción Item</th>
                   <th>Item Modelo</th>
                   <th>N° Serie</th>
-                  <th>Telefono</th>
+                  <th>Tipo Documento</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let garantia of garantiaData">
-                  <td >
+                  <!--<td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell"> -->
+                  <td>
                     {{ garantia.Folio }}
                   </td>
                   <td >
@@ -117,8 +118,12 @@
                   <td >
                     {{ garantia.Referencia }}
                   </td>
-                  <td>{{ garantia.Serie }}</td>
-                  <td>{{garantia.FonoConsumidor}}</td>
+                  <td>
+                    {{ garantia.Serie }}
+                  </td>
+                  <td>
+                    {{garantia.TipoDocumento}}
+                  </td>
                   <td>
                     <button
                       mat-icon-button
@@ -126,6 +131,14 @@
                       (click)="abrirModalAgregarRepuesto(garantia)"
                       matTooltip="Agregar Repuesto">
                       <mat-icon>add_circle</mat-icon>
+                    </button>
+
+                    <button *ngIf="garantia.Id_Pedido != null"
+                      mat-icon-button
+                      class="boton-enviar-sap"
+                      (click)="enviarASAP(garantia)"
+                      matTooltip="Enviar a SAP">
+                      <mat-icon class="icono-azul">cloud_upload</mat-icon>
                     </button>
                     
                   </td>
@@ -139,12 +152,12 @@
           <h2 class="highlight-text">No hay garantías registradas</h2>
         </div>
        
-         <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+        <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
               {{ mensaje }}
-          </div>
-          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
               {{ mensaje }}
-          </div>
+        </div>
       
       </div>
     </div>

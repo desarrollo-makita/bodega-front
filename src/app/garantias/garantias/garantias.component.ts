@@ -35,6 +35,7 @@ export class GarantiasComponent implements OnInit {
   tipoMensaje: string; // 'exito' o 'error'
   successMessage: boolean = false;
   errorMessage: boolean = false;
+  hasNullIdPedido = false; // boolean que activaremos
 
 
     constructor(
@@ -79,6 +80,8 @@ export class GarantiasComponent implements OnInit {
           next: (response) => {
            
             this.garantiaData = response.pedidosValidos.data;
+            
+            this.hasNullIdPedido = this.garantiaData.some(g => g.idPedido === null || g.idPedido === undefined);
             
             if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
           },
@@ -167,6 +170,33 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
+
+  enviarASAP(garantia : any){
+    this.isLoading= true;
+    let data = garantia.Id_Pedido;
+    this.garantiasServices.enviarSap(data).subscribe({
+      next: (response) => {
+        if (response?.error?.error || response?.error) {
+          this.errorMessage = true;
+          this.mensaje = response?.error?.error || response?.error;
+        }else {
+          this.successMessage = true;
+          this.mensaje = 'Enviado exitosamente a SAP'
+
+        }
+      },
+      error: (error) => {
+        console.error('Error en la consulta:', error);
+      },
+      complete: () => {
+          setTimeout(() => {
+              this.isLoading = false;
+              this.errorMessage = false;
+            }, 2500);
+        
+      },
+    });
+  }
 
 
 

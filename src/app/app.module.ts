@@ -48,6 +48,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BateriasDialogComponent } from './shared/baterias-dialog/baterias-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { InventarioBateriasComponent } from './inventario-baterias/inventario-baterias/inventario-baterias.component';
 import { AsignacionRerconteosBateriasComponent } from './reconteo-baterias/asignacion-rerconteos-baterias/asignacion-rerconteos-baterias.component';
 import { GarantiasComponent } from './garantias/garantias/garantias.component';
@@ -80,7 +81,8 @@ import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dial
     MatAutocompleteModule,
     MatExpansionModule,
     MatProgressBarModule,
-    MatRadioModule
+    MatRadioModule,
+    MatTooltipModule
 
     
   ],

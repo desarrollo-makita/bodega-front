@@ -56,7 +56,7 @@
         <label for="revendedor">Técnico</label>
         <input type="text" id="revendedor" formControlName="Revendedor" />
       </div>
-      <div class="form-group">
+       <div class="form-group" style="position: relative;">
         <label for="rutServ">Rut Servicio Técnico</label>
         <input 
           type="text" 
@@ -138,6 +138,34 @@
     <div *ngIf="isLoading" id="loader">
       <img src="../../assets/img/loader-preview.svg" alt="loading" />
     </div>
+    
+    <h3 class="seccion-titulo">Distribuidor</h3>
+    <div class="form-grid">
+      <div class="form-group" style="position: relative;">
+        <label for="revendedor">Nombre Distribuidor</label>
+        <input 
+          type="text" 
+          id="revendedor" 
+          formControlName="Revendedor" 
+          (input)="buscarProveedor()"
+          (blur)="ocultarListaConDelay()"
+          (focus)="buscarProveedor()" />
+
+          <ul
+            class="sugerencias"
+            *ngIf="proveedorFiltrados.length > 0 && mostrarSugerenciasProveedores"
+            style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+            
+            <li
+              *ngFor="let item of proveedorFiltrados"
+              (mousedown)="seleccionarProveedor(item)"
+              style="padding: 5px; cursor: pointer;">
+              {{ item.CardName }}
+            </li>
+          </ul>
+      </div>
+    </div>
+    
     <h3 class="seccion-titulo">Informe Técnico</h3>
     <div class="form-group full-width">
       <textarea id="informeTec" rows="3" formControlName="InformeTecnico" placeholder="Describe el diagnóstico..."></textarea>
@@ -151,6 +179,7 @@
     <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
         {{ mensaje }}
     </div>
+
    
   </form>
 

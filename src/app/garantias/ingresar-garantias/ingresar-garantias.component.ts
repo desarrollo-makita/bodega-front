@@ -26,9 +26,11 @@ export class IngresarGarantiasComponent implements OnInit {
   formularioData:{};
   modelosFiltrados: any[] = [];
   clientesFiltrados: any[] = [];
+  proveedorFiltrados: any[] = [];
   
   mostrarSugerencias = false;
   mostrarSugerenciasClientes = false;
+  mostrarSugerenciasProveedores = false;
   dataRegiones:any;
   selectedRegion: any = null;
   dataComunas:any;
@@ -167,7 +169,8 @@ export class IngresarGarantiasComponent implements OnInit {
       serie: formValue.serie,
       nombreConsumidor: formValue.NombreConsumidor,
       rutConsumidor: formValue.RutConsumidor,
-      nombreTecnico: formValue.Revendedor // asumo que Revendedor es el técnico, ajústalo si es otro campo
+      nombreTecnico: formValue.Revendedor,
+      tipoDocumento : formValue.TipoDocumento
     };
   }
 
@@ -253,6 +256,7 @@ export class IngresarGarantiasComponent implements OnInit {
     setTimeout(() => {
       this.mostrarSugerencias = false;
       this.mostrarSugerenciasClientes = false;
+      this.mostrarSugerenciasProveedores = false;
     }, 200); // espera para permitir click
   }
 
@@ -294,6 +298,34 @@ export class IngresarGarantiasComponent implements OnInit {
     });
     this.clientesFiltrados = [];
     this.mostrarSugerenciasClientes = false;
+  }
+
+  buscarProveedor() {
+    let valor = this.garantiaForm.get('Revendedor')?.value;
+    if (valor && valor.length >= 2) {
+      valor = valor.toUpperCase();
+      
+      this.garantiasServices.getProveedor(valor).subscribe({
+        next: (data) => {
+       
+          this.proveedorFiltrados = data.cliente;
+          this.mostrarSugerenciasProveedores = true;
+        },
+        error: (err) => console.error('Error en búsqueda de modelos', err)
+      });
+    } else {
+      this.proveedorFiltrados = [];
+      this.mostrarSugerenciasProveedores = false;
+    }
+  }
+
+   seleccionarProveedor(item: any) {
+    this.garantiaForm.patchValue({ 
+     // RutDistribuidor: item.CardCode.startsWith('P') ? item.CardCode.substring(1) : item.CardCode,
+      Revendedor: item.CardName
+    });
+    this.proveedorFiltrados = [];
+    this.mostrarSugerenciasProveedores = false;
   }
   
 }
