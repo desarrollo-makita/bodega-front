@@ -55,6 +55,7 @@ import { GarantiasComponent } from './garantias/garantias/garantias.component';
 import { GarantiaDetalleDialogComponent } from './shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingresar-garantias.component';
 import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
+import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 
 @NgModule({
   imports: [
@@ -112,6 +113,7 @@ import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dial
     GarantiaDetalleDialogComponent,
     IngresarGarantiasComponent,
     AgregarRepuestosDialogComponent,
+    EditarRepuestosDialogComponent,
 
     
     

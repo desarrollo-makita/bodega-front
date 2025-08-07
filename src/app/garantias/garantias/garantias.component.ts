@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
+import { EditarRepuestosDialogComponent } from 'app/shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 import { GarantiaDetalleDialogComponent } from 'app/shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 
 interface Garantia {
@@ -92,7 +93,7 @@ export class GarantiasComponent implements OnInit {
             setTimeout(() => {
               this.isLoading = false;
               this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
-            }, 1000);
+            }, 500);
           },
       });
     }else{
@@ -109,12 +110,56 @@ export class GarantiasComponent implements OnInit {
           setTimeout(() => {
             this.isLoading = false;
             this.bloquearCombo = false;
-          }, 1000);
+          }, 500);
         },
       });
     }
    
   }
+
+    obtenerGarantiasEstadoEditar(estado: string){
+     console.log("estado : " , estado);
+      this.isLoading = true;
+      this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+      if(estado === 'ingresada'){
+          this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+            next: (response) => {
+            
+              this.garantiaData = response.pedidosValidos.data;
+              
+              this.hasNullIdPedido = this.garantiaData.some(g => g.idPedido === null || g.idPedido === undefined);
+              
+              if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
+            },
+            error: (error) => {
+              console.error('Error en la consulta:', error);
+          },
+            complete: () => {
+              setTimeout(() => {
+                this.isLoading = false;
+                this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
+              }, 500);
+            },
+        });
+      }else{
+        this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
+          next: (response) => {
+        
+            this.garantiaData = response.pedidosValidos;
+            this.showIntranet = false;
+          },
+          error: (error) => {
+            console.error('Error en la consulta:', error);
+          },
+          complete: () => {
+            setTimeout(() => {
+              this.isLoading = false;
+              this.bloquearCombo = false;
+            }, 1500);
+          },
+        });
+      }
+    }
 
   filtrarGarantias() {
     console.log("Estado seleccionado:", this.estadoSeleccionado);
@@ -165,10 +210,47 @@ export class GarantiasComponent implements OnInit {
           this.mensaje = '';
           this.successMessage = false;
           this.errorMessage = false;
-        }, 5000);
+        }, 1500);
       }
     });
   }
+
+   abrirModalAgregarRepuestoOT(garantia: any): void {
+    console.log("garantia : " , garantia);
+    garantia.Id_Pedido = garantia.ID_Pedido;
+    
+    const dialogRef = this.dialog.open(EditarRepuestosDialogComponent, {
+      data: garantia,
+      width: '900px',
+      maxHeight: '80vh',
+      panelClass: 'custom-dialog-container',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((resultado) => {
+      if (resultado) {
+        // Mostrar mensaje en el componente padre
+        if (resultado.exito) {
+          this.obtenerGarantiasEstadoEditar("EnProcesoAprobacion");
+          this.successMessage= true
+          this.mensaje = resultado.mensaje;
+         
+        } else {
+          this.errorMessage = true
+          this.mensaje = resultado.mensaje;
+         
+        }
+
+        // Mostrar el mensaje por unos segundos (opcional)
+        setTimeout(() => {
+          this.mensaje = '';
+          this.successMessage = false;
+          this.errorMessage = false;
+        }, 1500);
+      }
+    });
+  }
+
 
 
   enviarASAP(garantia : any){
@@ -192,11 +274,15 @@ export class GarantiasComponent implements OnInit {
           setTimeout(() => {
               this.isLoading = false;
               this.errorMessage = false;
+              this.successMessage = false;
+              this.filtrarGarantias();
             }, 2500);
         
       },
     });
   }
+
+
 
 
 

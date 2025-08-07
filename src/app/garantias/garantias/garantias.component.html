@@ -38,6 +38,7 @@
                   <th>Orden Venta Asociada</th>
                   <th>Orden Telecontrol</th>
                   <th>Nombre Serv. Autorizado</th>
+                  <th>Tipo Documento</th>
                   <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
@@ -48,12 +49,13 @@
                     {{ garantia.servicioLlamada }}
                   </td>
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
-                    {{ garantia.DocEntryAsociado }}
+                    {{ garantia.DocNumAsociado }}
                   </td>
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
                     {{ garantia.OS_ID }}
                   </td>
                   <td>{{ garantia.NombreServicioAut }}</td>
+                  <td>{{ garantia.TipoDocumento }}</td>
                   <td>
                     <span [ngClass]="{
                       'pendiente': garantia.EstadoSAP === 'EnProcesoAprobacion',
@@ -64,22 +66,14 @@
                     </span>
                   </td>
                   <td>
-                    <button
+                    <button  *ngIf="garantia.TipoDocumento === 'ORDEN DE TRABAJO'"
                       mat-icon-button
-                      class="boton-agregar"
-                      *ngIf="garantia.EstadoSAP === 'EnProcesoAprobacion'"
-                      (click)="aprobarGarantia(garantia)"
-                      matTooltip="Aprobar">
-                      <mat-icon class="icono-verde">check_circle</mat-icon>
+                      class= "icono-editar"
+                      (click)="abrirModalAgregarRepuestoOT(garantia)"
+                      matTooltip="Editar OT">
+                      <mat-icon>edit</mat-icon>
                     </button>
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      *ngIf="garantia.EstadoSAP === 'EnProcesoAprobacion'"
-                      (click)="rechazarGarantia(garantia)"
-                      matTooltip="Rechazar">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
+                    
                   </td>
                 </tr>
               </tbody>

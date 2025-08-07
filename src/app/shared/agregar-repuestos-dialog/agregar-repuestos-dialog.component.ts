@@ -36,7 +36,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
     
   ) 
   {
-    this.garantia = data;
+    this.garantia = this.data;
     this.formularioRepuestos = this.fb.group({
       repuestos: this.fb.array([this.crearRepuesto()])
     });
@@ -47,8 +47,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("data en el modal : " ,  this.data);
-    let pedido =  this.data.Id_Pedido;
+    let pedido =  this.data.Id_Pedido || 0;
     this.garantiasServices.getGarantiasDetallesIntranet(pedido).subscribe({
       next: (response) => {
         this.detallePedidoList = response.pedidosValidos.data;
@@ -133,12 +132,12 @@ export class AgregarRepuestosDialogComponent implements OnInit {
       };
 
       const requestPayload = this.transformData(payload);
-      console.log("pedidos" , requestPayload);
+     
       this.garantiasServices.insertarPedidosIntranet(requestPayload).subscribe({
         next: (res) => {
-          console.log("reeees" , res);
+         
           const respuesta = res.responsePedidosGarantia;
-          console.log("respuesta" , respuesta);
+        
           if (!respuesta) {
             // Si no existe la respuesta esperada, tratamos como error
             this.dialogRef.close({
@@ -200,7 +199,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
 
       modelo: payload.Referencia,
       serie: payload.Serie,
-      tipoGarantia: payload.TipoGarantia || 'Garantía',
+      tipoGarantia: payload.TipoDocumento || '',
       nombreCliente: payload.NombreConsumidor,
       direccionCliente: payload.DireccionConsumidor,
 
@@ -209,6 +208,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
       numeroDocumento: payload.NotaFiscal || '',
       observacion: payload.DefectoReclamado || '',
       idPedido: payload.Id_Pedido,
+      tipoDocumento : payload.TipoDocumento,
 
       detalle: payload.detalle.map((d: any) => ({
         referencia: d.referencia,
