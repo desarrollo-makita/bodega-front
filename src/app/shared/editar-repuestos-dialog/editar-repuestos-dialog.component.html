@@ -88,18 +88,29 @@
             <th>Descripción</th>
             <th>Cantidad</th>
             <th>Precio</th>
+             <th>Acción</th>
            
             
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let repuesto of detallePedidoList">
+          <tr *ngFor="let repuesto of detallePedidoList"
+              [ngClass]="{'cerrado': repuesto.LineStatus === 'bost_Close'}">
             <td>{{ repuesto.ItemCode }}</td>
             <td>{{ repuesto.ItemDescription }}</td>
             <td>{{ repuesto.Quantity }}</td>
             <td>{{ repuesto.Price }}</td>
+            <td>
+              <button mat-icon-button color="warn" 
+                (click)="eliminarDetalle(repuesto)" 
+                matTooltip="Eliminar"
+                [disabled]="repuesto.LineStatus === 'bost_Close'">
+                <mat-icon>delete</mat-icon>
+            </button>
+            </td>
           </tr>
         </tbody>
+
       </table>
     </div>
   </section>

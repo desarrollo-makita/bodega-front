@@ -163,3 +163,12 @@ input[formcontrolname="codigo"] {
         background-color: #b0d9db;
       }
     }
+
+    .cerrado {
+      background-color: #f8d7da; /* rojo claro */
+      color: #721c24; /* texto rojo oscuro */
+
+       button {
+    display: none; // oculta el botón eliminar
+  }
+    }

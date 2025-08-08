@@ -52,7 +52,8 @@ export class EditarRepuestosDialogComponent implements OnInit {
       this.garantiasServices.obtenerArticulosOrden(docEntry).subscribe({
         next: (response) => {
           this.detallePedidoList = response.DocumentLines;
-          console.log(this.detallePedidoList);
+          console.log( this.detallePedidoList)
+          
         },
         error: () => {
           
@@ -223,5 +224,39 @@ export class EditarRepuestosDialogComponent implements OnInit {
       }
     };
   }
+
+eliminarDetalle(item: any) {
+    const data  =  {
+      lineNum : item.LineNum,
+      lineStatus : 'bost_Close',
+      docEntry : item.DocEntry
+
+    }
+
+    this.isLoading = true;
+    this.garantiasServices.eliminarArticulos(data).subscribe({
+      next: (res) => {
+        console.log("Resouesta de eliminar _ " , res);
+
+      },
+      error: (err) => {
+        // Error de red o del servidor
+        console.log("Error de red o servidor:", err);
+        this.dialogRef.close({
+          exito: false,
+          mensaje: 'Error al eliminar la garantía. Intenta nuevamente...'
+        });
+      },
+      complete: () => {
+            console.log("Éxito:", this.mensajeDetalle);
+            this.dialogRef.close({
+              exito: true,
+              mensaje: 'se ha eliminado el pedido correctamente.'
+            });
+      }
+    });
+    
+    console.log('Índice a eliminar:', item);
+}
   
 }

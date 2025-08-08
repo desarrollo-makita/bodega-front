@@ -216,7 +216,7 @@ export class GarantiasComponent implements OnInit {
   }
 
    abrirModalAgregarRepuestoOT(garantia: any): void {
-    console.log("garantia : " , garantia);
+    
     garantia.Id_Pedido = garantia.ID_Pedido;
     
     const dialogRef = this.dialog.open(EditarRepuestosDialogComponent, {

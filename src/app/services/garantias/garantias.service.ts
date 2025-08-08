@@ -21,6 +21,7 @@ export class GarantiasService {
     private enviarSapURL = "http://localhost:3026/api/exportar-garantia-intranet";
     private editarPedidosIntranetURL = "http://localhost:3026/api/editar-pedido-detalle-intranet"
     private obtenerArticulosURL = "http://localhost:3026/api/detalle-articulos-orden";
+    private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
 
 
 
@@ -84,9 +85,13 @@ export class GarantiasService {
     return this.http.post<any>(this.enviarSapURL, { data });
   }
   
-   obtenerArticulosOrden(docEntry: any): Observable<any> {
+  obtenerArticulosOrden(docEntry: any): Observable<any> {
     const url = `${this.obtenerArticulosURL}/${docEntry}`;
     return this.http.get<any>(url);
+  }
+
+  eliminarArticulos(data : any): Observable<any> {
+    return this.http.post<any>(this.eliminarArticulosURL, { data });
   }
 
   
