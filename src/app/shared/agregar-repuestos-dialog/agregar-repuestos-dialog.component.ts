@@ -21,8 +21,11 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   codigo: any;
   mensajeDetalle: any;
   tabSeleccionada: 'agregar' | 'detalle'  = 'agregar';
+  successMessage: boolean = false;
+  errorMessage:boolean = false;
 
   detallePedidoList: any[] = [];
+  pedido: any;
 
   
 
@@ -47,8 +50,8 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let pedido =  this.data.Id_Pedido || 0;
-    this.garantiasServices.getGarantiasDetallesIntranet(pedido).subscribe({
+    this.pedido =  this.data.Id_Pedido || 0;
+    this.garantiasServices.getGarantiasDetallesIntranet(this.pedido).subscribe({
       next: (response) => {
         this.detallePedidoList = response.pedidosValidos.data;
         console.log(this.detallePedidoList);
@@ -87,7 +90,8 @@ export class AgregarRepuestosDialogComponent implements OnInit {
       const grupo = this.repuestos.at(index);
       grupo.patchValue({
         codigo: seleccionado.ItemCode,
-        descripcion: seleccionado.ItemName
+        descripcion: seleccionado.ItemName,
+        precio: seleccionado.ItemPrice.Price
       });
       this.modelosFiltrados[index] = [];
     }
@@ -97,7 +101,8 @@ export class AgregarRepuestosDialogComponent implements OnInit {
     return this.fb.group({
       codigo: ['', Validators.required],
       descripcion: ['', Validators.required],
-      cantidad: [1, [Validators.required, Validators.min(1)]]
+      cantidad: [1, [Validators.required, Validators.min(1)]],
+      precio: [1, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -127,7 +132,8 @@ export class AgregarRepuestosDialogComponent implements OnInit {
           referencia: r.codigo,
           cantidad: r.cantidad,
           rutCliente: this.garantia.entidad,
-          descripcion: r.descripcion
+          descripcion: r.descripcion,
+          precio : r.precio
         }))
       };
 
@@ -137,7 +143,8 @@ export class AgregarRepuestosDialogComponent implements OnInit {
         next: (res) => {
          
           const respuesta = res.responsePedidosGarantia;
-        
+          this.successMessage = true;
+          this.mensaje = 'Se ha generado el pedido correctamente.'
           if (!respuesta) {
             // Si no existe la respuesta esperada, tratamos como error
             this.dialogRef.close({
@@ -159,29 +166,36 @@ export class AgregarRepuestosDialogComponent implements OnInit {
           });
         },
         complete: () => {
-          this.isLoading = false;
-
-      if (this.codigo === -1) {
-        console.log("Error de negocio:", this.mensajeDetalle);
-        this.dialogRef.close({
-          exito: false,
-          mensaje: 'Error al guardar la garantía. Intenta nuevamente.'
-        });
-      } else if (this.codigo !== undefined) {
-        console.log("Éxito:", this.mensajeDetalle);
-        this.dialogRef.close({
-          exito: true,
-          mensaje: 'se ha generado el pedido correctamente.'
-        });
-      }
-      // Si this.codigo no fue asignado en ningún momento (caso raro)
-      else {
-        console.log("Error: código de respuesta no recibido.");
-        this.dialogRef.close({
-          exito: false,
-          mensaje: 'No se recibió una respuesta válida del servidor.'
-        });
-      }
+          
+          if (this.codigo === -1) {
+            console.log("Error de negocio:", this.mensajeDetalle);
+            this.dialogRef.close({
+              exito: false,
+              mensaje: 'Error al guardar la garantía. Intenta nuevamente.'
+            });
+          } else if (this.codigo !== undefined) {
+              console.log("Éxito:", this.mensajeDetalle);
+          /* this.dialogRef.close({
+              exito: true,
+              mensaje: 'se ha generado el pedido correctamente.'
+            });*/
+             this.formularioRepuestos.reset();
+              setTimeout(() => {
+               
+                this.successMessage = false;
+                this.cargarTabla();
+              }, 1500);
+            
+            
+          }
+          // Si this.codigo no fue asignado en ningún momento (caso raro)
+          else {
+            console.log("Error: código de respuesta no recibido.");
+            this.dialogRef.close({
+              exito: false,
+              mensaje: 'No se recibió una respuesta válida del servidor.'
+            });
+          }
         }
       });
     }
@@ -214,12 +228,64 @@ export class AgregarRepuestosDialogComponent implements OnInit {
         referencia: d.referencia,
         cantidad: d.cantidad,
         rutCliente: payload.CodigoServicioAut,
-        descripcion : d.descripcion
+        descripcion : d.descripcion,
+        precio : d.precio
       }))
     }
   };
-}
+  }
 
 
+  eliminarRepuestoLocal(repuesto: any) {
+
+    let resultado;
+    this.isLoading = true;
+    const data = 
+    {
+      idPedido : repuesto.Pedido_ID,
+      referencia : repuesto.Referencia,
+      idItem: repuesto.ID_Item
+
+    }
+    this.garantiasServices.eliminarArticulosLocal(data).subscribe({
+      next: (response) => {
+       resultado = response;
+        console.log("Respuesta de eliminacion de articulo local :" , response);
+      },
+      error: () => {
+        
+      },
+      complete: () => {
+        
+        this.mensaje = resultado.mensaje;
+        setTimeout(() => {
+         
+          this.cargarTabla();
+           
+        }, 1000);
+      },
+    });
+  }
+
+
+  cargarTabla(){
+   
+    this.garantiasServices.getGarantiasDetallesIntranet(this.pedido).subscribe({
+      next: (response) => {
+        this.detallePedidoList = response.pedidosValidos.data;
+        console.log(this.detallePedidoList);
+      },
+      error: () => {
+        this.isLoading= false;
+      },
+      complete: () => {
+        
+        setTimeout(() => {
+          this.isLoading= false;     
+          
+        }, 1500);
+      },
+    });
+  }
 
 }

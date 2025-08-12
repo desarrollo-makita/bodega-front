@@ -72,10 +72,12 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/informes']);
             }else if(response.data.Rol === 'Administrador'){
               this.router.navigate(['/user']);
-              
+            }else if(response.data.Rol === 'ST'){
+               this.router.navigate(['/servicio-tecnico']);
             }else if(response.data.Rol === 'Operario'){
               this.errorMessage = 'Usuario sin permiso para ingresar al mantenedor';
             }
+
           }
         },
         error: error => {

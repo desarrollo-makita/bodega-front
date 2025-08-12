@@ -131,7 +131,28 @@
       </div>
       <div class="form-group">
         <label for="rutConsumidor">Rut Cliente</label>
-        <input type="text" id="rutConsumidor" formControlName="RutConsumidor" />
+        <input
+          type="text"
+          id="rutConsumidor"
+          formControlName="RutConsumidor"
+          [value]="garantiaForm.get('RutConsumidor')?.value"
+          (input)="onRutInput($event)" 
+          maxlength="12"
+        />
+
+        <!-- Mensaje de error si el formato o dígito verificador está mal -->
+        <div class="error"
+            *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('rutInvalido')"
+            style="color: red;">
+          RUT inválido.
+        </div>
+
+        <!-- Mensaje si está vacío y es requerido -->
+        <div class="error"
+            *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('required')"
+            style="color: red;">
+          El RUT es obligatorio.
+        </div>
       </div>
     </div>
 

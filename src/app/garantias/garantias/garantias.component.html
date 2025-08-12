@@ -36,6 +36,7 @@
                 <tr>
                   <th>Llamada Servicio</th>
                   <th>Orden Venta Asociada</th>
+                  <th>Oferta Venta Asociada</th>
                   <th>Orden Telecontrol</th>
                   <th>Nombre Serv. Autorizado</th>
                   <th>Tipo Documento</th>
@@ -47,6 +48,9 @@
                 <tr *ngFor="let garantia of garantiaData">
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
                     {{ garantia.servicioLlamada }}
+                  </td>
+                  <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
+                    {{ garantia.DocNumAsociado }}
                   </td>
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
                     {{ garantia.DocNumAsociado }}
@@ -66,7 +70,7 @@
                     </span>
                   </td>
                   <td>
-                    <button  *ngIf="garantia.TipoDocumento === 'ORDEN DE TRABAJO'"
+                    <button  *ngIf="garantia.TipoDocumento === 'PRESUPUESTO'"
                       mat-icon-button
                       class= "icono-editar"
                       (click)="abrirModalAgregarRepuestoOT(garantia)"

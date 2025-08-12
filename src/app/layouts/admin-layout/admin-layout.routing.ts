@@ -26,8 +26,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'asignacion-reconteos', component: AsignacionReconteosComponent },
     { path: 'inventario-baterias', component: InventarioBateriasComponent },
     { path: 'asignacion-reconteos-baterias', component: AsignacionRerconteosBateriasComponent },
-    { path: 'garantias', component: GarantiasComponent},
-    { path: 'ingresar-garantias', component: IngresarGarantiasComponent},
+    { path: 'servicio-tecnico', component: GarantiasComponent},
+    { path: 'crear-orden-trabajo', component: IngresarGarantiasComponent},
   
 
 ];

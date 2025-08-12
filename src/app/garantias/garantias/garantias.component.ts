@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthGuard } from 'app/auth/auth.guard';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
 import { EditarRepuestosDialogComponent } from 'app/shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
@@ -37,11 +38,13 @@ export class GarantiasComponent implements OnInit {
   successMessage: boolean = false;
   errorMessage: boolean = false;
   hasNullIdPedido = false; // boolean que activaremos
+  cardCode : any;
 
 
     constructor(
       private garantiasServices: GarantiasService,
-      private dialog: MatDialog
+      private dialog: MatDialog,
+      private authService: AuthGuard,
   ) {
 
     
@@ -49,11 +52,12 @@ export class GarantiasComponent implements OnInit {
 
   ngOnInit(): void {
     // Simular carga
-
-      this.filtrarGarantias();
-      
-    //  this.actualizarConteos();
-      this.isLoading = false;
+    const token = sessionStorage.getItem("authToken");
+    const decodedToken = this.authService.decodeToken(token);
+    
+    this.cardCode = decodedToken.cardCode;
+    this.filtrarGarantias();
+    this.isLoading = false;
 
   }
 
@@ -77,7 +81,7 @@ export class GarantiasComponent implements OnInit {
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado , this.cardCode).subscribe({
           next: (response) => {
            
             this.garantiaData = response.pedidosValidos.data;
@@ -97,7 +101,7 @@ export class GarantiasComponent implements OnInit {
           },
       });
     }else{
-      this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
+      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode).subscribe({
         next: (response) => {
        
           this.garantiaData = response.pedidosValidos;
@@ -117,49 +121,49 @@ export class GarantiasComponent implements OnInit {
    
   }
 
-    obtenerGarantiasEstadoEditar(estado: string){
-     console.log("estado : " , estado);
-      this.isLoading = true;
-      this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
-      if(estado === 'ingresada'){
-          this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
-            next: (response) => {
-            
-              this.garantiaData = response.pedidosValidos.data;
-              
-              this.hasNullIdPedido = this.garantiaData.some(g => g.idPedido === null || g.idPedido === undefined);
-              
-              if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
-            },
-            error: (error) => {
-              console.error('Error en la consulta:', error);
-          },
-            complete: () => {
-              setTimeout(() => {
-                this.isLoading = false;
-                this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
-              }, 500);
-            },
-        });
-      }else{
-        this.garantiasServices.getGarantiasPorEstado(estado).subscribe({
+  obtenerGarantiasEstadoEditar(estado: string){
+    
+    this.isLoading = true;
+    this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+    if(estado === 'ingresada'){
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado, this.cardCode).subscribe({
           next: (response) => {
-        
-            this.garantiaData = response.pedidosValidos;
-            this.showIntranet = false;
+          
+            this.garantiaData = response.pedidosValidos.data;
+            
+            this.hasNullIdPedido = this.garantiaData.some(g => g.idPedido === null || g.idPedido === undefined);
+            
+            if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
           },
           error: (error) => {
             console.error('Error en la consulta:', error);
-          },
+        },
           complete: () => {
             setTimeout(() => {
               this.isLoading = false;
-              this.bloquearCombo = false;
-            }, 1500);
+              this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
+            }, 500);
           },
-        });
-      }
+      });
+    }else{
+      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode).subscribe({
+        next: (response) => {
+      
+          this.garantiaData = response.pedidosValidos;
+          this.showIntranet = false;
+        },
+        error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+        complete: () => {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+          }, 1500);
+        },
+      });
     }
+  }
 
   filtrarGarantias() {
     console.log("Estado seleccionado:", this.estadoSeleccionado);
@@ -185,7 +189,7 @@ export class GarantiasComponent implements OnInit {
     
     const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
       data: garantia,
-      width: '900px',
+      width: '1000px',
       maxHeight: '80vh',
       panelClass: 'custom-dialog-container',
       disableClose: true
@@ -215,13 +219,14 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-   abrirModalAgregarRepuestoOT(garantia: any): void {
+  
+  abrirModalAgregarRepuestoOT(garantia: any): void {
     
     garantia.Id_Pedido = garantia.ID_Pedido;
     
     const dialogRef = this.dialog.open(EditarRepuestosDialogComponent, {
       data: garantia,
-      width: '900px',
+      width: '1000px',
       maxHeight: '80vh',
       panelClass: 'custom-dialog-container',
       disableClose: true

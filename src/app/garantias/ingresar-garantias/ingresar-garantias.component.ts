@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { regiones } from '../../util/regiones-comunas/regiones-comunas';
+import { rutChilenoValidator } from '../../util/validador-rut';
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -16,7 +17,6 @@ export class IngresarGarantiasComponent implements OnInit {
     'GARANTIA',
     'PRESUPUESTO',
     'PUESTA EN MARCHA',
-    'ORDEN DE TRABAJO'
   ];
 
   mensaje: string = '';
@@ -72,7 +72,7 @@ export class IngresarGarantiasComponent implements OnInit {
       DireccionConsumidor: ['', Validators.required],
       RegionConsumidor: ['', Validators.required],
       ComunaConsumidor: ['', Validators.required],
-      RutConsumidor: ['', Validators.required],
+      RutConsumidor: ['', [Validators.required, rutChilenoValidator]],
       TelCliente: ['+569', [Validators.required, Validators.pattern(/^\+569[0-9]{8}$/)]],
       Descripcion: ['', Validators.required], 
     });   
@@ -319,7 +319,7 @@ export class IngresarGarantiasComponent implements OnInit {
     }
   }
 
-   seleccionarProveedor(item: any) {
+  seleccionarProveedor(item: any) {
     this.garantiaForm.patchValue({ 
      // RutDistribuidor: item.CardCode.startsWith('P') ? item.CardCode.substring(1) : item.CardCode,
       Revendedor: item.CardName
@@ -327,5 +327,22 @@ export class IngresarGarantiasComponent implements OnInit {
     this.proveedorFiltrados = [];
     this.mostrarSugerenciasProveedores = false;
   }
+
+  onRutInput(event: any) {
+    let value = event.target.value.replace(/\./g, '').replace(/-/g, '');
+
+    if (value.length > 1) {
+      const cuerpo = value.slice(0, -1);
+      const dv = value.slice(-1).toUpperCase();
+      const nuevoValor = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+
+      event.target.value = nuevoValor;
+      this.garantiaForm.get('RutConsumidor')?.setValue(nuevoValor); // <-- emitEvent true por defecto
+    } else {
+      this.garantiaForm.get('RutConsumidor')?.setValue(value);
+    }
+  }
+
+
   
 }

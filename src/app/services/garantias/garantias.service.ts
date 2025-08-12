@@ -22,18 +22,19 @@ export class GarantiasService {
     private editarPedidosIntranetURL = "http://localhost:3026/api/editar-pedido-detalle-intranet"
     private obtenerArticulosURL = "http://localhost:3026/api/detalle-articulos-orden";
     private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
+    private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
 
 
 
   constructor(private http: HttpClient) {}
 
-  getGarantiasPorEstado(estado: string): Observable<any> {
-    const url = `${this.obtenerGarantiasEstadoURL}/${estado}`;
+  getGarantiasPorEstado(estado: string , cardCode: string): Observable<any> {
+    const url = `${this.obtenerGarantiasEstadoURL}/${estado}/${cardCode}`;
     return this.http.get<any>(url);
   }  
   
-  getGarantiasPorEstadoIntranet(estado: string): Observable<any> {
-    const url = `${this.obtenerGarantiasIntranet}/${estado}`;
+  getGarantiasPorEstadoIntranet(estado: string , cardCode: string): Observable<any> {
+    const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}`;
     return this.http.get<any>(url);
   }
   
@@ -94,5 +95,9 @@ export class GarantiasService {
     return this.http.post<any>(this.eliminarArticulosURL, { data });
   }
 
+
+  eliminarArticulosLocal(data : any): Observable<any> {
+    return this.http.post<any>(this.eliminarArticulosLocalURL, { data });
+  }
   
 }

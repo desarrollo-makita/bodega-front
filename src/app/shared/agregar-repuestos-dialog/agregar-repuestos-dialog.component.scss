@@ -11,7 +11,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  max-width: 900px;
+  max-width: 950px;
   max-height: 85vh;
   background: #fff;
   border-radius: 10px;
@@ -41,10 +41,15 @@
 
   .campos-repuesto {
     display: grid;
-    grid-template-columns: 2fr 4fr 1fr auto;
+    grid-template-columns: 29fr 18fr 14fr auto 29fr;
     gap: 1rem;
     align-items: center;
     margin-bottom: 1rem;
+  }
+
+   button[mat-icon-button] {
+    justify-self: center; // centra horizontalmente en su celda
+    align-self: center;   // centra verticalmente
   }
 
   mat-form-field {
@@ -163,3 +168,19 @@ input[formcontrolname="codigo"] {
         background-color: #b0d9db;
       }
     }
+
+
+
+    .alert-success {
+    background-color: rgba(0, 144, 158, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+  }
+
+  .alert-danger{
+    background-color: rgba(235, 35, 35, 0.8);
+    font-size : 150%;
+    text-align: center; /* Centrar el texto */
+    padding: 10px; /* Espaciado interno */
+  }
