@@ -89,9 +89,9 @@
       <div *ngIf="data.documentos && data.documentos.length > 0; else sinDocumentos">
         <ul>
           <li *ngFor="let doc of data.documentos">
-            <a [href]="doc.nombreArchivo" target="_blank" rel="noopener noreferrer">
-              <span class="material-icons">attach_file</span> Ver documento
-            </a>
+           <a href="javascript:void(0)" (click)="abrir(doc)">
+            <span class="material-icons">attach_file</span> Ver documento
+          </a>
           </li>
         </ul>
       </div>

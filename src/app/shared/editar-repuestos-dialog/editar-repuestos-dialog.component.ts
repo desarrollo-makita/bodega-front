@@ -89,7 +89,8 @@ export class EditarRepuestosDialogComponent implements OnInit {
         const grupo = this.repuestos.at(index);
         grupo.patchValue({
           codigo: seleccionado.ItemCode,
-          descripcion: seleccionado.ItemName
+          descripcion: seleccionado.ItemName,
+          precio: seleccionado.ItemPrice.Price
         });
         this.modelosFiltrados[index] = [];
       }
@@ -99,7 +100,8 @@ export class EditarRepuestosDialogComponent implements OnInit {
       return this.fb.group({
         codigo: ['', Validators.required],
         descripcion: ['', Validators.required],
-        cantidad: [1, [Validators.required, Validators.min(1)]]
+        cantidad: [1, [Validators.required, Validators.min(1)]],
+        precio: [1, [Validators.required, Validators.min(1)]]
       });
     }
   
@@ -128,7 +130,8 @@ export class EditarRepuestosDialogComponent implements OnInit {
           detalle: repuestos.map((r: any) => ({
             referencia: r.codigo,
             cantidad: r.cantidad,
-            descripcion: r.descripcion
+            descripcion: r.descripcion,
+            precio: r.precio
           }))
         };
   
@@ -196,7 +199,7 @@ export class EditarRepuestosDialogComponent implements OnInit {
       data: {
         entidad: payload.Entidad,
         fecha: payload.Fecha || new Date().toISOString(), // Asegura fecha
-        folio: payload.Folio,
+        folio: payload.OS_ID,
         informeTecnico: payload.DescripcionDefecto || '',
   
         modelo: payload.Referencia,
@@ -218,45 +221,46 @@ export class EditarRepuestosDialogComponent implements OnInit {
           referencia: d.referencia,
           cantidad: d.cantidad,
           rutCliente: payload.CodigoServicioAut,
-          descripcion : d.descripcion
+          descripcion : d.descripcion,
+          precio : d.precio
         })),
         itemsExistentes :this.detallePedidoList
       }
     };
   }
 
-eliminarDetalle(item: any) {
-    const data  =  {
-      lineNum : item.LineNum,
-      lineStatus : 'bost_Close',
-      docEntry : item.DocEntry
+  eliminarDetalle(item: any) {
+      const data  =  {
+        lineNum : item.LineNum,
+        lineStatus : 'bost_Close',
+        docEntry : item.DocEntry
 
-    }
-
-    this.isLoading = true;
-    this.garantiasServices.eliminarArticulos(data).subscribe({
-      next: (res) => {
-        console.log("Resouesta de eliminar _ " , res);
-
-      },
-      error: (err) => {
-        // Error de red o del servidor
-        console.log("Error de red o servidor:", err);
-        this.dialogRef.close({
-          exito: false,
-          mensaje: 'Error al eliminar la garantía. Intenta nuevamente...'
-        });
-      },
-      complete: () => {
-            console.log("Éxito:", this.mensajeDetalle);
-            this.dialogRef.close({
-              exito: true,
-              mensaje: 'se ha eliminado el pedido correctamente.'
-            });
       }
-    });
+
+      this.isLoading = true;
+      this.garantiasServices.eliminarArticulos(data).subscribe({
+        next: (res) => {
+          console.log("Respuesta de eliminar _ " , res);
+
+        },
+        error: (err) => {
+          // Error de red o del servidor
+          console.log("Error de red o servidor:", err);
+          this.dialogRef.close({
+            exito: false,
+            mensaje: 'Error al eliminar la garantía. Intenta nuevamente...'
+          });
+        },
+        complete: () => {
+              console.log("Éxito:", this.mensajeDetalle);
+              this.dialogRef.close({
+                exito: true,
+                mensaje: 'se ha eliminado el pedido correctamente.'
+              });
+        }
+      });
+      
+     
+  }
     
-    console.log('Índice a eliminar:', item);
-}
-  
 }

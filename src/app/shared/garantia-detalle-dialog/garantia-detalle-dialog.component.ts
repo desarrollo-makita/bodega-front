@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { GarantiasService } from 'app/services/garantias/garantias.service';
 
 @Component({
   selector: 'app-garantia-detalle-dialog',
@@ -9,7 +10,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class GarantiaDetalleDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<GarantiaDetalleDialogComponent>
+    public dialogRef: MatDialogRef<GarantiaDetalleDialogComponent>,
+    private garantiasServices : GarantiasService
   ) {
    
   }
@@ -69,5 +71,17 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     console.log(this.comentarios)
     this.confirmarRechazoHabilitado = this.comentarios.trim().length > 0;
   }
+
+   abrir(doc: any) {
+    this.garantiasServices.abrirDocumentoIntranet(doc.id).subscribe({
+      next: (response: Blob) => {
+        const url = window.URL.createObjectURL(response);
+        window.open(url, '_blank');
+      },
+      error: (error) => {
+        console.error('Error al abrir el documento:', error);
+      }
+  });
+}
 
 }

@@ -25,9 +25,9 @@
 }
 
 label {
-   text-transform: uppercase;
-  font-weight: 600;
-  color: #008686;
+   
+  font-weight: 700;
+  color: black;
   margin-bottom: 0.5rem;
   font-size: 14px;
   letter-spacing: 0.02em;
@@ -45,7 +45,7 @@ textarea {
   padding: 8px 12px;
   font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: #8b8b8b;;
   border-radius: 4px 4px 0 0;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   outline-offset: 2px;
@@ -111,10 +111,11 @@ button:hover:not(:disabled) {
 
 
 .seccion-titulo {
+   text-transform: uppercase;
   margin: 2rem 0 1rem;
-  color: #777;
-  font-weight: bold;
-  font-size: 2rem;
+  color: #008686;
+  font-weight: 600;
+  font-size: 18px;
   border-bottom: 2px solid #008686;
   padding-bottom: 0.3rem;
   
@@ -139,4 +140,44 @@ button:hover:not(:disabled) {
     font-size : 150%;
     text-align: center; /* Centrar el texto */
     padding: 10px; /* Espaciado interno */
+  }
+
+  .adjuntos-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+
+    .adjunto-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 700;
+        color:black;
+      }
+
+      input[type="file"] {
+        background: #f9f9f9;
+        border: none;
+        padding: 6px;
+        font-size: 14px;
+        border-radius: 4px;
+      }
+
+      .file-preview {
+        margin-top: 0.5rem;
+        img {
+          max-width: 10%;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0, 134, 134, 0.25);
+        }
+        span {
+          background: #eef6f6;
+          padding: 6px 10px;
+          border-radius: 6px;
+          display: inline-block;
+        }
+      }
+    }
   }

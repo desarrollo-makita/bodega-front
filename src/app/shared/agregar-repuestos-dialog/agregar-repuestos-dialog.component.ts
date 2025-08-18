@@ -20,7 +20,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
 
   codigo: any;
   mensajeDetalle: any;
-  tabSeleccionada: 'agregar' | 'detalle'  = 'agregar';
+  tabSeleccionada: 'agregar' | 'detalle' | 'anexos' = 'agregar';
   successMessage: boolean = false;
   errorMessage:boolean = false;
 
@@ -175,16 +175,16 @@ export class AgregarRepuestosDialogComponent implements OnInit {
             });
           } else if (this.codigo !== undefined) {
               console.log("Éxito:", this.mensajeDetalle);
-          /* this.dialogRef.close({
+          this.dialogRef.close({
               exito: true,
               mensaje: 'se ha generado el pedido correctamente.'
-            });*/
-             this.formularioRepuestos.reset();
-              setTimeout(() => {
+            });
+            
+            /*  setTimeout(() => {
                
                 this.successMessage = false;
                 this.cargarTabla();
-              }, 1500);
+              }, 1500);*/
             
             
           }
@@ -282,7 +282,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
         
         setTimeout(() => {
           this.isLoading= false;     
-          
+          this.formularioRepuestos.reset();
         }, 1500);
       },
     });

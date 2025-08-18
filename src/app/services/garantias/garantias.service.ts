@@ -23,6 +23,7 @@ export class GarantiasService {
     private obtenerArticulosURL = "http://localhost:3026/api/detalle-articulos-orden";
     private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
     private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
+    private abrirDocumento = "http://localhost:3026/api/abrir-documento"
 
 
 
@@ -99,5 +100,9 @@ export class GarantiasService {
   eliminarArticulosLocal(data : any): Observable<any> {
     return this.http.post<any>(this.eliminarArticulosLocalURL, { data });
   }
-  
+
+  abrirDocumentoIntranet(id: any): Observable<Blob> {
+    const url = `${this.abrirDocumento}/${id}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

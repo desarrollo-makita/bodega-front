@@ -27,6 +27,9 @@ export class IngresarGarantiasComponent implements OnInit {
   modelosFiltrados: any[] = [];
   clientesFiltrados: any[] = [];
   proveedorFiltrados: any[] = [];
+  adjuntos = [null, null, null, null];
+ filePreviews: { file: File, url: string, type: string, name: string }[] = [];
+  
   
   mostrarSugerencias = false;
   mostrarSugerenciasClientes = false;
@@ -52,9 +55,8 @@ export class IngresarGarantiasComponent implements OnInit {
         "rutConsumidor": "168020120",
         "rutServicioTecnico": "777777777",
         "serie": "123"
-    }
-
-
+  }
+  
   constructor(private fb: FormBuilder, private garantiasServices: GarantiasService,
   ) {}
 
@@ -75,6 +77,10 @@ export class IngresarGarantiasComponent implements OnInit {
       RutConsumidor: ['', [Validators.required, rutChilenoValidator]],
       TelCliente: ['+569', [Validators.required, Validators.pattern(/^\+569[0-9]{8}$/)]],
       Descripcion: ['', Validators.required], 
+      serieHerramienta: [null, Validators.required],
+      herramienta: [null, Validators.required],
+      repuesto: [null, Validators.required],
+      boleta: [null, Validators.required]
     });   
    
     
@@ -99,41 +105,56 @@ export class IngresarGarantiasComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.garantiaForm.valid) {
-      const formValue = this.garantiaForm.value;
-      let data = this.garantiaForm.getRawValue();
-      data = this.mapFormularioARequest(formValue);
-      
-      this.isLoading = true; // Mostrar el loader
-      this.garantiasServices.insertarGarantiaIntranet(data).subscribe({
-          next: (response) => {
-            this.formularioData =  response;
-            this.generarComprobante(formValue); // Generar comprobante
-          
-          
-          },
-          error: (error) => {
-            console.error('Error en la consulta getGarantiasPorEstadoIntranet:', error);
-        },
-          complete: () => {
-            setTimeout(() => {
-              this.successMessage = true;
-              this.mensaje = 'Garantia ingresada correctamente';
-              this.isLoading = false; // Ocultar el loader
-              this.garantiaForm.reset(); // Limpiar el formulario
-           
-              
-            }, 1500); 
+    this.isLoading = true;
 
-              setTimeout(() => {
-                this.borrarMensaje(); // Limpiar mensaje
-              }, 4000);
-          },
-      });
-      
-    } else {
+    if (!this.garantiaForm.valid) {
       this.garantiaForm.markAllAsTouched();
+      this.isLoading = false;
+      return;
     }
+
+    // Obtener y mapear datos del formulario
+    const formValue = this.garantiaForm.value;
+    const mappedData = this.mapFormularioARequest(formValue);
+
+    // Crear FormData
+    const formData = new FormData();
+
+    // Agregar campos normales al FormData
+    Object.entries(mappedData).forEach(([key, value]) => {
+      formData.append(key, value ?? ''); // Evitar undefined
+    });
+
+    // 4️⃣ Agregar archivos
+    this.filePreviews.forEach((filePreview, index) => {
+      if (!filePreview || !filePreview.file) return;
+
+      const fieldNames = ['serieHerramienta', 'herramienta', 'repuesto', 'boleta'];
+      const fieldName = fieldNames[index];
+      if (fieldName) {
+        formData.append(fieldName, filePreview.file, filePreview.name);
+      }
+    });
+
+    // 5️⃣ Enviar al backend
+    this.garantiasServices.insertarGarantiaIntranet(formData).subscribe({
+      next: (response) => {
+        this.formularioData = response;
+        this.generarComprobante(formValue);
+      },
+      error: (error) => console.error(error),
+      complete: () => {
+        setTimeout(() => {
+          this.successMessage = true;
+          this.mensaje = 'Garantía ingresada correctamente';
+          this.isLoading = false;
+          this.garantiaForm.reset();
+          this.borrarNombresArchivos();
+        }, 1500);
+
+        setTimeout(() => this.borrarMensaje(), 4000);
+      }
+    });
   }
 
 
@@ -176,7 +197,31 @@ export class IngresarGarantiasComponent implements OnInit {
 
   borrarMensaje() {
     this.successMessage = false; // Limpiar el mensaje
+    
+  }
+
+  borrarNombresArchivos(){
+    this.filePreviews = [
+      { file: null, url: '', type: '', name: '' },
+      { file: null, url: '', type: '', name: '' },
+      { file: null, url: '', type: '', name: '' },
+      { file: null, url: '', type: '', name: '' }
+    ];
    
+  }
+
+  clearFile(index: number) {
+    const controlName = this.getControlNameByIndex(index);
+    this.garantiaForm.get(controlName)?.reset();
+    this.filePreviews[index] = null;
+
+    const fileInput = document.getElementById(`archivo${index}`) as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  }
+
+  getControlNameByIndex(index: number): string {
+    const controlNames = ['serieHerramienta', 'herramienta', 'repuesto', 'boleta'];
+    return controlNames[index];
   }
 
   generarComprobante(formData: any) {
@@ -343,6 +388,24 @@ export class IngresarGarantiasComponent implements OnInit {
     }
   }
 
+
+  onFileSelected(event: Event, index: number) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.filePreviews[index] = {
+        file: file,            // <-- guardamos el archivo real
+        url: e.target.result,  // preview
+        type: file.type,
+        name: file.name
+      };
+    };
+    reader.readAsDataURL(file);
+  }
 
   
 }
