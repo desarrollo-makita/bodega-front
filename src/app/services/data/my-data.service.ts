@@ -16,6 +16,7 @@ export class MyDataService {
   private showEdit = new BehaviorSubject<boolean>(true); // Valor inicial para boolean
   private reconteoDataSource = new BehaviorSubject<ReconteoData | null>(null);
   private asignacionCapturadoresSource = new BehaviorSubject<any[]>([]); // Valor inicial para array
+  private cardCode = new BehaviorSubject<string>(''); // Valor inicial para string
   
   // Observables expuestos para suscribirse
   stringData$ = this.dataSource.asObservable();
@@ -24,11 +25,16 @@ export class MyDataService {
   booleanData$ = this.showEdit.asObservable();
   reconteoData$ = this.reconteoDataSource.asObservable();
   asignacionCap$ = this.asignacionCapturadoresSource.asObservable();
+  cardCode$ = this.cardCode.asObservable();
 
   
   constructor() { }
 
   // Métodos para obtener los datos
+  getCardCode() {
+    return this.cardCode$;
+  }
+
   getBooleanData() {
     return this.booleanData$;
   }
@@ -73,5 +79,9 @@ export class MyDataService {
 
   setReconteoData(data: ReconteoData) {
     this.reconteoDataSource.next(data);
+  }
+
+  setCardCode(data: string) {
+    this.cardCode.next(data);
   }
 }

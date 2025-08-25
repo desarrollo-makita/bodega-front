@@ -6,6 +6,8 @@ import { rutChilenoValidator } from '../../util/validador-rut';
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { MyDataService } from 'app/services/data/my-data.service';
+import { take } from 'rxjs';
 @Component({
   selector: 'app-ingresar-garantias',
   templateUrl: './ingresar-garantias.component.html',
@@ -57,7 +59,7 @@ export class IngresarGarantiasComponent implements OnInit {
         "serie": "123"
   }
   
-  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService,
+  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService, private dataService : MyDataService
   ) {}
 
   ngOnInit(): void {
@@ -82,7 +84,8 @@ export class IngresarGarantiasComponent implements OnInit {
       repuesto: [null, Validators.required],
       boleta: [null, Validators.required]
     });   
-   
+    this.garantiaForm.get('RutServicioTecnico')?.disable();
+    this.garantiaForm.get('NombreServicioAut')?.disable();
     
     this.garantiaForm.get('Modelo')?.valueChanges.subscribe((valor) => {
       if (!valor) {
@@ -102,8 +105,27 @@ export class IngresarGarantiasComponent implements OnInit {
       }
     });
 
+    this.obtenerRutLogueado();
   }
 
+
+  obtenerRutLogueado() {
+    let cardCode = sessionStorage.getItem('cardCode');
+    this.dataService.getCardCode().pipe(take(1)).subscribe({
+      next: (response) => {
+        // Si comienza con "C", le quitamos solo esa letra
+        console.log("response" , cardCode);
+        this.buscarClientes(cardCode);
+      },
+      error: (error) => {
+        console.error("Error al obtener responseReconteo", error);
+      },
+      complete: () => {},
+    });
+  }
+
+
+  
   onSubmit(): void {
     this.isLoading = true;
 
@@ -114,7 +136,8 @@ export class IngresarGarantiasComponent implements OnInit {
     }
 
     // Obtener y mapear datos del formulario
-    const formValue = this.garantiaForm.value;
+   
+    const formValue = this.garantiaForm.getRawValue();
     const mappedData = this.mapFormularioARequest(formValue);
 
     // Crear FormData
@@ -317,24 +340,30 @@ export class IngresarGarantiasComponent implements OnInit {
     });
   }
 
-  buscarClientes() {
-    let valor = this.garantiaForm.get('RutServicioTecnico')?.value;
-    if (valor && valor.length >= 2) {
-      valor = valor.toUpperCase();
-      
-      this.garantiasServices.getClientes(valor).subscribe({
-        next: (data) => {
-       
-          this.clientesFiltrados = data.cliente;
-          this.mostrarSugerenciasClientes = true;
-        },
-        error: (err) => console.error('Error en búsqueda de modelos', err)
-      });
-    } else {
-      this.clientesFiltrados = [];
-      this.mostrarSugerenciasClientes = false;
-    }
+  buscarClientes(code: any) {
+    console.log("code", code)
+    let cardCode = code.startsWith('C') ? code.substring(1) : code;
+
+     this.garantiasServices.getClientes(cardCode).subscribe({
+      next: (response) => {
+        console.log("response clientes:", response);
+
+        // ✅ acceder al array correcto
+        if (response && response.cliente && response.cliente.length > 0) {
+          const cliente = response.cliente[0]; // tomamos el primer cliente del array
+
+          this.garantiaForm.patchValue({ 
+            RutServicioTecnico: cliente.CardCode,   // lo dejamos tal cual
+            NombreServicioAut: cliente.CardName
+          });
+        } else {
+          console.warn("No se encontró cliente con el código:", cardCode);
+        }
+      },
+      error: (err) => console.error('Error en búsqueda de clientes', err)
+    });
   }
+
 
    seleccionarCliente(item: any) {
     this.garantiaForm.patchValue({ 

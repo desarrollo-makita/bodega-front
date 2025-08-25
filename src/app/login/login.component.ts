@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = true; // Mostrar el loader
       this.loginService.login(usuario, clave).subscribe({
         next: response => {
-          
+          console.log("response : " , response);
           // Guarda el token en el localStorage
           sessionStorage.setItem('menu', JSON.stringify(response.data.menu));
           
@@ -59,6 +59,9 @@ export class LoginComponent implements OnInit {
           console.log('Login successful');
 
           this.dataService.setUserObjectData(response.data);
+          this.dataService.setCardCode(response.data.CardCode);
+          sessionStorage.setItem('cardCode', response.data.CardCode);
+          
           if(response.data.recuperarClave ===  1){
             console.log("responseeeeeeee : " , response.data);
             response.data.claveTemporal = this.claveProvisoria;

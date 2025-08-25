@@ -568,6 +568,7 @@ export class InventarioComponent implements OnInit {
    
     const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
   
+    console.log("grupoencontrado : " , grupoEncontrado);
     if(localGuardado === '02'){
       this.dataCerrarConteo = {
         periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
@@ -645,7 +646,7 @@ export class InventarioComponent implements OnInit {
       next: (response) => {
         
 
-        this.codigoBloqueo = response.data.Estado === 1 ? true : false;
+        this.codigoBloqueo = response.data.Estado === 1 ? false : true;
     
         console.log("Validando Inventario Cerrado [validarCierreInventario] ... " ,  this.codigoBloqueo);
        
