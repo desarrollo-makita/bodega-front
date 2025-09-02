@@ -865,9 +865,7 @@ export class InventarioBateriasComponent implements OnInit {
       let mes = partes[1];  // "05"
       let dia = partes[2];  // "09"
       
-      const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
-    
-      const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
+      const grupoEncontrado = sessionStorage.getItem('grupo') || ''; 
   
       const dataCierre = {
         agno: agno,
@@ -875,7 +873,7 @@ export class InventarioBateriasComponent implements OnInit {
         fechaInventario: fechaInventario,
         tipoItem: tipoItem,
         local: localGuardado,
-        grupoBodega: grupoEncontrado.GrupoBodega,
+        grupoBodega: grupoEncontrado,
       };
   
       console.log("requestCierre" , dataCierre);

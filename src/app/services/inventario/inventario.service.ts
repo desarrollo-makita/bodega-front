@@ -39,6 +39,16 @@ export class InventarioService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
+  consultaInventario2(tipoItem: string, local: string , fechaInventario: string, grupo:any): Observable<any> {
+    const params = new HttpParams()
+      .set('tipoItem', tipoItem)
+      .set('local', local)
+      .set('fechaInventario', fechaInventario)
+      .set('grupo', grupo);
+
+    return this.http.get<any>(this.apiUrl, { params });
+  }
+
   consultaAmacen(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
     const params = new HttpParams()
       .set('tipoItem', tipoItem)
@@ -94,11 +104,32 @@ export class InventarioService {
     return this.http.get<any>(this.validaCierreInvUrl, { params });
   }
 
+    validarCierreInventario2(tipoItem: string, local: string , fechaInventario: string, grupo:any): Observable<any> {
+    const params = new HttpParams()
+      .set('tipoItem', tipoItem)
+      .set('local', local)
+      .set('fechaInventario', fechaInventario)
+      .set('grupo', grupo);
+
+    return this.http.get<any>(this.validaCierreInvUrl, { params });
+  }
+
   validarTerminoInventario(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
     const params = new HttpParams()
       .set('tipoItem', tipoItem)
       .set('local', local)
       .set('fechaInventario', fechaInventario);
+
+    return this.http.get<any>(this.validaTerminoInvUrl, { params });
+  }
+
+  
+  validarTerminoInventario2(tipoItem: string, local: string , fechaInventario: string , grupo: any): Observable<any> {
+    const params = new HttpParams()
+      .set('tipoItem', tipoItem)
+      .set('local', local)
+      .set('fechaInventario', fechaInventario)
+      .set('grupo', grupo);
 
     return this.http.get<any>(this.validaTerminoInvUrl, { params });
   }
@@ -122,6 +153,16 @@ export class InventarioService {
       .set('tipoItem', tipoItem)
       .set('local', local)
       .set('fechaInventario', fechaInventario);
+
+    return this.http.get<any>(this.validaCantidadReconteosUrl, { params });
+  }
+
+   validarCantidadReconteos2(tipoItem: string, local: string , fechaInventario: string , grupo:any): Observable<any> {
+    const params = new HttpParams()
+      .set('tipoItem', tipoItem)
+      .set('local', local)
+      .set('fechaInventario', fechaInventario)
+       .set('grupo', grupo);
 
     return this.http.get<any>(this.validaCantidadReconteosUrl, { params });
   }

@@ -103,6 +103,7 @@ export class InventarioComponent implements OnInit {
   dataCerrarConteo: any = {};
   dataActualizaTablaCierre : any ={};
   datosInventarioReconteo: ReconteoData;
+  grupo: any;
 
   constructor(
     private invetarioServices: InventarioService , 
@@ -255,10 +256,18 @@ export class InventarioComponent implements OnInit {
   }
 
   onChange() {
+    if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '01') {
+      this.grupo = 1;
+    } else if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '02') {
+      this.grupo = 2;
+    } else {
+      this.grupo = 0; // valor por defecto si no cumple
+    }
+
     sessionStorage.setItem('tipoItem', this.selectedTipoItem || '');
     sessionStorage.setItem('local', this.selectedLocal || '');
     sessionStorage.setItem('fechaInventario', this.selectedFechaInicio || '');
-    
+    sessionStorage.setItem('grupo', this.grupo || '');
   }
 
   getMesTooltip(codigo: string): string {
@@ -282,8 +291,6 @@ export class InventarioComponent implements OnInit {
   }
 
   validarInventarioFun(){
-   
-    
     const fechaActual = new Date();
     
     this.formattedDate = fechaActual.toISOString().split('T')[0];
@@ -295,8 +302,6 @@ export class InventarioComponent implements OnInit {
     const token = sessionStorage.getItem("authToken");
     const decodedToken = this.authService.decodeToken(token);
     this.usuario = decodedToken.username;
-    
-    
     
     this.invetarioServices.validarInicioInventario(this.formattedDate).subscribe({
       next: (response) => {
@@ -485,7 +490,9 @@ export class InventarioComponent implements OnInit {
     const data = {
           tipoItem: this.selectedTipoItem,
           local: this.selectedLocal,
-          fechaInventario: this.selectedFechaInicio
+          fechaInventario: this.selectedFechaInicio,
+          grupoBodega: this.grupo
+
         };
     
     // Guarda el objeto convertido en string
@@ -495,7 +502,7 @@ export class InventarioComponent implements OnInit {
     this.isLoading = true;
     this.showTable = false;
     
-    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+    this.invetarioServices.consultaInventario2(data.tipoItem, data.local, data.fechaInventario , data.grupoBodega).subscribe({
       next: (response) => {
         
         this.totalItems = response.data.recordset.length;
@@ -560,39 +567,27 @@ export class InventarioComponent implements OnInit {
   }
 
   cerrarInventario(){
-    this.mensajeCargado = 'Cerrando conteo y sumando almacenamiento...'
+    
+    this.mensajeCargado = 'Cerrando conteo ...'
     this.isLoading = true;
     this.mostrarGrafico = false;
     const localGuardado = sessionStorage.getItem('local') || ''; 
-    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
-   
-    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
+    const grupoEncontrado =sessionStorage.getItem('grupo') || '';
   
     console.log("grupoencontrado : " , grupoEncontrado);
-    if(localGuardado === '02'){
-      this.dataCerrarConteo = {
-        periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
-        mes: parseInt(this.selectedMes, 10) || null, 
-        tipoItem: this.selectedTipoItem,
-        local: '01',
-        grupo: 2,
-        fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
-      };
-    }else{
-      this.dataCerrarConteo = {
-        periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
-        mes: parseInt(this.selectedMes, 10) || null, 
-        tipoItem: this.selectedTipoItem,
-        local: this.selectedLocal,
-        grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null,
-        fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
-      };
-
-    }
     
+    this.dataCerrarConteo = {
+      periodo: this.selectedPeriodo,  // Convierte a número, si falla asigna null
+      mes: parseInt(this.selectedMes, 10) || null, 
+      tipoItem: this.selectedTipoItem,
+      local: localGuardado,
+      grupoBodega: grupoEncontrado,
+      fechaInventario: this.selectedFechaInicio, // Devuelve el número en lugar de un array
+    };
+   
     this.invetarioServices.cierreInventario(this.dataCerrarConteo).subscribe({
       next: (response) => {
-        
+        console.log("response cierreInventario : " , response);
         this.codigoBloqueo = response.codigo === 0 ? true: false;
         console.log("response cierreInventario [cierreInventario] : " ,  this.codigoBloqueo);
     },
@@ -607,46 +602,34 @@ export class InventarioComponent implements OnInit {
         }, 5000);
       },
       complete: () =>  {
-        if(localGuardado === '02'){
-          this.dataActualizaTablaCierre = {
-            periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
-            mes: parseInt(this.selectedMes, 10) || null, 
-            tipoItem: this.selectedTipoItem,
-            local: '02',
-            grupo: 2,
-            fechaInventario: this.selectedFechaInicio,
-          };
-       }else{
-          this.dataActualizaTablaCierre = {
-            periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
-            mes: parseInt(this.selectedMes, 10) || null, 
-            tipoItem: this.selectedTipoItem,
-            local: this.selectedLocal,
-            grupo: grupoEncontrado ? grupoEncontrado.GrupoBodega : null, // Devuelve el número en lugar de un array,
-            fechaInventario: this.selectedFechaInicio,
-          };
-       }
+        this.dataActualizaTablaCierre = {
+        periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
+        mes: parseInt(this.selectedMes, 10) || null, 
+        tipoItem: this.selectedTipoItem,
+        local: this.selectedLocal,
+        grupo: this.grupo
         
-        this.actualizaTabla(this.dataActualizaTablaCierre);
-        setTimeout(() => {
-          this.isLoading = false;
+      };
+   
+      this.actualizaTabla(this.dataActualizaTablaCierre);
+      setTimeout(() => {
+        this.isLoading = false;
           
-        }, 5000);
-       
-        
+      }, 5000);
       },
     });
     
   }
 
   validarCierreInventario(data: any){
-    data.local = data.local === '02' ? '01' : data.local;
+    data.local = this.selectedLocal;
+    data.grupo = this.grupo;
     this.isLoading = true;
-    this.invetarioServices.validarCierreInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
+    this.invetarioServices.validarCierreInventario2(data.tipoItem, data.local , data.fechaInventario, data.grupo).subscribe({
       next: (response) => {
         
 
-        this.codigoBloqueo = response.data.Estado === 1 ? false : true;
+        this.codigoBloqueo = response.data.Estado === 1 ? true : false;
     
         console.log("Validando Inventario Cerrado [validarCierreInventario] ... " ,  this.codigoBloqueo);
        
@@ -680,9 +663,10 @@ export class InventarioComponent implements OnInit {
     });
   }
   validarTerminoInventario(data: any){
-    data.local = data.local === '02' ? '01' : data.local;
+    data.local = this.selectedLocal;
+    data.grupo = this.grupo;
     this.isLoading = true;
-    this.invetarioServices.validarTerminoInventario(data.tipoItem, data.local , data.fechaInventario).subscribe({
+    this.invetarioServices.validarTerminoInventario2(data.tipoItem, data.local , data.fechaInventario , data.grupo).subscribe({
       next: (response) => {
         console.log("Validando Inventario Terminado ... " , response);
         this.botonInventarioTerminado =  response.estado === 1 ?  true : false;
@@ -751,33 +735,23 @@ export class InventarioComponent implements OnInit {
   }
 
   reconteo(){
+    
     const localGuardado = sessionStorage.getItem('local') || ''; 
     const tipoItem = sessionStorage.getItem('tipoItem') || '';
     const fechaInventario = sessionStorage.getItem('fechaInventario') || '';
+    const grupo =  sessionStorage.getItem('grupo') || '';
     
-    const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
     const mensaje = `¿Desea sumar el almacenaje?`;
-    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
-      
-    if(localGuardado === '02'){
-      this.datosInventarioReconteo = {
-        tipoItem: tipoItem,
-        local: '01',
-        fechaInventario: fechaInventario,
-        bodega: 2,
-        loading: this.isLoading,
-        numeroReconteo: this.proximoReconteo,
-      };
-    }else{
-      this.datosInventarioReconteo = {
+    
+    this.datosInventarioReconteo = {
         tipoItem: tipoItem,
         local: localGuardado,
         fechaInventario: fechaInventario,
-        bodega: grupoEncontrado.GrupoBodega,
+        bodega: Number(grupo),
         loading: this.isLoading,
         numeroReconteo: this.proximoReconteo,
       };
-    }
+    
     
     sessionStorage.setItem('datosInventario', JSON.stringify(this.datosInventarioReconteo));
     this.myDataService.setReconteoData(this.datosInventarioReconteo);
@@ -795,8 +769,10 @@ export class InventarioComponent implements OnInit {
 
 
   validarCantidadReconteos(data: any) {
-    data.local = data.local === '02' ? '01' : data.local;
-    this.invetarioServices.validarCantidadReconteos(data.tipoItem, data.local, data.fechaInventario).subscribe({
+    data.local = this.selectedLocal;
+    this.grupo = this.grupo;
+    
+    this.invetarioServices.validarCantidadReconteos2(data.tipoItem, data.local, data.fechaInventario , this.grupo).subscribe({
       next: (response) => {
         
       console.log("Validando Cantidad de Reconteos ... " , response);
@@ -1107,6 +1083,7 @@ export class InventarioComponent implements OnInit {
         
       },
     });
+    
   }
   
   

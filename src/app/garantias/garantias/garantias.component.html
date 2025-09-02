@@ -18,7 +18,7 @@
              
                 <mat-option value="pendientes">Pendientes</mat-option>
                 <mat-option value="aprobadas">Aprobadas</mat-option>
-                <mat-option value="rechazadas">Rechazadas</mat-option>
+                <mat-option value="rechazado">Rechazadas</mat-option>
                 <mat-option value="ingresada">Ingresadas</mat-option>
                
               </mat-select>
@@ -29,19 +29,18 @@
           <img src="../../../assets/img/loader-preview.svg" alt="loading" />
         </div>
         <div *ngIf="!isLoading && garantiaData.length > 0" class="card-garantias-tabla mat-elevation-z8 animate-fadeIn">
-          
           <div *ngIf="!showIntranet" class="table-container mat-elevation-z4 animate-slideIn">
             <table class="table table-hover table-striped">
               <thead>
                 <tr>
                   <th>Llamada Servicio</th>
-                  <th>Orden Venta Asociada</th>
+                  <th>DocEntry Asociada</th>
                   <th>Oferta Venta Asociada</th>
                   <th>Orden Telecontrol</th>
                   <th>Nombre Serv. Autorizado</th>
                   <th>Tipo Documento</th>
                   <th>Estado</th>
-                  <th>Acciones</th>
+                  <th *ngIf="mostrarAcciones">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -50,7 +49,7 @@
                     {{ garantia.servicioLlamada }}
                   </td>
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
-                    {{ garantia.DocNumAsociado }}
+                    {{ garantia.DocEntryAsociado}}
                   </td>
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
                     {{ garantia.DocNumAsociado }}
@@ -63,8 +62,8 @@
                   <td>
                     <span [ngClass]="{
                       'pendiente': garantia.EstadoSAP === 'EnProcesoAprobacion',
-                      'aprobado': garantia.estado === 'Aprobado',
-                      'rechazado': garantia.estado === 'Rechazado'
+                      'aprobado': garantia.EstadoSAP === 'Aprobado',
+                      'rechazado': garantia.EstadoSAP === 'RECHAZADO'
                     }">
                       {{ garantia.EstadoSAP === 'EnProcesoAprobacion' ? 'Pendiente Aprobación' : garantia.EstadoSAP }}
                     </span>
@@ -144,7 +143,6 @@
               </tbody>
             </table>
           </div>
-          
         </div>
         <div *ngIf="!isLoading && garantiaData.length === 0" class="card-garantias mat-elevation-z8 animate-fadeIn">
           <h2 class="highlight-text">No hay garantías registradas</h2>

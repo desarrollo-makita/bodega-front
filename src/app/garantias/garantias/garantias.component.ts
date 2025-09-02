@@ -39,12 +39,15 @@ export class GarantiasComponent implements OnInit {
   errorMessage: boolean = false;
   hasNullIdPedido = false; // boolean que activaremos
   cardCode : any;
+  role: any;
+  mostrarAcciones: boolean = false;
 
 
     constructor(
       private garantiasServices: GarantiasService,
       private dialog: MatDialog,
       private authService: AuthGuard,
+      
   ) {
 
     
@@ -54,8 +57,9 @@ export class GarantiasComponent implements OnInit {
     // Simular carga
     const token = sessionStorage.getItem("authToken");
     const decodedToken = this.authService.decodeToken(token);
-    
     this.cardCode = decodedToken.cardCode;
+    this.role = decodedToken.role;
+    this.role === 'Administrador'  ? this.mostrarAcciones = true : this.mostrarAcciones = false;
     this.filtrarGarantias();
     this.isLoading = false;
 
@@ -78,10 +82,11 @@ export class GarantiasComponent implements OnInit {
   }
 
   obtenerGarantiasEstado(estado: string){
+    
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado , this.cardCode).subscribe({
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado , this.cardCode, this.role).subscribe({
           next: (response) => {
            
             this.garantiaData = response.pedidosValidos.data;
@@ -101,10 +106,11 @@ export class GarantiasComponent implements OnInit {
           },
       });
     }else{
-      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode).subscribe({
+      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode , this.role).subscribe({
         next: (response) => {
-       
+          console.log("Response: " , response);
           this.garantiaData = response.pedidosValidos;
+          
           this.showIntranet = false;
         },
         error: (error) => {
@@ -126,7 +132,7 @@ export class GarantiasComponent implements OnInit {
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado, this.cardCode).subscribe({
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado, this.cardCode, this.role).subscribe({
           next: (response) => {
           
             this.garantiaData = response.pedidosValidos.data;
@@ -146,7 +152,7 @@ export class GarantiasComponent implements OnInit {
           },
       });
     }else{
-      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode).subscribe({
+      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode, this.role).subscribe({
         next: (response) => {
       
           this.garantiaData = response.pedidosValidos;
@@ -177,11 +183,28 @@ export class GarantiasComponent implements OnInit {
   }
 
   abrirDetalleGarantia(garantia: any): void {
-    this.dialog.open(GarantiaDetalleDialogComponent, {
+    const dialogRef = this.dialog.open(GarantiaDetalleDialogComponent, {
       data: garantia,
       width: '900px',
       maxHeight: '80vh',
-      panelClass: 'custom-dialog-container' // opcional para estilos extra
+      panelClass: 'custom-dialog-container'
+    });
+    
+    dialogRef.afterClosed().subscribe((resultado) => {
+       if (resultado.exito) {
+          this.successMessage= true
+          this.mensaje = resultado.mensaje;
+         
+          setTimeout(() => {
+            this.filtrarGarantias();
+            this.successMessage = false;
+          }, 1500);
+          
+      }else if (resultado.mensaje === 'cierre') {
+          setTimeout(() => {
+            }, 1500);
+          }
+      
     });
   }
 

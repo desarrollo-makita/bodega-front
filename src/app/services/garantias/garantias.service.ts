@@ -24,18 +24,22 @@ export class GarantiasService {
     private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
     private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
     private abrirDocumento = "http://localhost:3026/api/abrir-documento"
+    private rechazarOfertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
 
 
 
   constructor(private http: HttpClient) {}
 
-  getGarantiasPorEstado(estado: string , cardCode: string): Observable<any> {
-    const url = `${this.obtenerGarantiasEstadoURL}/${estado}/${cardCode}`;
+  getGarantiasPorEstado(estado: string , cardCode: string ,role:string): Observable<any> {
+    console.log("estado en servicio: " , estado);
+    console.log( "Role en servicio: " , role);
+    console.log("CardCode en servicio: " , cardCode);
+    const url = `${this.obtenerGarantiasEstadoURL}/${estado}/${cardCode}/${role}`;
     return this.http.get<any>(url);
   }  
   
-  getGarantiasPorEstadoIntranet(estado: string , cardCode: string): Observable<any> {
-    const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}`;
+  getGarantiasPorEstadoIntranet(estado: string , cardCode: string, role:string): Observable<any> {
+    const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}/${role}`;
     return this.http.get<any>(url);
   }
   
@@ -104,5 +108,9 @@ export class GarantiasService {
   abrirDocumentoIntranet(id: any): Observable<Blob> {
     const url = `${this.abrirDocumento}/${id}`;
     return this.http.get(url, { responseType: 'blob' });
+  }
+
+  rechazarOfertaVenta(data : any): Observable<any> {
+    return this.http.post<any>(this.rechazarOfertaVentaURL, { data });
   }
 }

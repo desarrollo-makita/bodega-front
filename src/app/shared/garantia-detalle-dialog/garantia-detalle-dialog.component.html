@@ -30,30 +30,58 @@
     <div *ngIf="tabSeleccionada === 'general'" class="tab-content">
       <div class="info-row" *ngFor="let dato of datosGenerales">
         <span class="label">{{ dato.label }}:</span>
-        <span class="value">{{ dato.value }}</span>
+        <span class="value" [ngClass]="dato.clase">{{ dato.value }}</span>
       </div>
     </div>
-    <div *ngIf="tabSeleccionada === 'general' && mostrarMotivos" class="tab-content">
+    <div *ngIf="tabSeleccionada === 'general' && (mostrarMotivos || mostrarComentarioRechazo)" class="tab-content">
       <label for="comentario" style="padding-top: 3%;"><strong>Motivos / Observaciones:</strong></label>
         <textarea
           id="comentario"
           [(ngModel)]="comentarios"
-          (ngModelChange)="validarComentario()"
+          (ngModelChange)="validarComentario(data)"
           placeholder="Motivos del rechazo......."
           rows="5"
-          style="width: 100%; resize: vertical; padding: 0.5rem; font-size: 14px; border-radius: 8px; border: 1px solid #ccc;">
+          [disabled]="data.EstadoSAP === 'RECHAZADO'">
         </textarea>
     </div>
 
-    <div *ngIf="tabSeleccionada === 'general'"  class="botones-acciones">
-      <button class="btn-aprobar" (click)="aprobar()">{{botonAprobar}}</button>
+    <div *ngIf="isLoading" id="loader" class="overlay" style="margin-top: 10em;">
+      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
+    </div>
+
+    <div *ngIf="tabSeleccionada === 'general' && mostrarBotonesInferiores"  class="botones-acciones">
+      <button 
+        *ngIf="!mostrarBotonRechazar" 
+        class="btn-aprobar" 
+        (click)="aprobar()">
+        {{botonAprobar}}
+      </button>
       <button
+       *ngIf="!mostrarBotonRechazar"
         class="btn-rechazar"
         [disabled]="mostrarMotivos && !comentarios.trim()"
         [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
         (click)="rechazar(data)">
         {{ botonRechazar }}
       </button>
+      <button
+        *ngIf="mostrarBotonRechazar"
+        class="btn-rechazar"
+        [disabled]="mostrarMotivos && !comentarios.trim()"
+        [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
+        (click)="enviarRechazo(data)">
+        Enviar Rechazo
+      </button>
+      <button
+        *ngIf="mostrarBotonRechazar"
+        (click)="cerrarModal()"
+        type="button"
+        class="btn-aprobar" 
+        data-bs-dismiss="modal">
+        Cancelar
+       
+      </button>
+
     </div>
     
     <div *ngIf="tabSeleccionada === 'detalle'" class="tab-content">

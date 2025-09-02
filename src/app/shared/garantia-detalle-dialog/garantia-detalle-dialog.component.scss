@@ -212,7 +212,26 @@ textarea {
   border-radius: 8px;
   border: 1px solid #ccc;
   font-family: inherit;
+  font-weight: bold; 
+  text-transform: uppercase;
+  color: #e53935;
 }
+
+.pendiente {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+}
+
+.aprobado {
+  color: #00909E !important;
+  font-weight: bold !important;
+}
+
+.rechazado {
+  color: #e53935 !important;
+  font-weight: bold !important;
+}
+
 
 
 /* Animación */
