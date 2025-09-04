@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-garantia-detalle-dialog',
@@ -12,7 +13,8 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<GarantiaDetalleDialogComponent>,
-    private garantiasServices : GarantiasService
+    private garantiasServices : GarantiasService,
+     private dialog: MatDialog,
   ) {
    
   }
@@ -37,7 +39,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   mostrarBotonCancelar: boolean = false;
   dataRechazo:any;
   mostrarComentarioRechazo: boolean = false;
-  
+  habilitarBotonera: boolean = false;  
   
   get datosGenerales() {
     if (!this.data) return [];
@@ -46,7 +48,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
       { label: 'Tipo Orden', value: this.data.TipoDocumento },
       { 
         label: 'Status Garantía', 
-        value: this.data.EstadoSAP === 'EnProcesoAProbacion' ? 'Pendiente Aprobación' : this.data.EstadoSAP, 
+        value: this.data.EstadoSAP === 'EnProcesoAprobacion' ? 'Pendiente Aprobación' : this.data.EstadoSAP, 
         clase: this.getEstadoClase(this.data.EstadoSAP)
       },
       { label: 'Orden Servicio Telecontrol', value: this.data.OS_ID },
@@ -85,7 +87,6 @@ export class GarantiaDetalleDialogComponent implements OnInit {
 
   rechazar(datosGarantia: any) {
     
-   
     console.log("dato:", datosGarantia);
     this.mostrarMotivos = true;
     this.mostrarBotonRechazar = true;
@@ -94,38 +95,40 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     //this.botonAprobar = 'Cancelar';
   }
 
-  enviarRechazo(datosGarantia){
+  enviarRechazo(datosGarantia: any) {
+    console.log("datos a enviar: ", datosGarantia);
 
-    this.isLoading = true;
-    
-    this.garantiasServices.rechazarOfertaVenta(datosGarantia).subscribe({
-      next: (response) => {
-       
-        this.dataRechazo = response;
-        console.log("Response: " , this.dataRechazo);
-       
-      },
-      error: (error) => {
-        console.error('Error en la consulta:', error);
-      },
-      complete: () => {
-        setTimeout(() => {
-           this.dialogRef.close({
-              exito: true,
-              mensaje: 'Se ha rechazado la oferta de venta correctamente'
-            });
-        }, 1500);
-      },
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: datosGarantia,
+      disableClose: true,
+      width: '500px',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container'
+    });
+
+    // Solo escuchas el resultado final (cuando modal se cierra)
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.exito) {
+        console.log("✔ Oferta rechazada con éxito:", result.mensaje);
+        this.habilitarBotonera = true;
+        
+        this.dialogRef.close({
+            exito: true,
+            
+          });
+      
+        } else {
+        console.log("❌ Cancelado o cerrado sin acción");
+      }
     });
   }
+
 
   validarComentario(dato: any) {
     this.data.comentarioRechazo = this.comentarios;
     console.log("dato:", dato);
     console.log(this.comentarios)
     this.confirmarRechazoHabilitado = this.comentarios.trim().length > 0;
-
-    
   }
 
   abrir(doc: any) {
@@ -142,11 +145,9 @@ export class GarantiaDetalleDialogComponent implements OnInit {
 
   getEstadoClase(estado: string): string {
     if (!estado) return '';
-
-    console.log("estado.toLowerCase(): ", estado.toLowerCase());
     switch (estado.toLowerCase()) {
       case 'enprocesoaprobacion':
-        console.log("entramos aca.....")
+      
         return 'pendiente';
 
       case 'aprobado':

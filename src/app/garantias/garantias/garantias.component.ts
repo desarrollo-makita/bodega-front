@@ -83,7 +83,7 @@ export class GarantiasComponent implements OnInit {
 
   obtenerGarantiasEstado(estado: string){
     
-    this.isLoading = true;
+   
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
         this.garantiasServices.getGarantiasPorEstadoIntranet(estado , this.cardCode, this.role).subscribe({
@@ -120,7 +120,8 @@ export class GarantiasComponent implements OnInit {
           setTimeout(() => {
             this.isLoading = false;
             this.bloquearCombo = false;
-          }, 500);
+            this.successMessage = false;
+          }, 1000);
         },
       });
     }
@@ -192,13 +193,10 @@ export class GarantiasComponent implements OnInit {
     
     dialogRef.afterClosed().subscribe((resultado) => {
        if (resultado.exito) {
-          this.successMessage= true
-          this.mensaje = resultado.mensaje;
-         
-          setTimeout(() => {
+        setTimeout(() => {
             this.filtrarGarantias();
-            this.successMessage = false;
-          }, 1500);
+           
+          }, 1000);
           
       }else if (resultado.mensaje === 'cierre') {
           setTimeout(() => {

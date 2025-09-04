@@ -187,7 +187,7 @@
 }
 
 .btn-rechazar {
-  background-color: #c62828; // Rojo fuerte
+  background-color: #F44336; // Rojo fuerte
   color: white;
 
   &:hover {
@@ -229,6 +229,10 @@ textarea {
 
 .rechazado {
   color: #e53935 !important;
+  font-weight: bold !important;
+}
+
+.negrita{
   font-weight: bold !important;
 }
 

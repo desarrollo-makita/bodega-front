@@ -30,7 +30,13 @@
     <div *ngIf="tabSeleccionada === 'general'" class="tab-content">
       <div class="info-row" *ngFor="let dato of datosGenerales">
         <span class="label">{{ dato.label }}:</span>
-        <span class="value" [ngClass]="dato.clase">{{ dato.value }}</span>
+         <span 
+          class="value" 
+          [class.negrita]="dato.label === 'Observación'" 
+          [ngClass]="dato.clase">
+          {{ dato.value }}
+        </span>
+
       </div>
     </div>
     <div *ngIf="tabSeleccionada === 'general' && (mostrarMotivos || mostrarComentarioRechazo)" class="tab-content">
@@ -39,7 +45,7 @@
           id="comentario"
           [(ngModel)]="comentarios"
           (ngModelChange)="validarComentario(data)"
-          placeholder="Motivos del rechazo......."
+          placeholder="Motivos del rechazo ..."
           rows="5"
           [disabled]="data.EstadoSAP === 'RECHAZADO'">
         </textarea>
@@ -53,7 +59,8 @@
       <button 
         *ngIf="!mostrarBotonRechazar" 
         class="btn-aprobar" 
-        (click)="aprobar()">
+        (click)="aprobar()"
+        [disabled]="habilitarBotonera">
         {{botonAprobar}}
       </button>
       <button
@@ -61,7 +68,8 @@
         class="btn-rechazar"
         [disabled]="mostrarMotivos && !comentarios.trim()"
         [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
-        (click)="rechazar(data)">
+        (click)="rechazar(data)"
+        [disabled]="habilitarBotonera">
         {{ botonRechazar }}
       </button>
       <button
@@ -69,12 +77,14 @@
         class="btn-rechazar"
         [disabled]="mostrarMotivos && !comentarios.trim()"
         [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
-        (click)="enviarRechazo(data)">
+        (click)="enviarRechazo(data)"
+        [disabled]="habilitarBotonera">
         Enviar Rechazo
       </button>
       <button
         *ngIf="mostrarBotonRechazar"
         (click)="cerrarModal()"
+        [disabled]="habilitarBotonera"
         type="button"
         class="btn-aprobar" 
         data-bs-dismiss="modal">

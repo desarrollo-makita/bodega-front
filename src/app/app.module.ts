@@ -46,6 +46,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AlmacenamientoDialogComponent } from './shared/almacenamiento-dialog/almacenamiento-dialog.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BateriasDialogComponent } from './shared/baterias-dialog/baterias-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -83,7 +84,8 @@ import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog
     MatExpansionModule,
     MatProgressBarModule,
     MatRadioModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule 
 
     
   ],
