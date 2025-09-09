@@ -15,7 +15,7 @@
   <button
     [class.active]="tabSeleccionada === 'detalle'"
     (click)="tabSeleccionada = 'detalle'">
-    <span class="material-icons">inventory_2</span> Detalle Repuestos
+    <span class="material-icons">inventory_2</span> Oferta de Venta
   </button>
 
   <button
@@ -27,20 +27,132 @@
 
 
   <section class="modal-body">
-    <div *ngIf="tabSeleccionada === 'general'" class="tab-content">
-      <div class="info-row" *ngFor="let dato of datosGenerales">
-        <span class="label">{{ dato.label }}:</span>
-         <span 
-          class="value" 
-          [class.negrita]="dato.label === 'Observación'" 
-          [ngClass]="dato.clase">
-          {{ dato.value }}
-        </span>
 
-      </div>
+    <div *ngIf="isLoading" id="loader" class="overlay">
+      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
     </div>
+
+
+    <div *ngIf="tabSeleccionada === 'general'" class="tab-content p-3">
+      <div class="row">
+        <!-- Columna izquierda -->
+        <div class="col-md-6">
+          <!-- Código Socio -->
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Rut Cliente :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.RutServicioTecnico }}</span>
+            </div>
+          </div>
+
+          <!-- Nombre Cliente -->
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Nombre Cliente :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.NombreServicioAut }}</span>
+            </div>
+          </div>
+
+          <!-- Serie -->
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Serie :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.serie }}</span>
+            </div>
+          </div>
+
+          <!-- Modelo -->
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Modelo :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.Modelo }}</span>
+            </div>
+          </div>
+
+          <!-- Descripción -->
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Descripción :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.DescripcionHerramienta }}</span>
+            </div>
+          </div>
+
+          <!-- Tipo Item -->
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Tipo Item :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.tipoItem }}</span>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <label class="col-sm-4 text-verde-makita">Observación :</label>
+            <div class="col-sm-6">
+              <textarea rows="4" disabled= "true" style="font-weight: bold;">{{ dataLLamadaServicio.Observacion }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="col-md-6">
+          <div class="row mb-2 ajuste-derecha" >
+            <label class="col-sm-4 text-verde-makita">Status :</label>
+            <div class="col-sm-6">
+              <span 
+                [ngClass]="{
+                  'pendiente': dataLLamadaServicio.EstadoSAP === 'EnProcesoAprobacion',
+                  'aprobado': dataLLamadaServicio.EstadoSAP === 'Aprobado',
+                  'rechazado': dataLLamadaServicio.EstadoSAP === 'Rechazado'
+                }">
+                {{ dataLLamadaServicio.EstadoSAP === 'EnProcesoAprobacion' ?  'Pendiente de Aprobación' :  dataLlamadaServicio.EstadoSAP }}
+              </span>
+            </div>
+          </div>
+          <div class="row mb-2 ajuste-derecha">
+            <label class="col-sm-4 text-verde-makita">ID de llamada :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.servicioLlamada }}</span>
+            </div>
+          </div>
+          <div class="row mb-2 ajuste-derecha">
+            <label class="col-sm-4 text-verde-makita">Fecha creación :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.FechaAbertura | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <div class="row mb-2 ajuste-derecha">
+            <label class="col-sm-4 text-verde-makita">Oferta asociada :</label>
+            <div class="col-sm-6">     
+              <span>{{ dataLLamadaServicio.DocNumAsociado }}</span>
+            </div>
+          </div>
+          <div class="row mb-2 ajuste-derecha">
+            <label class="col-sm-4 text-verde-makita">Nombre distribuidor :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.Revendedor }}</span>
+            </div>
+          </div>
+          <div class="row mb-2 ajuste-derecha">
+            <label class="col-sm-4 text-verde-makita">Nombre consumidor :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.NombreConsumidor }}</span>
+            </div>
+          </div>
+          <div class="row mb-2 ajuste-derecha">
+            <label class="col-sm-4 text-verde-makita">Rut consumidor :</label>
+            <div class="col-sm-6">
+              <span>{{ dataLLamadaServicio.RutConsumidor }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br><br>
+      
+    </div>
+
+    
     <div *ngIf="tabSeleccionada === 'general' && (mostrarMotivos || mostrarComentarioRechazo)" class="tab-content">
-      <label for="comentario" style="padding-top: 3%;"><strong>Motivos / Observaciones:</strong></label>
+      <label class  ="text-verde-makita"  for="comentario" style="padding-top: 3%;"><strong>Motivos / Observaciones:</strong></label>
         <textarea
           id="comentario"
           [(ngModel)]="comentarios"
@@ -49,10 +161,6 @@
           rows="5"
           [disabled]="data.EstadoSAP === 'RECHAZADO'">
         </textarea>
-    </div>
-
-    <div *ngIf="isLoading" id="loader" class="overlay" style="margin-top: 10em;">
-      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
     </div>
 
     <div *ngIf="tabSeleccionada === 'general' && mostrarBotonesInferiores"  class="botones-acciones">
@@ -66,10 +174,9 @@
       <button
        *ngIf="!mostrarBotonRechazar"
         class="btn-rechazar"
-        [disabled]="mostrarMotivos && !comentarios.trim()"
-        [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
+        [disabled]="habilitarBotonera"
         (click)="rechazar(data)"
-        [disabled]="habilitarBotonera">
+        >
         {{ botonRechazar }}
       </button>
       <button
@@ -77,8 +184,7 @@
         class="btn-rechazar"
         [disabled]="mostrarMotivos && !comentarios.trim()"
         [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
-        (click)="enviarRechazo(data)"
-        [disabled]="habilitarBotonera">
+        (click)="enviarRechazo(data)">
         Enviar Rechazo
       </button>
       <button
@@ -94,33 +200,63 @@
 
     </div>
     
-    <div *ngIf="tabSeleccionada === 'detalle'" class="tab-content">
-      <table>
+    <mat-accordion *ngIf="tabSeleccionada === 'detalle'" multi>
+     <mat-expansion-panel *ngFor="let oferta of dataOferta?.llamada">
+       
+    
+      <!-- Encabezado Oferta -->
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Oferta Nº {{ oferta.DocumentNumber }}
+        </mat-panel-title>
+        <mat-panel-description>
+          <div class="header-container">
+            <span class="fecha">Fecha: {{ oferta.DocumentPostingDate | date:'dd/MM/yyyy' }}</span>
+           
+            <span 
+            class="estado" 
+            [ngClass]="{'cerrada': oferta.Status === 'bost_Close', 'abierta': oferta.Status !== 'bost_Close'}">
+            {{ oferta.Status === 'bost_Close' ? 'Cerrada' : 'Abierta' }}
+          </span>
+          </div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <!-- Tabla con rowspan -->
+      <table class="table table-striped table-bordered">
         <thead>
           <tr>
+            <th>Oferta</th>
+            <th>Fecha</th>
             <th>Item</th>
-            <th>Cantidad</th>
             <th>Descripción</th>
-            <th>Ubicación</th>
-            <th>Stock</th>
+            <th>Cantidad</th>
             <th>Bodega</th>
-            
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let repuesto of data.detalle">
-            <td>{{ repuesto.itemRepuesto }}</td>
-            <td>{{ repuesto.Cantidad }}</td>
-            <td>{{ repuesto.Descripcion  }}</td>
-            <td>{{ repuesto.Ubicacion }}</td>
-            <td>{{ repuesto.StockFinal }}</td>
-            <td>{{ repuesto.Bodega }}</td>
-          
+          <tr *ngFor="let repuesto of oferta.Pedido">
+            <!-- Mostrar Oferta y Fecha solo en la primera fila -->
+            <td *ngIf="repuesto.LineNum === 0" [attr.rowspan]="oferta.Pedido.length">
+              {{ oferta.DocumentNumber }}
+            </td>
+            <td *ngIf="repuesto.LineNum === 0" [attr.rowspan]="oferta.Pedido.length">
+              {{ oferta.DocumentPostingDate | date:'dd/MM/yyyy' }}
+            </td>
+
+            <!-- Detalle de repuestos -->
+            <td>{{ repuesto.ItemCode }}</td>
+            <td>{{ repuesto.ItemDescription }}</td>
+            <td>{{ repuesto.Quantity }}</td>
+            <td>{{ repuesto.WarehouseCode }}</td>
           </tr>
         </tbody>
       </table>
-    </div>
 
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    
     <div *ngIf="tabSeleccionada === 'anexos'" class="tab-content">
       <h4 style="margin-bottom: 1rem;">Documentos Adjuntos</h4>
       

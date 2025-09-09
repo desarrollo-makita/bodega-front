@@ -48,15 +48,9 @@
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
                     {{ garantia.servicioLlamada }}
                   </td>
-                  <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
-                    {{ garantia.DocNumAsociado }}
-                  </td>
-                  <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
-                    {{ garantia.DocNumAsociado }}
-                  </td>
-                  <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
-                    {{ garantia.OS_ID }}
-                  </td>
+                  <td>{{ garantia.DocEntryAsociado }}</td>
+                  <td>{{ garantia.DocNumAsociado }}</td>
+                  <td>{{ garantia.OS_ID }}</td>
                   <td>{{ garantia.NombreServicioAut }}</td>
                   <td>{{ garantia.TipoDocumento }}</td>
                   <td>

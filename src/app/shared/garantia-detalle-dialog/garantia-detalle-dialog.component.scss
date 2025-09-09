@@ -1,3 +1,9 @@
+/* variables rápidas */
+$makita-teal: #008686;
+$makita-red: #e53935;
+
+
+
 .modal-backdrop {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.4);
@@ -9,8 +15,7 @@
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 85%;
-  max-width: 850px;
+  width: 65%;
   max-height: 85vh;
   background: #fff;
   border-radius: 10px;
@@ -83,30 +88,12 @@
 }
 
 .modal-body {
+
   .tab-content {
      background: transparent !important; /* para evitar fondo blanco extra */
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid #eee;
-        font-size: 1.8rem;
-
-      .label {
-        font-weight: 500;
-        color: #007a85;
-        max-width: 50%;
-        word-wrap: break-word;
-      }
-      .value {
-        color: #444;
-        max-width: 65%;
-        word-wrap: break-word;
-        font-weight: 100;
-      }
-    }
-
-     ul {
+   
+      
+      ul {
       list-style: none;
       padding-left: 0;
       margin-top: 1rem;
@@ -183,6 +170,12 @@
 
   &:hover {
     background-color: #006f6f;
+  }&:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
   }
 }
 
@@ -236,6 +229,47 @@ textarea {
   font-weight: bold !important;
 }
 
+.ajuste-derecha
+{
+  margin-left : 87px;
+}
+
+
+.text-negro {
+  color: black;
+}
+
+.text-verde-makita {
+  color: #008686; /* Color verde Makita */
+  font-weight: bold; /* opcional, para que resalte */
+}
+
+.mat-expansion-panel table {
+  margin-bottom: 0;
+}
+.mat-expansion-panel th, 
+.mat-expansion-panel td {
+  padding: 0.5rem;
+  vertical-align: middle;
+}
+
+
+.header-container {
+  display: flex;
+  justify-content: space-between; /* fecha a la izquierda, estado a la derecha */
+  width: 100%;
+  margin-right: 30%;
+}
+
+.estado.cerrada {
+  color: #e53935; /* o el color que quieras para cerrada */
+  font-weight: 500;
+}
+
+.estado.abierta {
+  color: #008686; /* verde Makita */
+  font-weight: 500;
+}
 
 
 /* Animación */

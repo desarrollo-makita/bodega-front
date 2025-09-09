@@ -57,6 +57,7 @@ import { GarantiaDetalleDialogComponent } from './shared/garantia-detalle-dialog
 import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingresar-garantias.component';
 import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
 import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   imports: [
@@ -85,7 +86,8 @@ import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog
     MatProgressBarModule,
     MatRadioModule,
     MatTooltipModule,
-    MatProgressSpinnerModule 
+    MatProgressSpinnerModule,
+    MatTableModule
 
     
   ],

@@ -186,8 +186,8 @@ export class GarantiasComponent implements OnInit {
   abrirDetalleGarantia(garantia: any): void {
     const dialogRef = this.dialog.open(GarantiaDetalleDialogComponent, {
       data: garantia,
-      width: '900px',
-      maxHeight: '80vh',
+      // width: '900px',  
+      maxHeight: '80vh', // opcional, para que no desborde la pantalla
       panelClass: 'custom-dialog-container'
     });
     

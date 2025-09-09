@@ -20,12 +20,17 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   }
   ngOnInit() {
     console.log("data recibida: ", this.data);
+
+    this.dataLLamadaServicio = this.data;
     if(this.data.EstadoSAP === 'RECHAZADO'){
       this.mostrarComentarioRechazo = true;
       this.comentarios = this.data.comentarioAdicional;
-
     }
+
+    this.obtenerOfertasVenta(this.data.servicioLlamada);
+
   }
+  
            
   mostrarBotonesInferiores: boolean = true; 
   isLoading = false;
@@ -39,38 +44,12 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   mostrarBotonCancelar: boolean = false;
   dataRechazo:any;
   mostrarComentarioRechazo: boolean = false;
-  habilitarBotonera: boolean = false;  
+  habilitarBotonera: boolean = false;
+  dataLLamadaServicio:any;
+  generalFields: Array<{ label: string, value: any, clase?: string }> = []; 
+  dataOferta: any = { llamada: [] };
   
-  get datosGenerales() {
-    if (!this.data) return [];
-    
-    return [
-      { label: 'Tipo Orden', value: this.data.TipoDocumento },
-      { 
-        label: 'Status Garantía', 
-        value: this.data.EstadoSAP === 'EnProcesoAprobacion' ? 'Pendiente Aprobación' : this.data.EstadoSAP, 
-        clase: this.getEstadoClase(this.data.EstadoSAP)
-      },
-      { label: 'Orden Servicio Telecontrol', value: this.data.OS_ID },
-      { label: 'Informe Técnico', value: this.data.InformeTecnico },
-      { label: 'Tipo Documento', value: this.data.TipoMO },
-      { label: 'Modelo', value: this.data.Modelo },
-      { label: 'Serie', value: this.data.serie },
-      { label: 'Número Documento', value: this.data.NumeroDocumento },
-      { label: 'Observación', value: this.data.Observacion },
-      { label: 'Vendedor', value: this.data.Revendedor },
-      { label: 'RUT Servicio Técnico', value: this.data.RutServicioTecnico },
-      { label: 'Nombre Servicio Autorizado', value: this.data.NombreServicioAut },
-      { label: 'Fecha Apertura', value: (new Date(this.data.FechaAbertura)).toLocaleDateString() },
-      { label: 'Nombre Consumidor', value: this.data.NombreConsumidor },
-      { label: 'Dirección Consumidor', value: this.data.DireccionConsumidor },
-      { label: 'Ciudad Consumidor', value: this.data.CiudadConsumidor },
-      { label: 'Región Consumidor', value: this.data.RegionConsumidor },
-      { label: 'RUT Consumidor', value: this.data.RutConsumidor },
-    ];
-  }
-
-
+  
   cerrarModal() {
       this.dialogRef.close({
         exito: false,
@@ -82,7 +61,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   aprobar() {
     this.mostrarMotivos = false;
     this.botonRechazar = 'Rechazar';
-       this.botonAprobar = 'Aprobar';
+    this.botonAprobar = 'Aprobar';
   }
 
   rechazar(datosGarantia: any) {
@@ -143,24 +122,39 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   });
   }
 
-  getEstadoClase(estado: string): string {
+getEstadoClase(estado: string): string {
     if (!estado) return '';
     switch (estado.toLowerCase()) {
       case 'enprocesoaprobacion':
-      
         return 'pendiente';
-
       case 'aprobado':
         return 'aprobado';
-
       case 'rechazado':
-        // 👉 Aquí haces lo que necesites
         this.mostrarBotonesInferiores = false;
         return 'rechazado';
-
       default:
         return '';
     }
+  }
+
+
+  obtenerOfertasVenta(idLlamada){
+    this.isLoading= true;
+    this.habilitarBotonera= true;
+    
+    this.garantiasServices.obtenerOfertasVentas(idLlamada).subscribe({
+      next: (response) => {
+      console.log("esta sera la nueva data a mostrar directamente desde SAP" , response);
+      this.dataOferta =  response;
+      },
+      error: (err) => {
+      console.log("Error" , err);
+      },
+      complete: () => {
+        this.isLoading= false;
+         this.habilitarBotonera= false;
+      }
+    });
   }
 
 

@@ -25,6 +25,7 @@ export class GarantiasService {
     private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
     private abrirDocumento = "http://localhost:3026/api/abrir-documento"
     private rechazarOfertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
+    private obtenerOfertaVentaURL = "http://localhost:3026/api/obtener-ofertas-ventas";
 
 
 
@@ -112,5 +113,10 @@ export class GarantiasService {
 
   rechazarOfertaVenta(data : any): Observable<any> {
     return this.http.post<any>(this.rechazarOfertaVentaURL, { data });
+  }
+
+  obtenerOfertasVentas(docEntry: any): Observable<any> {
+    const url = `${this.obtenerOfertaVentaURL}/${docEntry}`;
+    return this.http.get<any>(url);
   }
 }
