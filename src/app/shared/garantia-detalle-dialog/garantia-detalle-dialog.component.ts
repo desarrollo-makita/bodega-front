@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-garantia-detalle-dialog',
@@ -22,19 +23,20 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     console.log("data recibida: ", this.data);
 
     this.dataLLamadaServicio = this.data;
+    
     if(this.data.EstadoSAP === 'RECHAZADO'){
       this.mostrarComentarioRechazo = true;
       this.comentarios = this.data.comentarioAdicional;
     }
 
-    this.obtenerOfertasVenta(this.data.servicioLlamada);
+    
 
   }
   
            
   mostrarBotonesInferiores: boolean = true; 
   isLoading = false;
-  tabSeleccionada: 'general' | 'detalle' | 'anexos' = 'general';
+  tabSeleccionada: string = 'general';
   comentarios: string = '';
   mostrarMotivos: boolean = false;
   botonRechazar: string = 'Rechazar';
@@ -48,7 +50,21 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   dataLLamadaServicio:any;
   generalFields: Array<{ label: string, value: any, clase?: string }> = []; 
   dataOferta: any = { llamada: [] };
+  anexos: any[] = [];
+  descargando: Record<string, boolean> = {};
   
+  cambiarTab(tab: string) {
+    
+    this.tabSeleccionada = tab;
+    
+    console.log("tabSeleccionado",this.tabSeleccionada )
+    
+    if (tab === 'detalle') {
+      this.obtenerOfertaVenta(this.data.ServiceCallID);
+    }else if(tab === 'anexos'){
+       this.cargarDocumentos(this.data.AttachmentEntry);
+    }
+  }
   
   cerrarModal() {
       this.dialogRef.close({
@@ -122,7 +138,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   });
   }
 
-getEstadoClase(estado: string): string {
+  getEstadoClase(estado: string): string {
     if (!estado) return '';
     switch (estado.toLowerCase()) {
       case 'enprocesoaprobacion':
@@ -137,10 +153,7 @@ getEstadoClase(estado: string): string {
     }
   }
 
-
-  obtenerOfertasVenta(idLlamada){
-    this.isLoading= true;
-    this.habilitarBotonera= true;
+  obtenerOfertaVenta(idLlamada:any){
     
     this.garantiasServices.obtenerOfertasVentas(idLlamada).subscribe({
       next: (response) => {
@@ -152,10 +165,49 @@ getEstadoClase(estado: string): string {
       },
       complete: () => {
         this.isLoading= false;
-         this.habilitarBotonera= false;
+        this.habilitarBotonera= false;
       }
     });
   }
+
+  cargarDocumentos(attachmentEntry: any) {
+    this.garantiasServices.cargarDocumentos(attachmentEntry).subscribe({
+      next: (response: any) => {
+        console.log("TRAEMOS LOS DOCUMENTOS", response);
+        // Aseguramos que this.anexos sea siempre un array (si el backend devuelve un objeto único)
+        this.anexos = Array.isArray(response) ? response : [response];
+      },
+      error: (err) => {
+        console.error("Error al cargar documentos", err);
+        // opcional: mostrar toast/alert aquí
+      }
+    });
+  }
+
+  abrirDocumento(doc: any) {
+    
+    this.isLoading = true
+    this.descargando[doc.nombre] = true;
+
+    this.garantiasServices.descargarDocumentos(doc.absoluteEntry).subscribe({
+      next: (blob: Blob) => {
+        // Crear URL temporal y abrir en otra pestaña
+        const fileURL = window.URL.createObjectURL(blob);
+        window.open(fileURL, '_blank');
+        this.descargando[doc.nombre] = false;
+      },
+      error: (err) => {
+        console.error('Error al abrir documento', err);
+        alert('No se pudo abrir el documento');
+        this.descargando[doc.nombre] = false;
+      }, complete: () => {
+        this.isLoading= false;
+        
+      }
+    });
+  }
+
+
 
 
 }

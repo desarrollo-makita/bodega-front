@@ -22,7 +22,7 @@ interface Garantia {
   styleUrls: ['./garantias.component.scss']
 })
 export class GarantiasComponent implements OnInit {
-  isLoading = true;
+  isLoading :boolean= false;
   garantiaData: Garantia[] = [];
   garantiaDataIntranet: Garantia[] = [];
   garantiaPendiente = 0;
@@ -61,7 +61,7 @@ export class GarantiasComponent implements OnInit {
     this.role = decodedToken.role;
     this.role === 'Administrador'  ? this.mostrarAcciones = true : this.mostrarAcciones = false;
     this.filtrarGarantias();
-    this.isLoading = false;
+    
 
   }
 
@@ -82,41 +82,28 @@ export class GarantiasComponent implements OnInit {
   }
 
   obtenerGarantiasEstado(estado: string){
+    this.isLoading= true;
     
-   
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
-    if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado , this.cardCode, this.role).subscribe({
-          next: (response) => {
-           
-            this.garantiaData = response.pedidosValidos.data;
-            
-            this.hasNullIdPedido = this.garantiaData.some(g => g.idPedido === null || g.idPedido === undefined);
-            
-            if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
-          },
-          error: (error) => {
-            console.error('Error en la consulta:', error);
-        },
-          complete: () => {
-            setTimeout(() => {
-              this.isLoading = false;
-              this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
-            }, 500);
-          },
-      });
-    }else{
-      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode , this.role).subscribe({
-        next: (response) => {
-          console.log("Response: " , response);
-          this.garantiaData = response.pedidosValidos;
+    
+    this.garantiasServices.getGarantiasPorEstado().subscribe({
+      next: (response) => {
+      
+        if(estado === 'pendientes'){
+          this.garantiaData = response.abiertas.map(item => ({
+          ...item,
+          tipoLLamada: 'Garantia'
+  }));
+        }else{
+            this.garantiaData = response.cerradas;
+        }
           
-          this.showIntranet = false;
+        this.showIntranet = false;
         },
-        error: (error) => {
+      error: (error) => {
           console.error('Error en la consulta:', error);
         },
-        complete: () => {
+      complete: () => {
           setTimeout(() => {
             this.isLoading = false;
             this.bloquearCombo = false;
@@ -124,8 +111,6 @@ export class GarantiasComponent implements OnInit {
           }, 1000);
         },
       });
-    }
-   
   }
 
   obtenerGarantiasEstadoEditar(estado: string){
@@ -153,7 +138,7 @@ export class GarantiasComponent implements OnInit {
           },
       });
     }else{
-      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode, this.role).subscribe({
+      this.garantiasServices.getGarantiasPorEstado().subscribe({
         next: (response) => {
       
           this.garantiaData = response.pedidosValidos;
@@ -173,14 +158,7 @@ export class GarantiasComponent implements OnInit {
   }
 
   filtrarGarantias() {
-    console.log("Estado seleccionado:", this.estadoSeleccionado);
-    if (this.estadoSeleccionado === 'pendientes') {
-      this.obtenerGarantiasEstado('EnProcesoAprobacion');
-    }else if(this.estadoSeleccionado === 'rechazadas'){
-      this.obtenerGarantiasEstado('Rechazadas');
-    }else{
-      this.obtenerGarantiasEstado(this.estadoSeleccionado);
-    }
+    this.obtenerGarantiasEstado(this.estadoSeleccionado);
   }
 
   abrirDetalleGarantia(garantia: any): void {

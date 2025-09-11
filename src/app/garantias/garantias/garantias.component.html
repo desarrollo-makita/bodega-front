@@ -16,10 +16,10 @@
               <mat-label>Filtrar por estado</mat-label>
               <mat-select [(value)]="estadoSeleccionado" (selectionChange)="filtrarGarantias()"  [disabled]="bloquearCombo">
              
-                <mat-option value="pendientes">Pendientes</mat-option>
+                <mat-option value="pendientes">Garantias Abiertas</mat-option>
                 <mat-option value="aprobadas">Aprobadas</mat-option>
-                <mat-option value="rechazado">Rechazadas</mat-option>
-                <mat-option value="ingresada">Ingresadas</mat-option>
+                <mat-option value="rechazadas">Rechazadas</mat-option>
+                <mat-option value="ingresadas">Ingresadas</mat-option>
                
               </mat-select>
             </mat-form-field>
@@ -34,9 +34,7 @@
               <thead>
                 <tr>
                   <th>Llamada Servicio</th>
-                  <th>DocEntry Asociada</th>
-                  <th>Oferta Venta Asociada</th>
-                  <th>Orden Telecontrol</th>
+                  <th>Rut ST Autorizado</th>
                   <th>Nombre Serv. Autorizado</th>
                   <th>Tipo Documento</th>
                   <th>Estado</th>
@@ -46,20 +44,18 @@
               <tbody>
                 <tr *ngFor="let garantia of garantiaData">
                   <td (click)="abrirDetalleGarantia(garantia)" class="clickable-cell">
-                    {{ garantia.servicioLlamada }}
+                    {{ garantia.ServiceCallID }}
                   </td>
-                  <td>{{ garantia.DocEntryAsociado }}</td>
-                  <td>{{ garantia.DocNumAsociado }}</td>
-                  <td>{{ garantia.OS_ID }}</td>
-                  <td>{{ garantia.NombreServicioAut }}</td>
-                  <td>{{ garantia.TipoDocumento }}</td>
+                  <td>{{ garantia.CustomerCode }}</td>
+                  <td>{{ garantia.CustomerName }}</td>
+                  <td>{{ garantia.CallType === 1 ?'Garantia' :  'Ventas' }}</td>
                   <td>
                     <span [ngClass]="{
-                      'pendiente': garantia.EstadoSAP === 'EnProcesoAprobacion',
-                      'aprobado': garantia.EstadoSAP === 'Aprobado',
-                      'rechazado': garantia.EstadoSAP === 'RECHAZADO'
+                      'pendiente': garantia.Status === -3,
+                      'aprobado': garantia.Status === 'Aprobado',
+                      'rechazado': garantia.Status === 'RECHAZADO'
                     }">
-                      {{ garantia.EstadoSAP === 'EnProcesoAprobacion' ? 'Pendiente Aprobación' : garantia.EstadoSAP }}
+                      {{ garantia.Status === -3 ? 'Abierta' : garantia.Status }}
                     </span>
                   </td>
                   <td>

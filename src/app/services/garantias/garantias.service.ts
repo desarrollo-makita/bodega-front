@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class GarantiasService {
 
-    private obtenerGarantiasEstadoURL = "http://localhost:3026/api/obtener-garantias-estado";
+    private obtenerGarantiasAbiertas = "http://localhost:3026/api/obtener-llamadas";
     private obtenerGarantiasIntranet = "http://localhost:3026/api/obtener-garantias-estado-intranet";
     private insertarGarantiasIntranet = "http://localhost:3026/api/insertar-garantias-intranet";
     private buscarItemURL = "http://localhost:3026/api/buscar-item-formulario";
@@ -26,16 +26,15 @@ export class GarantiasService {
     private abrirDocumento = "http://localhost:3026/api/abrir-documento"
     private rechazarOfertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
     private obtenerOfertaVentaURL = "http://localhost:3026/api/obtener-ofertas-ventas";
+    private cargarDocumentosURL = "http://localhost:3026/api/obtener-documentos-llamada";
+    private descargarDocumentosURL = "http://localhost:3026/api/anexos";
 
 
 
   constructor(private http: HttpClient) {}
 
-  getGarantiasPorEstado(estado: string , cardCode: string ,role:string): Observable<any> {
-    console.log("estado en servicio: " , estado);
-    console.log( "Role en servicio: " , role);
-    console.log("CardCode en servicio: " , cardCode);
-    const url = `${this.obtenerGarantiasEstadoURL}/${estado}/${cardCode}/${role}`;
+  getGarantiasPorEstado(): Observable<any> {
+    const url = `${this.obtenerGarantiasAbiertas}`;
     return this.http.get<any>(url);
   }  
   
@@ -119,4 +118,16 @@ export class GarantiasService {
     const url = `${this.obtenerOfertaVentaURL}/${docEntry}`;
     return this.http.get<any>(url);
   }
+
+  cargarDocumentos(attachmentEntry: any): Observable<any> {
+    const url = `${this.cargarDocumentosURL}/${attachmentEntry}`;
+    return this.http.get<any>(url);
+  }
+
+   descargarDocumentos(attachmentEntry: any): Observable<any> {
+    const url = `${this.descargarDocumentosURL}/${attachmentEntry}/$value`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  
 }

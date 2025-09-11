@@ -250,7 +250,7 @@ textarea {
 .mat-expansion-panel th, 
 .mat-expansion-panel td {
   padding: 0.5rem;
-  vertical-align: middle;
+  vertical-align: unset;
 }
 
 
@@ -271,6 +271,10 @@ textarea {
   font-weight: 500;
 }
 
+
+.fecha{
+  font-weight: bold;
+}
 
 /* Animación */
 @keyframes slideDownFadeIn {
