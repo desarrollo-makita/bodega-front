@@ -24,10 +24,11 @@ export class GarantiasService {
     private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
     private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
     private abrirDocumento = "http://localhost:3026/api/abrir-documento"
-    private rechazarOfertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
+    private cerrarOfertaVentaURL = "http://localhost:3026/api/cerrar-oferta-venta"
     private obtenerOfertaVentaURL = "http://localhost:3026/api/obtener-ofertas-ventas";
     private cargarDocumentosURL = "http://localhost:3026/api/obtener-documentos-llamada";
     private descargarDocumentosURL = "http://localhost:3026/api/anexos";
+    private cerrarLLamadaServicioURL = "http://localhost:3026/api/cerrar-llamada-servicio"
 
 
 
@@ -110,8 +111,8 @@ export class GarantiasService {
     return this.http.get(url, { responseType: 'blob' });
   }
 
-  rechazarOfertaVenta(data : any): Observable<any> {
-    return this.http.post<any>(this.rechazarOfertaVentaURL, { data });
+  cerrarOfertaVenta(data : any): Observable<any> {
+    return this.http.post<any>(this.cerrarOfertaVentaURL, { data });
   }
 
   obtenerOfertasVentas(docEntry: any): Observable<any> {
@@ -127,6 +128,10 @@ export class GarantiasService {
    descargarDocumentos(attachmentEntry: any): Observable<any> {
     const url = `${this.descargarDocumentosURL}/${attachmentEntry}/$value`;
     return this.http.get(url, { responseType: 'blob' });
+  }
+
+    cerrarLLamadaServicio(data : any): Observable<any> {
+    return this.http.post<any>(this.cerrarLLamadaServicioURL, { data });
   }
 
   
