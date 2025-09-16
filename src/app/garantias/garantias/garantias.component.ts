@@ -88,14 +88,19 @@ export class GarantiasComponent implements OnInit {
     
     this.garantiasServices.getGarantiasPorEstado().subscribe({
       next: (response) => {
-      
         if(estado === 'pendientes'){
           this.garantiaData = response.abiertas.map(item => ({
-          ...item,
-          tipoLLamada: 'Garantia'
-  }));
+              ...item,
+              tipoLLamada: 'Garantia'
+          }));
+        }else if (estado === 'cerradas'){
+          
+            this.garantiaData = response.cerradas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia'
+          }));
         }else{
-            this.garantiaData = response.cerradas;
+          this.garantiaData= [];
         }
           
         this.showIntranet = false;

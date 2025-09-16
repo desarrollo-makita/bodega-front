@@ -276,6 +276,48 @@ textarea {
   font-weight: bold;
 }
 
+
+.swal2-makita-popup {
+  font-family: 'Roboto', sans-serif; 
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 100% !important;  // más grande que el default
+}
+
+.swal2-makita-title {
+  font-size: 1.5rem !important; 
+  font-weight: bold;
+  color: #008686;
+}
+
+.swal2-makita-text {
+  font-size: 1rem !important;
+  color: #333;
+}
+
+.swal2-makita-confirm {
+  background-color: #008686 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 500;
+}
+
+.swal2-makita-cancel {
+  background-color: #e0e0e0 !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 500;
+}
+
+.swal2-makita-icon {
+  transform: scale(1.3); // icono más grande
+}
+
+
 /* Animación */
 @keyframes slideDownFadeIn {
   from {
@@ -287,3 +329,6 @@ textarea {
     transform: translate(-50%, 0);
   }
 }
+
+
+

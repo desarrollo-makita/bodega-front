@@ -3,7 +3,7 @@
 
     <!-- FORMULARIO: solo visible si no hay éxito -->
     <ng-container *ngIf="!exito && !errorMsg">
-      <h2>Rechazar Oferta de Venta N° {{numeroOfertaVenta}}</h2>
+      <h2>Cerrar LLamada de servicio {{numeroLLamada}}</h2>
 
       <mat-form-field appearance="outline" class="email-field">
         <mat-label>Correo electrónico de confirmación</mat-label>
@@ -16,14 +16,15 @@
         <mat-error *ngIf="email && !isValidEmail(email)">Formato de correo inválido</mat-error>
       </mat-form-field>
 
-      <p *ngIf="!errorMsg"  class="notice">Se notificará al <strong>correo electrónico ingresado</strong></p>
+      <p *ngIf="!errorMsg"  class="notice warning"> <strong>Se notificará al correo electrónico ingresado</strong></p>
+      <p *ngIf="!errorMsg" class="notice info"><strong>Se cerrarán las ofertas de venta que se encuentran asociadas a la llamada de servicio {{numeroLLamada}}</strong></p>
     </ng-container>
 
     <!-- SPINNER: se muestra mientras carga -->
      
     <div *ngIf="isLoading" class="loading">
       <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
-      <p style="margin-top: 10px;">Procesando rechazo...</p>
+      <p style="margin-top: 10px;">Procesando cierre de la llamada...</p>
     </div>
 
     <!-- MENSAJE ÉXITO -->

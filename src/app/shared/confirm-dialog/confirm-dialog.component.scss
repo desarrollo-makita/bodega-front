@@ -21,11 +21,7 @@ h2 {
   margin: 0 auto 15px auto;
 }
 
-p.notice {
-  font-size: 1.5em;
-  color: #555;
-  margin-top: 10px;
-}
+
 
 /* Estilos para las acciones del diálogo */
 .mat-dialog-actions {
@@ -132,4 +128,17 @@ button.mat-raised-button.confirm-button:hover {
 /* LOADING */
 .loading {
   text-align: center;
+}
+
+.notice {
+  font-size: 18px;
+  margin-top: 10px;
+
+  &.info {
+    color: #008686; // azul tipo información
+  }
+
+  &.warning {
+    color: #ff9800; // naranja tipo aviso
+  }
 }

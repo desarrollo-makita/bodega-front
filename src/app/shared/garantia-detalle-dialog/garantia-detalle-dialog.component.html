@@ -73,7 +73,7 @@
           <div class="row mb-2">
             <label class="col-sm-4 text-verde-makita">Número de Serie :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.InternalSerialNum }}</span>
+              <span>{{ dataLLamadaServicio?.InternalSerialNum }}</span>
             </div>
           </div>
 
@@ -81,14 +81,14 @@
           <div class="row mb-2">
             <label class="col-sm-4 text-verde-makita">Modelo :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.ItemCode }}</span>
+              <span>{{ dataLLamadaServicio?.ItemCode }}</span>
             </div>
           </div>
            <!-- Descripción -->
           <div class="row mb-2">
             <label class="col-sm-4 text-verde-makita">Descripción :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.ItemDescription }}</span>
+              <span>{{ dataLLamadaServicio?.ItemDescription }}</span>
             </div>
           </div>
 
@@ -96,7 +96,7 @@
           <div class="row mb-2">
             <label class="col-sm-4 text-verde-makita">Tipo de llamada :</label>
             <div class="col-sm-6">
-              <span class="fw-bold">{{ dataLLamadaServicio.tipoLLamada }}</span>
+              <span class="fw-bold">{{ dataLLamadaServicio?.tipoLLamada }}</span>
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@
           <div class="row mb-2 ajuste-derecha">
             <label class="col-sm-4 text-verde-makita">DocNum llamada :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.DocNum }}</span>
+              <span>{{ dataLLamadaServicio?.DocNum }}</span>
             </div>
           </div>
           <div class="row mb-2 ajuste-derecha" >
@@ -113,43 +113,43 @@
             <div class="col-sm-6">
               <span 
                 [ngClass]="{
-                  'pendiente': dataLLamadaServicio.Status === -3,
-                  'aprobado': dataLLamadaServicio.Status === -2,
-                  'rechazado': dataLLamadaServicio.Status === -1
+                  'pendiente': dataLLamadaServicio?.Status === -3,
+                  'aprobado': dataLLamadaServicio?.Status === -2,
+                  'rechazado': dataLLamadaServicio?.Status === -1
                 }">
-                {{ dataLLamadaServicio.Status === -3 ?  'Abierta' :  dataLlamadaServicio.Status }}
+                {{ dataLLamadaServicio?.Status === -3 ? 'Abierta' : dataLLamadaServicio?.Status === -1 ? 'Cerrada' : dataLLamadaServicio?.Status }}
               </span>
             </div>
           </div>
           <div class="row mb-2 ajuste-derecha">
             <label class="col-sm-4 text-verde-makita">ID de llamada :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.ServiceCallID }}</span>
+              <span>{{ dataLLamadaServicio?.ServiceCallID }}</span>
             </div>
           </div>
 
           <div class="row mb-2 ajuste-derecha">
             <label class="col-sm-4 text-verde-makita">Creado :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.CreationDate | date:'dd/MM/yyyy' }}</span> - <span>{{dataLLamadaServicio.CreationTime}}</span>
+              <span>{{ dataLLamadaServicio?.CreationDate | date:'dd/MM/yyyy' }}</span> - <span>{{dataLLamadaServicio?.CreationTime}}</span>
             </div>
           </div>
           <div class="row mb-2 ajuste-derecha">
             <label class="col-sm-4 text-verde-makita">Nombre distribuidor :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.U_U_NombreDistribuidor }}</span>
+              <span>{{ dataLLamadaServicio?.U_U_NombreDistribuidor }}</span>
             </div>
           </div>
           <div class="row mb-2 ajuste-derecha">
             <label class="col-sm-4 text-verde-makita">Nombre consumidor :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.U_U_NombreConsumidor }}</span>
+              <span>{{ dataLLamadaServicio?.U_U_NombreConsumidor }}</span>
             </div>
           </div>
           <div class="row mb-2 ajuste-derecha">
             <label class="col-sm-4 text-verde-makita">Rut consumidor :</label>
             <div class="col-sm-6">
-              <span>{{ dataLLamadaServicio.U_U_RutConsumidor }}</span>
+              <span>{{ dataLLamadaServicio?.U_U_RutConsumidor }}</span>
             </div>
           </div>
         </div>
@@ -158,65 +158,52 @@
           <div class="row mb-2">
             <label class="col-sm-2 text-verde-makita">Asunto :</label>
             <div class="col-sm-8">
-              <span  style="font-weight: bold;background-color: beige;">{{ dataLLamadaServicio.Subject }}</span>
+              <span  style="font-weight: bold;background-color: beige;">{{ dataLLamadaServicio?.Subject }}</span>
             </div>
           </div> 
          
           <div class="row mb-2">
             <label class="col-sm-2 text-verde-makita">Observación :</label>
             <div class="col-sm-8">
-              <textarea rows="5" disabled= "true" style="font-weight: bold;">{{ dataLLamadaServicio.Description }}</textarea>
+              <textarea rows="5" disabled= "true" style="font-weight: bold;">{{ dataLLamadaServicio?.Description }}</textarea>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
+
     <div *ngIf="tabSeleccionada === 'general' && (mostrarMotivos || mostrarComentarioRechazo)" class="tab-content">
-      <label class  ="text-verde-makita"  for="comentario" style="padding-top: 3%;"><strong>Motivos / Observaciones:</strong></label>
+      <label class  ="text-verde-makita"  for="comentario" style="padding-top: 3%;"><strong>Resolución:</strong></label>
         <textarea
           id="comentario"
           [(ngModel)]="comentarios"
           (ngModelChange)="validarComentario(data)"
-          placeholder="Motivos del rechazo ..."
+          placeholder="Motivos del cierre ..."
           rows="5"
-          [disabled]="data.EstadoSAP === 'RECHAZADO'">
+          [disabled]="dataLLamadaServicio?.Status === -1"
+          >
         </textarea>
     </div>
-
+   
     <div *ngIf="tabSeleccionada === 'general' && mostrarBotonesInferiores"  class="botones-acciones">
-      <button 
-        *ngIf="!mostrarBotonRechazar" 
-        class="btn-aprobar" 
-        (click)="aprobar()"
-        [disabled]="habilitarBotonera">
-        {{botonAprobar}}
-      </button>
+      
       <button
-       *ngIf="!mostrarBotonRechazar"
+       *ngIf="!mostrarBotonCerrar"
         class="btn-rechazar"
-        [disabled]="habilitarBotonera"
-        (click)="rechazar(data)"
+        [disabled]="deshabilitarBotonera"
+        (click)="cerrar(data)"
         >
-        {{ botonRechazar }}
+        {{botonCerrar}}
       </button>
+      
+
       <button
-        *ngIf="mostrarBotonRechazar"
+       *ngIf="mostrarBotonConfirmarCierre"
         class="btn-rechazar"
-        [disabled]="mostrarMotivos && !comentarios.trim()"
-        [ngClass]="{ 'disabled-btn': mostrarMotivos && !comentarios.trim() }"
-        (click)="enviarRechazo(data)">
-        Enviar Rechazo
-      </button>
-      <button
-        *ngIf="mostrarBotonRechazar"
-        (click)="cerrarModal()"
-        [disabled]="habilitarBotonera"
-        type="button"
-        class="btn-aprobar" 
-        data-bs-dismiss="modal">
-        Cancelar
-       
+        [disabled]="!confirmarRechazoHabilitado"
+        (click)="confirmarCierre(data)"
+        >
+        {{botonConfirmarCerrar}}
       </button>
 
     </div>

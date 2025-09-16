@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
             sessionStorage.setItem('authToken', response.data.token);
           
             if(response.data.Rol === 'Consulta'){
-              this.router.navigate(['/informes']);
+              this.router.navigate(['/inventario']);
             }else if(response.data.Rol === 'Administrador'){
               this.router.navigate(['/user']);
             }else if(response.data.Rol === 'ST'){

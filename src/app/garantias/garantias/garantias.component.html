@@ -17,9 +17,8 @@
               <mat-select [(value)]="estadoSeleccionado" (selectionChange)="filtrarGarantias()"  [disabled]="bloquearCombo">
              
                 <mat-option value="pendientes">Garantias Abiertas</mat-option>
-                <mat-option value="aprobadas">Aprobadas</mat-option>
-                <mat-option value="rechazadas">Rechazadas</mat-option>
-                <mat-option value="ingresadas">Ingresadas</mat-option>
+                <mat-option value="cerradas">Garantias Cerradas</mat-option>
+              
                
               </mat-select>
             </mat-form-field>
@@ -53,9 +52,10 @@
                     <span [ngClass]="{
                       'pendiente': garantia.Status === -3,
                       'aprobado': garantia.Status === 'Aprobado',
-                      'rechazado': garantia.Status === 'RECHAZADO'
+                      'rechazado': garantia.Status === -1
                     }">
-                      {{ garantia.Status === -3 ? 'Abierta' : garantia.Status }}
+                     {{ garantia.Status === -3 ? 'Abierta' : (garantia.Status === -1 ? 'Cerrada' : garantia.Status) }}
+
                     </span>
                   </td>
                   <td>

@@ -256,12 +256,14 @@ export class InventarioComponent implements OnInit {
   }
 
   onChange() {
-    if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '01') {
+    if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '01' ) {
       this.grupo = 1;
     } else if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '02') {
       this.grupo = 2;
-    } else {
-      this.grupo = 0; // valor por defecto si no cumple
+      this.selectedLocal ='01';
+      
+    } else if (this.selectedTipoItem === '01-HERRAMIENTAS' && this.selectedLocal === '01') {
+      this.grupo = 1; // valor por defecto si no cumple
     }
 
     sessionStorage.setItem('tipoItem', this.selectedTipoItem || '');
@@ -494,6 +496,8 @@ export class InventarioComponent implements OnInit {
           grupoBodega: this.grupo
 
         };
+
+        
     
     // Guarda el objeto convertido en string
     sessionStorage.setItem('data', JSON.stringify(data));
