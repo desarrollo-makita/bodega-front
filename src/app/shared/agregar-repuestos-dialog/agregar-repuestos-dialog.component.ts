@@ -25,7 +25,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   errorMessage:boolean = false;
 
   detallePedidoList: any[] = [];
-  pedido: any;
+  ordenServicio: any;
 
   
 
@@ -40,6 +40,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   ) 
   {
     this.garantia = this.data;
+    
     this.formularioRepuestos = this.fb.group({
       repuestos: this.fb.array([this.crearRepuesto()])
     });
@@ -50,8 +51,8 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.pedido =  this.data.Id_Pedido || 0;
-    this.garantiasServices.getGarantiasDetallesIntranet(this.pedido).subscribe({
+    this.ordenServicio =  this.data.ID_OS || 0;
+    this.garantiasServices.getGarantiasDetallesIntranet(this.ordenServicio).subscribe({
       next: (response) => {
         this.detallePedidoList = response.pedidosValidos.data;
         console.log(this.detallePedidoList);
@@ -270,7 +271,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
 
   cargarTabla(){
    
-    this.garantiasServices.getGarantiasDetallesIntranet(this.pedido).subscribe({
+    this.garantiasServices.getGarantiasDetallesIntranet(this.ordenServicio).subscribe({
       next: (response) => {
         this.detallePedidoList = response.pedidosValidos.data;
         console.log(this.detallePedidoList);

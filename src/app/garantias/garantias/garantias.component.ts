@@ -83,10 +83,36 @@ export class GarantiasComponent implements OnInit {
 
   obtenerGarantiasEstado(estado: string){
     this.isLoading= true;
+    console.log("ingresadas : " , estado);
     
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     
-    this.garantiasServices.getGarantiasPorEstado().subscribe({
+    if(estado === 'ingresada'){
+    this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+      next: (response) => {
+       console.log(response)
+        this.garantiaData = response.pedidosValidos.data;
+         this.showIntranet = true;
+        },
+      error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+      complete: () => {
+
+        setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+            this.successMessage = false;
+          }, 1000);
+
+      }
+          
+      });
+        
+    }
+    
+    else{
+      this.garantiasServices.getGarantiasPorEstado().subscribe({
       next: (response) => {
         if(estado === 'pendientes'){
           this.garantiaData = response.abiertas.map(item => ({
@@ -116,6 +142,10 @@ export class GarantiasComponent implements OnInit {
           }, 1000);
         },
       });
+    }
+    
+    
+    
   }
 
   obtenerGarantiasEstadoEditar(estado: string){
@@ -123,7 +153,7 @@ export class GarantiasComponent implements OnInit {
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado, this.cardCode, this.role).subscribe({
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
           next: (response) => {
           
             this.garantiaData = response.pedidosValidos.data;
@@ -191,6 +221,7 @@ export class GarantiasComponent implements OnInit {
 
   abrirModalAgregarRepuesto(garantia: any): void {
     
+    console.log("garantia abrir modal: ", garantia);
     const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
       data: garantia,
       width: '1000px',

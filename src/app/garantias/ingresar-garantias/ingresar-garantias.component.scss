@@ -1,5 +1,10 @@
+/* variables rápidas */
+$makita-teal: #008686;
+$makita-red: #e53935;
+
+
 .card-garantias {
-  max-width: 900px;
+  max-width: 99%;
   margin: 2rem auto;
   background: white;
  // border-left: 6px solid #008686;
@@ -9,20 +14,6 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.75rem 2.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
 
 label {
    
@@ -154,7 +145,7 @@ button:hover:not(:disabled) {
 
       label {
         font-weight: 700;
-        color:black;
+        color:#008686;
       }
 
       input[type="file"] {
@@ -181,3 +172,41 @@ button:hover:not(:disabled) {
       }
     }
   }
+
+
+.text-verde-makita {
+  color: #008686; /* Color verde Makita */
+  font-weight: bold; /* opcional, para que resalte */
+}
+
+.row{
+  margin-right: -15px;
+  margin-left: -15px;
+  padding-bottom: 1%;
+  width: 90%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem 2.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+div:where(.swal2-icon).swal2-success .swal2-success-ring {
+    position: absolute;
+    z-index: 2;
+    top: -0.25em;
+    left: -0.25em;
+    box-sizing: content-box;
+    width: 100%;
+    height: 100%;
+    border: .25em solid #00909e;
+    border-radius: 50%;
+}
