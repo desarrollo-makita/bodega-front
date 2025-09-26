@@ -182,7 +182,7 @@ export class IngresarGarantiasComponent implements OnInit {
           this.successMessage = true;
           this.mensaje = 'Garantía ingresada correctamente';
           this.isLoading = false;
-          
+          this.mostrarAlerta();
           this.borrarNombresArchivos();
         }, 1500);
 
@@ -462,17 +462,17 @@ export class IngresarGarantiasComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
- /* mostrarAlerta() {
+ mostrarAlerta() {
     Swal.fire({
       title: '¡Éxito!',
-      html: '<p class="swal2-text-custom">Operación realizada correctamente</p>',
+      html: '<p class="swal2-text-custom">Orden generada correctamente</p>',
       icon: 'success',
       confirmButtonText: 'Aceptar',
       confirmButtonColor: '#008686',
       customClass: { title: 'swal2-title-custom' },
       showCloseButton: false,
     });
-  }*/
+  }
 
 
 }

@@ -90,10 +90,9 @@ export class GarantiasComponent implements OnInit {
     if(estado === 'ingresada'){
     this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
       next: (response) => {
-       console.log(response)
-        this.garantiaData = response.pedidosValidos.data;
-         this.showIntranet = true;
-        },
+        this.garantiaData = response.pedidosValidos;
+        this.showIntranet = true;
+      },
       error: (error) => {
           console.error('Error en la consulta:', error);
         },

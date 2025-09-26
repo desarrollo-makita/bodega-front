@@ -25,7 +25,12 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   errorMessage:boolean = false;
 
   detallePedidoList: any[] = [];
-  ordenServicio: any;
+  documentosAdjuntos: any[] = [];
+  pedido: any;
+
+
+  descargando: { [key: number]: boolean } = {};
+
 
   
 
@@ -51,21 +56,11 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ordenServicio =  this.data.ID_OS || 0;
-    this.garantiasServices.getGarantiasDetallesIntranet(this.ordenServicio).subscribe({
-      next: (response) => {
-        this.detallePedidoList = response.pedidosValidos.data;
-        console.log(this.detallePedidoList);
-      },
-      error: () => {
-        
-      },
-      complete: () => {
-        setTimeout(() => {
-             
-        }, 1000);
-      },
-    });
+
+    this.pedido =  this.garantia.Id_Pedido;;
+    this.detallePedidoList = this.garantia.detalle || [];
+    this.documentosAdjuntos = this.garantia.documentos || [];
+  console.log("thisdocumentos|" , this.documentosAdjuntos);
   }
 
   buscarRepuestos(valor: string, index: number): void {
@@ -243,7 +238,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
     this.isLoading = true;
     const data = 
     {
-      idPedido : repuesto.Pedido_ID,
+      idPedido : repuesto.ID,
       referencia : repuesto.Referencia,
       idItem: repuesto.ID_Item
 
@@ -271,7 +266,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
 
   cargarTabla(){
    
-    this.garantiasServices.getGarantiasDetallesIntranet(this.ordenServicio).subscribe({
+    this.garantiasServices.getGarantiasDetallesIntranet(this.pedido).subscribe({
       next: (response) => {
         this.detallePedidoList = response.pedidosValidos.data;
         console.log(this.detallePedidoList);
@@ -284,9 +279,33 @@ export class AgregarRepuestosDialogComponent implements OnInit {
         setTimeout(() => {
           this.isLoading= false;     
           this.formularioRepuestos.reset();
+         
         }, 1500);
       },
     });
   }
+
+    abrirDocumento(doc: any) {
+    
+      this.isLoading = true
+      this.descargando[doc.nombreArchivo] = true;
+
+      this.garantiasServices.abrirDocumentoIntranet(doc.id).subscribe({
+        next: (blob: Blob) => {
+          // Crear URL temporal y abrir en otra pestaña
+          const fileURL = window.URL.createObjectURL(blob);
+          window.open(fileURL, '_blank');
+          this.descargando[doc.nombreArchivo] = false;
+        },
+        error: (err) => {
+          console.error('Error al abrir documento', err);
+          alert('No se pudo abrir el documento');
+          this.descargando[doc.nombreArchivo] = false;
+        }, complete: () => {
+          this.isLoading= false;
+          
+        }
+      });
+    }
 
 }

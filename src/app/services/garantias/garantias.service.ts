@@ -39,13 +39,13 @@ export class GarantiasService {
     return this.http.get<any>(url);
   }  
   
-  getGarantiasPorEstadoIntranet(estado: string , cardCode: string, role:string): Observable<any> {
-    const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}/${role}`;
+  getGarantiasPorEstadoIntranet(estado: string ): Observable<any> {
+    const url = `${this.obtenerGarantiasIntranet}/${estado}`;
     return this.http.get<any>(url);
   }
   
   insertarGarantiaIntranet(data : any): Observable<any> {
-    return this.http.post<any>(this.insertarGarantiasIntranet, { data });
+    return this.http.post<any>(this.insertarGarantiasIntranet,  data );
   }
 
   buscarItems(filtro: string): Observable<any> {

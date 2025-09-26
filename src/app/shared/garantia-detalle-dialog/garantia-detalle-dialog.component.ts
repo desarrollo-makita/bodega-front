@@ -60,6 +60,11 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   
 
   cambiarTab(tab: string) {
+
+    if (this.data && this.data.Status === -1) {
+     
+      this.deshabilitarBotonera = true;
+    }
     
     this.tabSeleccionada = tab;
     
@@ -150,20 +155,28 @@ export class GarantiaDetalleDialogComponent implements OnInit {
 
   cargarDocumentos(attachmentEntry: any) {
     this.isLoading=  true;
-    this.garantiasServices.cargarDocumentos(attachmentEntry).subscribe({
-      next: (response: any) => {
-        console.log("TRAEMOS LOS DOCUMENTOS", response);
-        // Aseguramos que this.anexos sea siempre un array (si el backend devuelve un objeto único)
-        this.anexos = Array.isArray(response) ? response : [response];
-      },
-      error: (err) => {
-        console.error("Error al cargar documentos", err);
-        // opcional: mostrar toast/alert aquí
-      },complete: () => {
-        this.isLoading= false;
+    
+    console.log("attachmentEntry", attachmentEntry);
+    if(attachmentEntry === null || attachmentEntry === undefined || attachmentEntry === 0){
+      this.isLoading=  false;
+    }else{
+      this.garantiasServices.cargarDocumentos(attachmentEntry).subscribe({
+        next: (response: any) => {
+          console.log("TRAEMOS LOS DOCUMENTOS", response);
+          // Aseguramos que this.anexos sea siempre un array (si el backend devuelve un objeto único)
+          this.anexos = Array.isArray(response) ? response : [response];
+        },
+        error: (err) => {
+          console.error("Error al cargar documentos", err);
+          // opcional: mostrar toast/alert aquí
+        },complete: () => {
+          this.isLoading= false;
         
-      }
-    });
+        }
+      });
+
+    }
+    
   }
 
   abrirDocumento(doc: any) {
@@ -218,10 +231,5 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     });
     
   }
-
-
-
-
-
 
 }

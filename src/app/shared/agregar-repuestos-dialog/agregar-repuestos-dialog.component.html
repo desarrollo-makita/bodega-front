@@ -101,11 +101,11 @@
         <tbody>
           <tr *ngFor="let repuesto of detallePedidoList">
             <td>{{ repuesto.Referencia }}</td>
-            <td>{{ repuesto.Pedido_ID }}</td>
+            <td>{{ repuesto.ID }}</td>
             <td>{{ repuesto.descripcion }}</td>
             <td>{{ repuesto.Cantidad }}</td>
             <td>{{ repuesto.Precio }}</td>
-            <td>{{ repuesto.TipoDocumento  }}</td>
+            <td>{{ repuesto.TipoItem === '04-REPUESTOS' ? 'REPUESTOS' : 'ACCESORIOS'  }}</td>
             <td>
               <button mat-icon-button color="warn" (click)="eliminarRepuestoLocal(repuesto)" matTooltip="Eliminar">
                 <mat-icon>delete</mat-icon>
@@ -119,8 +119,21 @@
     </div>
     <div *ngIf="tabSeleccionada === 'anexos'" class="tab-content">
       <h4 style="margin-bottom: 1rem;">Documentos Adjuntos</h4>
-      
-      
+  
+       <div *ngIf="documentosAdjuntos.length > 0; else sinAnexos">
+        <ul>
+          <li *ngFor="let doc of documentosAdjuntos">
+            <a href="#" (click)="abrirDocumento(doc); $event.preventDefault()">
+              {{ doc.nombreArchivo }}
+            </a>
+            <small *ngIf="descargando[doc.nombreArchivo]"> (descargando...)</small>
+          </li>
+        </ul>
+      </div>
+
+      <ng-template #sinAnexos>
+        <p>No se encontraron documentos adjuntos para esta garantía.</p>
+      </ng-template>
     </div>
     <div *ngIf="isLoading" id="loader">
           <img src="../../assets/img/loader-preview.svg" alt="loading" />
