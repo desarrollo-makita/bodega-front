@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthGuard } from 'app/auth/auth.guard';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
+import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
 import { EditarRepuestosDialogComponent } from 'app/shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 import { GarantiaDetalleDialogComponent } from 'app/shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 
@@ -41,6 +42,8 @@ export class GarantiasComponent implements OnInit {
   cardCode : any;
   role: any;
   mostrarAcciones: boolean = false;
+  mensajeCarga:any;
+  exito:any;
 
 
     constructor(
@@ -204,29 +207,33 @@ export class GarantiasComponent implements OnInit {
     });
     
     dialogRef.afterClosed().subscribe((resultado) => {
-       if (resultado.exito) {
+       if (resultado?.exito) {
         setTimeout(() => {
             this.filtrarGarantias();
            
           }, 1000);
           
-      }else if (resultado.mensaje === 'cierre') {
+      }else if (resultado?.mensaje === 'cierre') {
           setTimeout(() => {
             }, 1500);
-          }
+      }else{
+         // usuario canceló o cerró sin confirmar
+      console.log('Diálogo cerrado sin acción');
+      }
       
     });
   }
 
   abrirModalAgregarRepuesto(garantia: any): void {
     
-    console.log("garantia abrir modal: ", garantia);
+    console.log("Iniciando Modal DefaultDialogComponent con esta data : ", garantia);
+    
     const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
       data: garantia,
-      width: '1000px',
-      maxHeight: '80vh',
-      panelClass: 'custom-dialog-container',
-      disableClose: true
+      disableClose: true,
+      width: '500px',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container'
     });
 
     dialogRef.afterClosed().subscribe((resultado) => {
@@ -293,36 +300,27 @@ export class GarantiasComponent implements OnInit {
 
 
   enviarASAP(garantia : any){
-    this.isLoading= true;
-    let data = garantia.Id_Pedido;
-    this.garantiasServices.enviarSap(data).subscribe({
-      next: (response) => {
-        if (response?.error?.error || response?.error) {
-          this.errorMessage = true;
-          this.mensaje = response?.error?.error || response?.error;
-        }else {
-          this.successMessage = true;
-          this.mensaje = 'Enviado exitosamente a SAP'
+    
+    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+      data: { 
+        data: garantia,
+        clave: 'enviarASAP'
+    },
+      width: '80',
+      maxHeight: '80vh',
+      panelClass: 'custom-dialog-container',
+      disableClose: true,
+      autoFocus: false 
+    });
 
-        }
-      },
-      error: (error) => {
-        console.error('Error en la consulta:', error);
-      },
-      complete: () => {
-          setTimeout(() => {
-              this.isLoading = false;
-              this.errorMessage = false;
-              this.successMessage = false;
-              this.filtrarGarantias();
-            }, 2500);
-        
-      },
+  
+
+    dialogRef.afterClosed().subscribe((resultado) => {
+
+      
+       this.filtrarGarantias();
+      
     });
   }
-
-
-
-
 
 }

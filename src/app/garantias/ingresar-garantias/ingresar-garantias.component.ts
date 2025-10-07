@@ -9,6 +9,9 @@ import autoTable from 'jspdf-autotable';
 import { MyDataService } from 'app/services/data/my-data.service';
 import { take } from 'rxjs';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
 @Component({
   selector: 'app-ingresar-garantias',
   templateUrl: './ingresar-garantias.component.html',
@@ -40,6 +43,7 @@ export class IngresarGarantiasComponent implements OnInit {
   dataRegiones:any;
   selectedRegion: any = null;
   dataComunas:any;
+  mensajeCarga:any;
 
 
   mock =  {
@@ -60,7 +64,7 @@ export class IngresarGarantiasComponent implements OnInit {
         "serie": "123"
   }
   
-  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService, private dataService : MyDataService
+  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService, private dataService : MyDataService,private router: Router ,  private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -136,8 +140,7 @@ export class IngresarGarantiasComponent implements OnInit {
   }
   
   onSubmit(): void {
-    this.isLoading = true;
-    
+
 
     if (!this.garantiaForm.valid) {
       this.garantiaForm.markAllAsTouched();
@@ -146,7 +149,7 @@ export class IngresarGarantiasComponent implements OnInit {
     }
 
     // Obtener y mapear datos del formulario
-   
+  
     const formValue = this.garantiaForm.getRawValue();
     const mappedData = this.mapFormularioARequest(formValue);
 
@@ -169,46 +172,49 @@ export class IngresarGarantiasComponent implements OnInit {
       }
     });
 
+    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+          data: { 
+            formData: formData, 
+            clave: 'ingresarOrden' 
+          },
+          width: '80',
+          maxHeight: '80vh',
+          panelClass: 'custom-dialog-container',
+          disableClose: true,
+            autoFocus: false   
+        });
+    
+      
+    
+        dialogRef.afterClosed().subscribe((resultado) => {
+        
+        });
+
+
+
+
     //Enviar al backend
     this.garantiaForm.reset();
-    this.garantiasServices.insertarGarantiaIntranet(formData).subscribe({
-      next: (response) => {
-        this.formularioData = response;
-        this.generarComprobante(formValue);
-      },
-      error: (error) => console.error(error),
-      complete: () => {
-        setTimeout(() => {
-          this.successMessage = true;
-          this.mensaje = 'Garantía ingresada correctamente';
-          this.isLoading = false;
-          this.mostrarAlerta();
-          this.borrarNombresArchivos();
-        }, 1500);
-
-        setTimeout(() => this.borrarMensaje(), 4000);
-      }
-    });
   }
   
   onTelefonoInput(event?: any) {
-    const input = event.target;
-    let value = input.value;
+  const input = event.target;
+  let value = input.value;
 
-    // Forzar que empiece con +569
-    if (!value.startsWith('+569')) {
-      value = '+569' + value.replace(/[^0-9]/g, '').substring(0, 8);
-    } else {
-      value = '+569' + value.substring(4).replace(/[^0-9]/g, '').substring(0, 8);
-    }
+  // Forzar que empiece con +569
+  if (!value.startsWith('+569')) {
+    value = '+569' + value.replace(/[^0-9]/g, '').substring(0, 8);
+  } else {
+    value = '+569' + value.substring(4).replace(/[^0-9]/g, '').substring(0, 8);
+  }
 
-    input.value = value;
-    this.garantiaForm.get('TelCliente')?.setValue(value);
+  input.value = value;
+  this.garantiaForm.get('TelCliente')?.setValue(value);
   }
 
 
   mapFormularioARequest(formValue: any) {
-   
+  
     return {
       rutServicioTecnico: formValue.RutServicioTecnico,
       nombreServicioAut: formValue.NombreServicioAut,
@@ -225,7 +231,8 @@ export class IngresarGarantiasComponent implements OnInit {
       nombreConsumidor: formValue.NombreConsumidor,
       rutConsumidor: formValue.RutConsumidor,
       nombreTecnico: formValue.Revendedor,
-      tipoDocumento : formValue.TipoDocumento
+      tipoDocumento : formValue.TipoDocumento,
+      
     };
   }
 
@@ -241,7 +248,7 @@ export class IngresarGarantiasComponent implements OnInit {
       { file: null, url: '', type: '', name: '' },
       { file: null, url: '', type: '', name: '' }
     ];
-   
+  
   }
 
   clearFile(index: number) {

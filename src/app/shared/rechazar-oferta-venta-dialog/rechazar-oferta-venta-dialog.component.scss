@@ -1,0 +1,154 @@
+/* Contenido del diálogo */
+.dialog-content {
+  text-align: center;
+  padding: 30px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  color: #006f6f;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.email-field {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 15px auto;
+}
+
+
+
+/* Estilos para las acciones del diálogo */
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-bottom: 2em;
+  background: #f9f9f9;
+  border-top: 1px solid #ddd;
+  border-radius: 0 0 12px 12px;
+}
+
+button.mat-stroked-button.cancel-button {
+  border-color: #ccc;
+  color: #666;
+  padding: 3px 10px;
+  transition: all 0.3s ease;
+}
+
+button.mat-stroked-button.cancel-button:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+button.mat-raised-button.confirm-button {
+  background: #006f6f;
+  color: white;
+  font-weight: 400;
+  padding: 3px 10px;
+  transition: all 0.3s ease;
+}
+
+button.mat-raised-button.confirm-button:hover {
+  background: #007a8c;
+}
+
+.confirm-button {
+  background-color: #008686; /* color normal */
+  color: white;
+  cursor: pointer;
+}
+
+.confirm-button:disabled {
+  background-color: #e0e0e0 !important; /* gris apagado */
+  color: #9e9e9e !important; /* texto gris */
+  cursor: not-allowed;
+}
+
+/* MENSAJE DE ÉXITO */
+.exito {
+  display: flex;
+  flex-direction: column;   /* icono arriba, texto abajo */
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;              /* ocupa todo el ancho disponible */
+  min-height: 180px;        /* más espacio vertical */
+  text-align: center;
+}
+
+.error-class {
+  display: flex;
+  flex-direction: column;   /* icono arriba, texto abajo */
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;              /* ocupa todo el ancho disponible */
+  min-height: 180px;        /* más espacio vertical */
+  text-align: center;
+}
+
+/* ÍCONO DE ÉXITO */
+.check-icon {
+  font-size: 80px !important;   /* controla el tamaño del ícono */
+  width: 80px !important;
+  height: 80px !important;
+  color: #008686;;
+  margin-bottom: 12px;
+  animation: scaleIn 0.5s ease-in-out;
+}
+
+.error-icon {
+  font-size: 80px !important;   /* controla el tamaño del ícono */
+  width: 80px !important;
+  height: 80px !important;
+  color: #F44336;
+  margin-bottom: 12px;
+  animation: scaleIn 0.5s ease-in-out;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.mensaje {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+}
+
+.notice {
+  font-size: 18px;
+  margin-top: 10px;
+
+  &.info {
+    color: #008686; // azul tipo información
+  }
+
+  &.warning {
+    color: #ff9800; // naranja tipo aviso
+  }
+}
+
+
+
+.comentario-field {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 15px auto;
+  display: block;
+}

@@ -2,7 +2,7 @@
 
 <div class="modal-container mat-elevation-z8">
   <header class="modal-header">
-    <h3>Garantía</h3>
+    <h3>Garantía {{ dataLLamadaServicio?.ServiceCallID }}</h3>
   </header>
 
 <nav class="tabs">
@@ -23,14 +23,21 @@
     (click)="cambiarTab('anexos')">
     <span class="material-icons">attach_file</span> Anexos
   </button>
+
+   <button *ngIf="mostrarAgregarOferta"
+    [class.active]="tabSeleccionada === 'agregar'"
+    (click)="cambiarTab('agregar')">
+    <span class="material-icons">add</span> Agregar Oferta
+  </button>
 </nav>
 
 
   <section class="modal-body">
 
-    <div *ngIf="isLoading" id="loader" class="overlay">
-      <img src="../../../assets/img/loader-preview.svg" alt="loading" />
-    </div>
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
+    <p style="text-align: center;">Procesando cierre de la llamada...</p>
+  </div>
 
 
     <div *ngIf="tabSeleccionada === 'general'" class="tab-content p-3">
@@ -207,18 +214,80 @@
       </button>
 
     </div>
+
+    <div *ngIf="tabSeleccionada === 'agregar'" class="tab-content">
+      <form [formGroup]="formularioRepuestos">
+        <div formArrayName="repuestos">
+          <div *ngFor="let repuesto of repuestos.controls; let i = index" [formGroupName]="i" class="fila-repuesto">
+            <div class="campos-repuesto">
+              <mat-form-field appearance="fill">
+                <mat-label>Código *</mat-label>
+                <input
+                  matInput
+                  formControlName="codigo"
+                  [matAutocomplete]="auto"
+                  (input)="buscarRepuestos($event.target.value, i)"
+                />
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="seleccionarModelo(i, $event.option.value)">
+                  <mat-option *ngFor="let item of modelosFiltrados[i]" [value]="item.ItemCode">
+                    {{ item.ItemCode }} - {{ item.ItemName }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+              
+
+              <mat-form-field appearance="fill">
+                <mat-label>Descripción *</mat-label>
+                <input matInput formControlName="descripcion" />
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Cantidad *</mat-label>
+                <input matInput type="number" formControlName="cantidad" />
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Precio *</mat-label>
+                <input matInput type="number" formControlName="precio" />
+              </mat-form-field>
+
+              <button mat-icon-button color="warn" (click)="eliminarRepuesto(i)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+
+        <button mat-stroked-button color="primary" type="button" (click)="agregarRepuesto()" class="boton-agregar">
+          <mat-icon>add</mat-icon> Agregar otro repuesto
+        </button>
+      </form>
+      
+      <div class="botones-acciones-agregar">
+        <button mat-button (click)="cerrarModal()">Cancelar</button>
+        <button
+          mat-flat-button
+          [disabled]="formularioRepuestos.invalid"
+          [ngClass]="{ 'boton-guardar-habilitado': formularioRepuestos.valid, 'boton-guardar-deshabilitado': formularioRepuestos.invalid }"
+          (click)="guardar()"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
     
     <mat-accordion *ngIf="tabSeleccionada === 'detalle'" multi>
       <mat-expansion-panel *ngFor="let oferta of dataOferta?.llamada">
-      <!-- Encabezado Oferta -->
+        <!-- Encabezado Oferta -->
         <mat-expansion-panel-header>
           <mat-panel-title style="font-weight: 500;">
-            Oferta Nº {{ oferta.DocumentNumber }}
+            Oferta de Venta Nº {{ oferta.DocumentNumber }}
           </mat-panel-title>
           <mat-panel-description>
             <div class="header-container">
               <span class="fecha">Fecha: {{ oferta.DocumentPostingDate | date:'dd/MM/yyyy' }}</span>
-            
+              
               <span 
                 class="estado" 
                 [ngClass]="{'cerrada': oferta.Status === 'bost_Close', 'abierta': oferta.Status !== 'bost_Close'}">
@@ -227,7 +296,8 @@
             </div>
           </mat-panel-description>
         </mat-expansion-panel-header>
-         <!-- Tabla con rowspan -->
+
+        <!-- Tabla con rowspan -->
         <table class="table table-striped table-bordered">
           <thead>
             <tr>
@@ -256,10 +326,26 @@
               <td>{{ repuesto.WarehouseCode }}</td>
             </tr>
           </tbody>
+         
         </table>
+        <div style="padding-top: 2%;margin-right: 20%;">
+          <label style="margin-left: -1%" class="col-sm-2 text-verde-makita">Comentario :</label>
+          <span  style="font-weight: bold;background-color: beige;">{{ oferta?.Comments }}</span>
+        </div> 
+
+        <!-- Botones de acción -->  
+        <div *ngIf="oferta.Status !== 'bost_Close'"  class="botones-acciones">
+            <button class="btn-aprobar" (click)="aprobarOferta(oferta)">
+              Aprobar
+            </button>
+            <button class="btn-rechazar" (click)="rechazarOferta(oferta)">
+              Rechazar
+            </button>
+        </div>
       </mat-expansion-panel>
     </mat-accordion>
-    
+   
+
     <div *ngIf="tabSeleccionada === 'anexos'" class="tab-content">
       <h4 style="margin-bottom: 1rem;">Documentos Adjuntos</h4>
         
