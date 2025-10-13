@@ -44,6 +44,7 @@ export class GarantiasComponent implements OnInit {
   mostrarAcciones: boolean = false;
   mensajeCarga:any;
   exito:any;
+  decodedToken:any;
 
 
     constructor(
@@ -59,13 +60,27 @@ export class GarantiasComponent implements OnInit {
   ngOnInit(): void {
     // Simular carga
     const token = sessionStorage.getItem("authToken");
-    const decodedToken = this.authService.decodeToken(token);
-    this.cardCode = decodedToken.cardCode;
-    this.role = decodedToken.role;
+    this.decodedToken = this.authService.decodeToken(token);
+    console.log("Token decodificado: ", this.decodedToken);
+    this.cardCode = this.decodedToken.cardCode;
+    this.role = this.decodedToken.role;
     this.role === 'Administrador'  ? this.mostrarAcciones = true : this.mostrarAcciones = false;
-    this.filtrarGarantias();
+    
+    this.validarFiltros();
     
 
+  }
+
+
+  validarFiltros(){
+    if(this.decodedToken.role === 'ST'){
+      this.filtrarGarantiasRut(this.decodedToken.cardCode);
+    }else{
+      this.filtrarGarantias();
+
+    }
+    
+    console.log()
   }
 
   actualizarConteos() {
@@ -127,6 +142,12 @@ export class GarantiasComponent implements OnInit {
               ...item,
               tipoLLamada: 'Garantia'
           }));
+        }else if (estado === 'pendientesIncompletas'){
+          
+            this.garantiaData = response.pendientes.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia'
+          }));
         }else{
           this.garantiaData= [];
         }
@@ -148,6 +169,77 @@ export class GarantiasComponent implements OnInit {
     
     
     
+  }
+
+  obtenerGarantiasEstadoRut(estado: string , rut : string){
+    this.isLoading= true;
+    console.log("ingresadas : " , estado , rut);
+      
+    this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+      
+    if(estado === 'ingresada'){
+      this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+        next: (response) => {
+          this.garantiaData = response.pedidosValidos;
+          console.log(this.garantiaData);
+          
+          this.showIntranet = true;
+        },
+        error: (error) => {
+            console.error('Error en la consulta:', error);
+          },
+        complete: () => {
+
+          setTimeout(() => {
+              this.isLoading = false;
+              this.bloquearCombo = false;
+              this.successMessage = false;
+            }, 1000);
+
+        }
+            
+        });
+        
+      }
+    
+    else{
+      this.garantiasServices.getGarantiasPorEstadoRut(rut).subscribe({
+      next: (response) => {
+         console.log("entro pendientes" , response);
+        if(estado === 'pendientes'){
+          
+          this.garantiaData = response.abiertas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia',
+              rol: this.role
+          }));
+
+          console.log("entro pendientes2" , this.garantiaData);
+        }else if (estado === 'cerradas'){
+          
+            this.garantiaData = response.cerradas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia',
+              rol: this.role
+          }));
+        }else{
+          this.garantiaData= [];
+        }
+          
+        this.showIntranet = false;
+        },
+      error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+      complete: () => {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+            this.successMessage = false;
+          }, 1000);
+        },
+      });
+    }
   }
 
   obtenerGarantiasEstadoEditar(estado: string){
@@ -198,7 +290,12 @@ export class GarantiasComponent implements OnInit {
     this.obtenerGarantiasEstado(this.estadoSeleccionado);
   }
 
+  filtrarGarantiasRut(rut) {
+    this.obtenerGarantiasEstadoRut(this.estadoSeleccionado , rut);
+  }
+
   abrirDetalleGarantia(garantia: any): void {
+    
     const dialogRef = this.dialog.open(GarantiaDetalleDialogComponent, {
       data: garantia,
       // width: '900px',  

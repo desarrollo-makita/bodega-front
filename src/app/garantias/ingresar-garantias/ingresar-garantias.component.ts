@@ -140,11 +140,10 @@ export class IngresarGarantiasComponent implements OnInit {
   }
   
   onSubmit(): void {
-
-
+    
     if (!this.garantiaForm.valid) {
       this.garantiaForm.markAllAsTouched();
-      this.isLoading = false;
+      
       return;
     }
 
@@ -172,7 +171,7 @@ export class IngresarGarantiasComponent implements OnInit {
       }
     });
 
-    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+   const dialogRef = this.dialog.open(DefaultDialogComponent, {
           data: { 
             formData: formData, 
             clave: 'ingresarOrden' 

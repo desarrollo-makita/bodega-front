@@ -14,11 +14,12 @@
           <div class="filtro-estado mb-3">
             <mat-form-field appearance="outline" class="filtro-combo">
               <mat-label>Filtrar por estado</mat-label>
-              <mat-select [(value)]="estadoSeleccionado" (selectionChange)="filtrarGarantias()"  [disabled]="bloquearCombo">
+              <mat-select [(value)]="estadoSeleccionado" (selectionChange)="validarFiltros()"  [disabled]="bloquearCombo">
              
                 <mat-option value="pendientes">Garantias Abiertas</mat-option>
                 <mat-option value="cerradas">Garantias Cerradas</mat-option>
                 <mat-option value="ingresada">Garantias Ingresadas</mat-option>
+                 <mat-option value="pendientesIncompletas">Garantias Pendientes</mat-option>
               
                
               </mat-select>
@@ -33,7 +34,9 @@
         
         
         
-          <div *ngIf="!isLoading && garantiaData.length > 0" class="card-garantias-tabla mat-elevation-z8 animate-fadeIn">
+        
+        <div *ngIf="!isLoading && garantiaData.length > 0" class="card-garantias-tabla mat-elevation-z8 animate-fadeIn">
+          <!-- Tabla de Garantías usada para pedidos abiertos-->
           <div *ngIf="!showIntranet" class="table-container mat-elevation-z4 animate-slideIn">
             <table class="table table-hover table-striped">
               <thead>
@@ -58,9 +61,13 @@
                     <span [ngClass]="{
                       'pendiente': garantia.Status === -3,
                       'aprobado': garantia.Status === 'Aprobado',
-                      'rechazado': garantia.Status === -1
+                      'rechazado': garantia.Status === -1,
+                      'pendientesIncompletas': garantia.Status === -2
                     }">
-                     {{ garantia.Status === -3 ? 'Abierta' : (garantia.Status === -1 ? 'Cerrada' : garantia.Status) }}
+                     {{ garantia.Status === -3 ? 'Abierta' : 
+                        garantia.Status === -1 ? 'Cerrada' : 
+                        garantia.Status === -2 ? 'Pendiente e incompleta' :
+                        garantia.Status }}
 
                     </span>
                   </td>
@@ -79,6 +86,7 @@
             </table>
           </div>
 
+          <!-- Tabla de Garantías usada para pedidos ingresados -->
           <div *ngIf="showIntranet" class="table-container mat-elevation-z4 animate-slideIn">
             <table class="table table-hover table-striped">
               <thead>
@@ -140,20 +148,6 @@
             </table>
           </div>
         </div>
-        <!--<div *ngIf="!isLoading && garantiaData.length === 0" class="card-garantias mat-elevation-z8 animate-fadeIn">
-          <h2 class="highlight-text">No hay garantías registradas</h2>
-        </div>
-       
-        <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
-              {{ mensaje }}
-        </div>
-        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-              {{ mensaje }}
-        </div>
-
-       
-    
-  -->
       </div>
     </div>
   </div>

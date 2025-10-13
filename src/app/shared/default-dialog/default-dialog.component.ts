@@ -84,30 +84,33 @@ export class DefaultDialogComponent implements OnInit {
 
   ingresarOrden(garantia : any){
     
-    this.isLoading = true;
     this.mensajeCarga = 'Ingresando Orden...'
+    this.isLoading = true;
     this.garantiasServices.insertarGarantiaIntranet(garantia).subscribe({
       next: (response) => {
-      this.formularioData = response;
-      this.exito= true;
-      this.responseMensaje = 'Garantía ingresada correctamente';
-     //   this.generarComprobante(formValue);
+        this.formularioData = response;
+        setTimeout(() => {
+            this.isLoading = false;
+            this.exito = true;
+          }, 1000);
+       
+        this.responseMensaje = 'Garantía ingresada correctamente';
+      //   this.generarComprobante(formValue);
       },
        error: (error) => {
-        this.isLoading = false;
+       
         this.errorMsg = true;
         this.responseMensaje = "erro en el servidor, contacte al administrador"
         
-         setTimeout(() => {
-             this.dialogRef.close({ exito: true });
-           }, 1500);
+        setTimeout(() => {
+            this.dialogRef.close({ exito: true });
+          }, 2000);
       },
       complete: () => {
         
         setTimeout(() => {
          
-            this.isLoading = false;
-     
+          
         }, 1500);
 
         setTimeout(() => {

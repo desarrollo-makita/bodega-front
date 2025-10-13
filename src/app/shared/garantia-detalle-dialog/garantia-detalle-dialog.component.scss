@@ -2,7 +2,13 @@
 $makita-teal: #008686;
 $makita-red: #e53935;
 
-
+  .campos-repuesto {
+    display: grid;
+    grid-template-columns: 29fr 18fr 14fr auto 29fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
 
 .modal-backdrop {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -226,8 +232,8 @@ textarea {
   color: #e53935;
 }
 
-.pendiente {
-  color: #ff9800 !important;
+.pendientesIncompletas {
+  color: #3f51b5 !important;
   font-weight: bold !important;
 }
 

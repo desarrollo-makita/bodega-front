@@ -5,6 +5,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { RechazarOfertaVentaDialogComponent } from '../rechazar-oferta-venta-dialog/rechazar-oferta-venta-dialog.component';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { request } from 'http';
+import { AprobarOfertaVentaComponent } from '../aprobar-oferta-venta-dialog/aprobar-oferta-venta.component';
 
 
 
@@ -48,19 +49,21 @@ export class GarantiaDetalleDialogComponent implements OnInit {
   dataOferta: any = { llamada: [] };
   anexos: any[] = [];
   descargando: Record<string, boolean> = {};
-  botonCerrar :  string = 'Cerrar';
+  botonCerrar :  string = 'Cerrar garantia';
   botonConfirmarCerrar :  string = 'Confirmar cierre';
   mostrarBotonCerrar : boolean = false;
   mostrarBotonConfirmarCierre :  boolean = false;
   mostrarBotoneraOferta : boolean  = false;
   modelosFiltrados: any[][] = [];
   mostrarAgregarOferta:boolean= false;
+  mostrarBotonesAccion:boolean= false;
 
   ngOnInit() {
     console.log("data recibida: ", this.data);
 
     this.dataLLamadaServicio = this.data;
      console.log("dataLLamadaServicio ", this.dataLLamadaServicio);
+     this.mostrarBotonCerrar = this.dataLLamadaServicio.rol === 'ST' ? true : false;
    if (this.data && this.data.Status === -1) {
       this.mostrarComentarioRechazo = true;
       this.comentarios = this.dataLLamadaServicio.Resolution;
@@ -81,6 +84,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
       codigo: ['', Validators.required],
       descripcion: ['', Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
+      stock: [1, [Validators.required, Validators.min(1)]],
       precio: [1, [Validators.required, Validators.min(1)]]
     });
   }
@@ -120,7 +124,8 @@ export class GarantiaDetalleDialogComponent implements OnInit {
       grupo.patchValue({
         codigo: seleccionado.ItemCode,
         descripcion: seleccionado.ItemName,
-        precio: seleccionado.ItemPrice.Price
+        stock: seleccionado.Stock,
+        precio: seleccionado.ItemPrice.Price === 0 ? 1 : seleccionado.ItemPrice.Price
       });
       this.modelosFiltrados[index] = [];
     }
@@ -206,7 +211,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
 
   obtenerOfertaVenta(idLlamada: any) {
     this.isLoading = true;
-
+    this.mostrarBotonesAccion = this.dataLLamadaServicio.rol === 'ST' ? false : true;
     this.garantiasServices.obtenerOfertasVentas(idLlamada).subscribe({
       next: (response) => {
         console.log("Nueva data desde SAP:", response);
@@ -226,7 +231,10 @@ export class GarantiaDetalleDialogComponent implements OnInit {
         console.log("Error:", err);
       },
       complete: () => {
-        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading= false;
+        }, 200);
+       
         this.deshabilitarBotonera = false;
       }
     });
@@ -259,41 +267,73 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     
   }
 
+  /*
   abrirDocumento(doc: any) {
-  this.isLoading = true;
-  this.descargando[doc.nombre] = true;
+    console.log("doc a abrir", doc);
+    this.isLoading = true;
+    this.descargando[doc.nombre] = true;
 
-  this.garantiasServices.descargarDocumentos(doc.absoluteEntry).subscribe({
-  next: (blob: Blob) => {
-    // Crear URL temporal
-    const fileURL = window.URL.createObjectURL(blob);
+  this.garantiasServices.descargarDocumentos(doc).subscribe({
+    next: (blob: Blob) => {
+      // Crear URL temporal
+      const fileURL = window.URL.createObjectURL(blob);
 
-    // Crear <a> temporal
-    const a = document.createElement('a');
-    a.href = fileURL;
-    a.download = doc.nombre; // nombre del archivo
-    a.target = '_blank';
+      // Crear <a> temporal
+      const a = document.createElement('a');
+      a.href = fileURL;
+      a.download = doc.nombre; // nombre del archivo
+      a.target = '_blank';
 
-    // Añadir al DOM y hacer click
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      // Añadir al DOM y hacer click
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-    // Liberar memoria del blob después de 1 segundo
-    setTimeout(() => window.URL.revokeObjectURL(fileURL), 1000);
+      // Liberar memoria del blob después de 1 segundo
+      setTimeout(() => window.URL.revokeObjectURL(fileURL), 1000);
 
-    this.descargando[doc.nombre] = false;
-  },
-  error: (err) => {
-    console.error('Error al abrir documento', err);
-    alert('No se pudo abrir el documento');
-    this.descargando[doc.nombre] = false;
-  },
-  complete: () => {
-    this.isLoading = false;
+      this.descargando[doc.nombre] = false;
+    },
+    error: (err) => {
+      console.error('Error al abrir documento', err);
+      alert('No se pudo abrir el documento');
+      this.descargando[doc.nombre] = false;
+    },
+    complete: () => {
+      this.isLoading = false;
+    }
+    });
+  }*/
+
+  abrirDocumento(doc: any) {
+    console.log("doc a abrir", doc);
+    this.isLoading = true;
+    this.descargando[doc.nombre] = true;
+
+    this.garantiasServices.descargarDocumentos(doc).subscribe({
+      next: (blob: Blob) => {
+        // Crear URL temporal
+        const fileURL = window.URL.createObjectURL(blob);
+
+        // Abrir directamente en una pestaña nueva
+        window.open(fileURL, '_blank');
+
+        // Liberar memoria del blob después de 1 segundo
+        setTimeout(() => window.URL.revokeObjectURL(fileURL), 1000);
+
+        this.descargando[doc.nombre] = false;
+      },
+        error: (err) => {
+          console.error('Error al abrir documento', err);
+          alert('No se pudo abrir el documento');
+          this.descargando[doc.nombre] = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+    });
   }
-  });
-  }
+
 
 
 
@@ -328,7 +368,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     
   }
 
-   rechazarOferta(ofertaVenta: any) {
+  rechazarOferta(ofertaVenta: any) {
     
     console.log("datos a enviar: ", ofertaVenta);
 
@@ -350,6 +390,29 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     
   }
 
+  aprobarOferta(ofertaVenta: any) {
+    
+    ofertaVenta.rutCliente = this.data.CustomerCode; 
+    
+    const dialogRef = this.dialog.open(AprobarOfertaVentaComponent, {
+      data:  ofertaVenta ,
+      disableClose: false,
+      width: '500px',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container'
+      
+    });
+
+    // Solo escuchas el resultado final (cuando modal se cierra)
+   /* dialogRef.afterClosed().subscribe(result => {
+      if (result?.exito) {
+        this.obtenerOfertaVenta(this.data.ServiceCallID);
+        console.log("✔ Oferta rechazada con éxito...", result.mensaje);
+      }
+    });*/
+ 
+    
+  }
 
   guardar(){
     this.isLoading = true;
@@ -363,7 +426,7 @@ export class GarantiaDetalleDialogComponent implements OnInit {
           cantidad: r.cantidad,
           rutCliente: this.dataLLamadaServicio.entidad,
           descripcion: r.descripcion,
-          precio : r.precio
+          precio : r.precio === 0 ? 1 : r.precio
         }))
       };
 
@@ -410,4 +473,9 @@ export class GarantiaDetalleDialogComponent implements OnInit {
       }
     };
   }
+
+  
 }
+
+
+

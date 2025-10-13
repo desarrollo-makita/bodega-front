@@ -6,6 +6,7 @@ import { MyDataService } from 'app/services/data/my-data.service';
 import { LoginService } from 'app/services/login/login.service';
 import { PasswordRecoveryDialogComponent } from 'app/shared/password-recovery-dialog/password-recovery-dialog.component';
 import { ReplaceTemporaryKeyComponent } from 'app/shared/replace-temporary-key/replace-temporary-key.component';
+import confetti from 'canvas-confetti';
 
 
 @Component({
@@ -40,7 +41,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {      
-    sessionStorage.clear();}
+    sessionStorage.clear();
+    this.lanzarConfeti();
+  }
   
 
   onSubmit() {
@@ -138,6 +141,32 @@ export class LoginComponent implements OnInit {
       this.showLogin = true;
      
     });
+  }
+
+
+    lanzarConfeti() {
+    const duration = 4 * 1000; // duración de 4 segundos
+    const end = Date.now() + duration;
+
+    (function frame() {
+      // dispara confeti desde ambos lados
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
   }
 }
 

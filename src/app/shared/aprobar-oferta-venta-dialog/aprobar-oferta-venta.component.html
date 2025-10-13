@@ -3,7 +3,7 @@
 
     <!-- FORMULARIO: solo visible si no hay éxito -->
     <ng-container *ngIf="!exito && !errorMsg">
-      <h2>Rechazar Oferta de Venta {{numeroLLamada}}</h2>
+      <h2>Aprobar Oferta de Venta {{numeroLLamada}}</h2>
 
       <mat-form-field appearance="outline" class="email-field">
         <mat-label>Correo electrónico de confirmación</mat-label>
@@ -36,7 +36,7 @@
      
     <div *ngIf="isLoading" class="loading">
       <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
-      <p style="margin-top: 10px;">Procesando cierre de la oferta...</p>
+      <p style="margin-top: 10px;">Aprobanndo Oferta y creando la Orden...</p>
     </div>
 
     <!-- MENSAJE ÉXITO -->
