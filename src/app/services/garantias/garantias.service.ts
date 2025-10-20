@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 export class GarantiasService {
 
     private obtenerGarantiasAbiertas = "http://172.16.1.206:3026/api/obtener-llamadas";
+    private obtenerGarantiasEstadoURL = "http://172.16.1.206:3026/api/obtener-garantias-estado";
     private obtenerGarantiasIntranet = "http://172.16.1.206:3026/api/obtener-garantias-estado-intranet";
     private insertarGarantiasIntranet = "http://172.16.1.206:3026/api/insertar-garantias-intranet";
     private buscarItemURL = "http://172.16.1.206:3026/api/buscar-item-formulario";
@@ -29,6 +30,7 @@ export class GarantiasService {
     private cargarDocumentosURL = "http://172.16.1.206:3026/api/obtener-documentos-llamada";
     private descargarDocumentosURL = "http://172.16.1.206:3026/api/anexos";
     private cerrarLLamadaServicioURL = "http://172.16.1.206:3026/api/cerrar-llamada-servicio"
+    private rechazarOfertaVentaURL = "http://172.16.1.206:3026/api/rechazar-oferta-venta"
 
 
 
