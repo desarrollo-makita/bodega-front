@@ -46,6 +46,12 @@ export class GarantiasComponent implements OnInit {
   exito:any;
   decodedToken:any;
 
+  fechaDesde: Date | null = null;
+  fechaHasta: Date | null = null;
+
+  garantiaDataOriginal: any[] = []; // Copia original sin filtrar
+
+
 
     constructor(
       private garantiasServices: GarantiasService,
@@ -59,6 +65,7 @@ export class GarantiasComponent implements OnInit {
 
   ngOnInit(): void {
     // Simular carga
+    console.log("entroooooaca  : ");
     const token = sessionStorage.getItem("authToken");
     this.decodedToken = this.authService.decodeToken(token);
     console.log("Token decodificado: ", this.decodedToken);
@@ -73,7 +80,8 @@ export class GarantiasComponent implements OnInit {
 
 
   validarFiltros(){
-    if(this.decodedToken.role === 'ST'){
+    console.log("dekodetoken" , this.decodedToken.role);
+    if(this.decodedToken.role === 'ST' || this.decodedToken.role === 'STM'){
       this.filtrarGarantiasRut(this.decodedToken.cardCode);
     }else{
       this.filtrarGarantias();
@@ -101,14 +109,18 @@ export class GarantiasComponent implements OnInit {
 
   obtenerGarantiasEstado(estado: string){
     this.isLoading= true;
-    console.log("ingresadas : " , estado);
     
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     
-    if(estado === 'ingresada'){
+  if(estado === 'ingresada'){
     this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
       next: (response) => {
-        this.garantiaData = response.pedidosValidos;
+          this.garantiaDataOriginal = response.pedidosValidos.map(item => ({
+            ...item,
+            tipoLLamada: 'Garantia'
+          }));
+          this.garantiaData = [...this.garantiaDataOriginal];
+        
         this.showIntranet = true;
       },
       error: (error) => {
@@ -130,29 +142,33 @@ export class GarantiasComponent implements OnInit {
     
     else{
       this.garantiasServices.getGarantiasPorEstado().subscribe({
+
       next: (response) => {
         if(estado === 'pendientes'){
-          this.garantiaData = response.abiertas.map(item => ({
-              ...item,
-              tipoLLamada: 'Garantia'
-          }));
+           this.garantiaDataOriginal = response.abiertas.map(item => ({
+            ...item,
+            tipoLLamada: 'Garantia'
+        }));
+          console.log("garantiaData" , this.garantiaData);
         }else if (estado === 'cerradas'){
-          
-            this.garantiaData = response.cerradas.map(item => ({
-              ...item,
-              tipoLLamada: 'Garantia'
+          this.garantiaDataOriginal = response.cerradas.map(item => ({
+            ...item,
+            tipoLLamada: 'Garantia'
           }));
+
         }else if (estado === 'pendientesIncompletas'){
           
-            this.garantiaData = response.pendientes.map(item => ({
-              ...item,
-              tipoLLamada: 'Garantia'
+          this.garantiaDataOriginal = response.pendientes.map(item => ({
+          ...item,
+          tipoLLamada: 'Garantia'
           }));
+
         }else{
           this.garantiaData= [];
         }
-          
-        this.showIntranet = false;
+          this.garantiaData = [...this.garantiaDataOriginal];
+          this.showIntranet = false;
+      
         },
       error: (error) => {
           console.error('Error en la consulta:', error);
@@ -165,6 +181,7 @@ export class GarantiasComponent implements OnInit {
           }, 1000);
         },
       });
+
     }
     
     
@@ -178,8 +195,9 @@ export class GarantiasComponent implements OnInit {
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
       
     if(estado === 'ingresada'){
-      this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+      this.garantiasServices.getGarantiasPorEstadoRutIntranet(estado, rut).subscribe({
         next: (response) => {
+          console.log("responseeeeeeeee::::",response)
           this.garantiaData = response.pedidosValidos;
           console.log(this.garantiaData);
           
@@ -240,9 +258,10 @@ export class GarantiasComponent implements OnInit {
         },
       });
     }
+
   }
 
-  obtenerGarantiasEstadoEditar(estado: string){
+    obtenerGarantiasEstadoEditar(estado: string){
     
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
@@ -289,11 +308,10 @@ export class GarantiasComponent implements OnInit {
   filtrarGarantias() {
     this.obtenerGarantiasEstado(this.estadoSeleccionado);
   }
-
+  
   filtrarGarantiasRut(rut) {
     this.obtenerGarantiasEstadoRut(this.estadoSeleccionado , rut);
   }
-
   abrirDetalleGarantia(garantia: any): void {
     
     const dialogRef = this.dialog.open(GarantiaDetalleDialogComponent, {
@@ -323,37 +341,23 @@ export class GarantiasComponent implements OnInit {
 
   abrirModalAgregarRepuesto(garantia: any): void {
     
-    console.log("Iniciando Modal DefaultDialogComponent con esta data : ", garantia);
-    
+
+    console.log("Iniciando Modal abrirModalAgregarRepuesto con esta data : ", garantia);
+
     const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
       data: garantia,
-      disableClose: true,
       width: '500px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((resultado) => {
-      if (resultado) {
-        // Mostrar mensaje en el componente padre
-        if (resultado.exito) {
-          this.obtenerGarantiasEstado(this.estadoSeleccionado);
-          this.successMessage= true
-          this.mensaje = resultado.mensaje;
-         
-        } else {
-          this.errorMessage = true
-          this.mensaje = resultado.mensaje;
-         
-        }
-
-        // Mostrar el mensaje por unos segundos (opcional)
-        setTimeout(() => {
-          this.mensaje = '';
-          this.successMessage = false;
-          this.errorMessage = false;
-        }, 1500);
-      }
+    
+      console.log("resultado :_ " , resultado);
+      this.obtenerGarantiasEstado(this.estadoSeleccionado);
+        
+       
     });
   }
 
@@ -396,7 +400,7 @@ export class GarantiasComponent implements OnInit {
 
 
 
-  enviarASAP(garantia : any){
+   enviarASAP(garantia : any){
     
     const dialogRef = this.dialog.open(DefaultDialogComponent, {
       data: { 
@@ -406,7 +410,7 @@ export class GarantiasComponent implements OnInit {
       width: '80',
       maxHeight: '80vh',
       panelClass: 'custom-dialog-container',
-      disableClose: true,
+      disableClose: false,
       autoFocus: false 
     });
 
@@ -419,5 +423,65 @@ export class GarantiasComponent implements OnInit {
       
     });
   }
+
+
+  filtrarPorFecha() {
+    
+    if (!this.fechaDesde && !this.fechaHasta) {
+      alert('Por favor selecciona al menos una fecha');
+      return;
+    }
+
+
+    if (this.estadoSeleccionado === 'ingresada') {
+      let dataFiltrada = [...this.garantiaDataOriginal];
+
+      console.log("dataFiltradaaaa", dataFiltrada);
+
+      dataFiltrada = dataFiltrada.filter(x => {
+        const fechaItem = new Date(x.FechaAbertura);
+        const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+        const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+
+        // 🧩 Normalizar todas las fechas al inicio del día
+        fechaItem.setHours(0, 0, 0, 0);
+        if (desde) desde.setHours(0, 0, 0, 0);
+        if (hasta) hasta.setHours(0, 0, 0, 0);
+
+        return (!desde || fechaItem >= desde) && (!hasta || fechaItem <= hasta);
+      });
+
+      this.garantiaData = dataFiltrada;
+      console.log("Filtrado ingresadas:", this.garantiaData);
+    }else{
+      
+      let dataFiltrada = [...this.garantiaDataOriginal];
+
+      console.log("dataFiltrada" , dataFiltrada);
+
+      dataFiltrada = dataFiltrada.filter(x => {
+        const fechaItem = new Date(x.CreationDate);
+        const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+        const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+
+        return (!desde || fechaItem >= desde) && (!hasta || fechaItem <= hasta);
+      });
+
+      this.garantiaData = dataFiltrada;
+    }
+
+    
+}
+
+
+  
+
+// 🔹 Función para limpiar los campos de fecha
+  limpiarFiltroFecha() {
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.garantiaData = [...this.garantiaDataOriginal];
+  }
+
 
 }
