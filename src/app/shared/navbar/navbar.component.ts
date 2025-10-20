@@ -87,6 +87,29 @@ export class NavbarComponent implements OnInit{
             this.title = 'Ingresar Orde de Trabajo';
             this.showIcons = false;
         }
+        else if (title === '/carga-stock') {
+            this.title = 'Saldos de Inventario desde SAP B1';
+            this.showIcons = false;
+        }
+         else if (title === '/inventario-listado') {
+            this.title = 'Informacion de items capturados';
+            this.showIcons = false;
+        }
+         else if (title === '/comparativo-stock') {
+            this.title = 'Ubicaciones inventariadas vs Stock Sap';
+            this.showIcons = false;
+        }
+        else if (title === '/consulta-stock') {
+            this.title = 'Consulta de Stock x Item';
+            this.showIcons = false;
+        }
+         else if (title === '/inventario-sucursal') {
+            this.title = 'Inventario por sucursal';
+            this.showIcons = false;
+        }
+         
+         
+
       }
 
     

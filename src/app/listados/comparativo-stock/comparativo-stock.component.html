@@ -1,0 +1,204 @@
+<div style="width: 60%; margin: 0 auto;">
+
+  <h1 class="titulo-principal">
+    <span style="font-size: 0.6em; font-weight: normal; color: #ec3939; margin-left: 8px;">Versión 1.0.0 
+   </span>
+  </h1>
+  
+
+  <table
+    style="
+      width: 100%;
+      margin-bottom: 16px;
+      
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      padding: 12px;
+      background-color: #f9f9f9;
+    "
+  >
+
+   <tr>&nbsp;
+   </tr>
+
+
+   <tr>
+     <td>
+    <label for="anioSeleccionado" style="font-weight: bold; margin-right: 6px;">Año:</label>
+    <select
+      id="anioSeleccionado"
+      [(ngModel)]="anioSeleccionado"
+      style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+    >
+   
+      <option value="2025">2025</option>
+      <option value="2026">2026</option>
+    </select>
+     </td>
+   </tr>
+
+
+   <tr>
+    <td>
+    <label for="mesSeleccionado" style="font-weight: bold; margin-right: 6px;">Mes:</label>
+    <select
+      id="mesSeleccionado"
+      [(ngModel)]="mesSeleccionado"
+      style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+    >
+      <option *ngFor="let mes of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="mes">
+        {{ mes }}
+      </option>
+    </select>
+    </td>
+   </tr>
+
+
+   <tr>
+    <td>
+      <label for="fechaInventario" style="font-weight: bold; margin-right: 6px;">Fecha Inventario:</label>
+      <input
+       type="date"
+       id="fechaInventario"
+       [(ngModel)]="fechaInventario"
+       style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+      />
+    </td>
+   </tr>
+
+
+
+  <tr>
+  <td>
+  <label for="tipoItem" style="font-weight: bold; margin-right: 6px;">Grupo:&nbsp;</label>
+  <select
+    id="tipoItem"
+    [(ngModel)]="tipoItem"
+    style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+  >
+    <option value="">-- Todos --</option>
+    <option value="HERRAMIENTAS">101 - HERRAMIENTAS</option>
+    <option value="ACCESORIOS">102 - ACCESORIOS</option>
+    <option value="REPUESTOS">103 - REPUESTOS</option>
+  </select>
+  </td>
+ </tr>
+
+
+  <tr>
+  <td>
+  <label for="bodegaSeleccionado" style="font-weight: bold; margin-right: 6px;">Bodega  :&nbsp;</label>
+  <select
+    id="bodegaSeleccionado"
+    [(ngModel)]="bodegaSeleccionado"
+    style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+  >
+    <option value="">-- Todos --</option>
+    <option value="BOD01">BOD01 - Bodega ENEA (Ventas)</option>
+    <option value="BOD04">BOD04 - Bodega Sodimac</option>
+    <option value="ANF01">ANF01 - Bodega ST Antofagasta (Venta)</option>
+    <option value="ANF02">ANF02 - Bodega ST Antofagasta (Showroom)</option>
+    <option value="ANF03">ANF03 - Bodega ST Antofagasta (Taller)</option>
+    
+    <option value="CPO01">CPO01 - Bodega ST Copiapo (Venta)</option>
+    <option value="CPO02">CPO02 - Bodega ST Copiapo (Showroom)</option>
+    <option value="CPO03">CPO03 - Bodega ST Copiapo (Taller)</option>
+
+    <option value="TEM01">TEM01 - Bodega ST Temuco (Venta)</option>
+    <option value="TEM02">TEM02 - Bodega ST Temuco (Showroom)</option>
+    <option value="TEM03">TEM03 - Bodega ST Temuco (Taller)</option>
+   
+  </select>
+  </td>
+
+  <td>
+  <button 
+    (click)="limpiarFiltros()" 
+    style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: bold;">
+    Limpiar
+  </button>
+  </td>
+  </tr>
+
+<tr>
+   &nbsp;
+   &nbsp;
+</tr>
+
+
+       <td>
+        <button type="button"
+          (click)="obtenerubicacionesFiltrado(anioSeleccionado,mesSeleccionado,fechaInventario,tipoItem, bodegaSeleccionado)"
+          [disabled]="botonesDeshabilitados"
+          [ngStyle]="{
+    backgroundColor: botonesDeshabilitados ? '#b0b0b0' : '#008686',
+    color: 'white',
+    cursor: botonesDeshabilitados ? 'not-allowed' : 'pointer'
+  }"
+          style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: normal;"
+        >
+          Ver diferencias 
+        </button>
+     
+       </td>
+
+       <td>
+       
+       <button
+  type="button"
+  (click)="exportarAExcel()"
+  [disabled]="inventarioFiltradas.length === 0"
+  class="boton-secundario"
+>
+  Exportar a Excel
+</button> 
+    </td>
+
+
+</table>
+</div>
+
+
+  <div *ngIf="inventarioFiltradas.length > 0" style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc;">
+    <table class="tbl-excel" style="width: 80%;">
+      <thead style="position: sticky; top: 0; background-color: #008686; z-index: 1;">
+        
+        
+       <tr style="background-color: #004d4d; color: white;text-align: center;">
+          <th colspan="3">SAP</th>
+          <th colspan="3">Inventario</th>
+          <th rowspan="2">Diferencia</th>
+       </tr>
+
+        <tr>
+          
+          <th>Item </th>
+          <th>Ubicacion</th>
+          <th>Saldo SAP</th>
+          <th>Ubicacion Inventariada</th>
+          <th>Item Inventariada</th>
+          <th>Cantidad Inventariada</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let inventario of inventarioFiltradas">
+  
+          <tr class="master-row">     
+            <td>{{ inventario.item }}</td>
+            <td>{{ inventario.ubicacion }}</td>
+            <td>{{ inventario.saldo  }}</td>   
+            <td>{{ inventario.ubicacion_inv  }}</td>   
+            <td>{{ inventario.item_inv  }}</td>  
+            <td>{{ inventario.cantidad_inv  }}</td>
+            <td>{{ inventario.Diferencia  }}</td>
+          </tr>
+        
+          
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+ 
+
+

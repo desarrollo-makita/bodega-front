@@ -1,0 +1,132 @@
+<div class="card-consulta" style="max-width: 900px; margin: 0 auto;">
+
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="consultaForm">
+
+    <h3 class="seccion-titulo">Stock por Item</h3>
+    <div class="form-grid">
+   
+      
+      <div class="form-group" style="position: relative;">
+        <label for="modelo">Modelo</label>
+        <input
+          type="text"
+          id="modelo"
+          formControlName="Modelo"
+          (input)="buscarModelos()"
+          (blur)="ocultarListaConDelay()"
+          (focus)="buscarModelos()" />
+
+          <!-- Lista de sugerencias -->
+          <ul
+            class="sugerencias"
+            *ngIf="modelosFiltrados.length > 0 && mostrarSugerencias"
+            style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+            
+            <li
+              *ngFor="let item of modelosFiltrados"
+              (mousedown)="seleccionarModelo(item)"
+              style="padding: 5px; cursor: pointer;">
+              {{ item.ItemCode }} - {{ item.ItemName }}
+            </li>
+          </ul>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <input type="text" id="descripcion" formControlName="Descripcion" disabled  />
+      </div>
+      
+    </div>
+
+    
+<table style="width: 100%; border-collapse: collapse;">
+  <tr>
+    <td style="text-align: left; padding: 8px;">
+      <button
+        type="button"
+        (click)="obtenerInventarioFiltrado(consultaForm.get('Modelo')?.value)"
+        [disabled]="botonesDeshabilitados"
+        [ngStyle]="{
+          backgroundColor: botonesDeshabilitados ? '#b0b0b0' : '#008686',
+          color: 'white',
+          cursor: botonesDeshabilitados ? 'not-allowed' : 'pointer'
+        }"
+        style="padding: 6px 12px; border: none; border-radius: 4px; font-weight: normal;"
+      >
+        Consultar
+      </button>
+    </td>
+
+    <td style="text-align: right; padding: 8px;">
+      <button
+        type="button"
+        (click)="exportarAExcel()"
+        [disabled]="inventarioFiltradas.length === 0"
+        [ngStyle]="{
+          backgroundColor: botonesDeshabilitados ? '#b0b0b0' : '#008686',
+          color: 'white',
+          cursor: botonesDeshabilitados ? 'not-allowed' : 'pointer'
+        }"
+        style="padding: 6px 12px; border: none; border-radius: 4px; font-weight: normal;"
+      >
+        Exportar a Excel
+      </button>
+    </td>
+  </tr>
+</table>
+
+
+
+<div *ngIf="isLoading" style="text-align: center; margin-top: 20px;">
+  <div class="spinner"></div>
+  <p style="color: #008686; font-weight: bold;">Consultando datos...</p>
+</div>
+
+
+
+
+</form>
+
+</div>
+
+
+<div *ngIf="inventarioFiltradas.length > 0" style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc;">
+   
+      <table class="tbl-excel" style="width: 80%; border-collapse: collapse;">
+      <thead style="position: sticky; top: 0; background-color: #008686; z-index: 1;">
+        <tr>
+          <th>Bodega</th>
+          <th>Tipo</th>
+          <th>Categoria</th>
+          <th>Stock Total</th>
+          <th>Ubicacion</th>
+          <th>Stock Ubicacion</th>
+          <th>Alias Ubicacion</th>
+          
+          
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let inventario of inventarioFiltradas">
+  
+          <tr class="master-row">
+    
+            <td>{{ inventario.bodega }}</td>
+            <td>{{ inventario.tipoitem }}</td>
+            <td>{{ inventario.categoriaproducto  }}</td>   
+            <td>{{ inventario.saldostock  }}</td>   
+            <td>{{ inventario.ubicacion  }}</td>  
+            <td>{{ inventario.stockubicacion  }}</td>  
+            <td>{{ inventario.barcode }}</td>  
+    
+   
+          </tr>
+        
+          
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+ 
+
+

@@ -57,6 +57,12 @@ import { GarantiaDetalleDialogComponent } from './shared/garantia-detalle-dialog
 import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingresar-garantias.component';
 import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
 import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
+import { CargaStockComponent } from './carga-stock/carga-stock.component';
+import { ComparativoStockComponent } from './listados/comparativo-stock/comparativo-stock.component';
+import { InventarioListadoComponent } from './listados/inventario-listado/inventario-listado.component';
+import { ConsultaStockComponent } from './listados/consulta-stock/consulta-stock.component';
+import { InventarioSucursalComponent } from './listados/inventario-sucursal/inventario-sucursal.component';
+
 
 @NgModule({
   imports: [
@@ -116,9 +122,12 @@ import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog
     IngresarGarantiasComponent,
     AgregarRepuestosDialogComponent,
     EditarRepuestosDialogComponent,
+    CargaStockComponent,
+    ComparativoStockComponent,
+    InventarioListadoComponent,
+    ConsultaStockComponent,
+    InventarioSucursalComponent,
 
-    
-    
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

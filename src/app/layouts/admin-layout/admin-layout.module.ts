@@ -11,6 +11,7 @@ import { InformesComponent } from '../../informes/informes.component';
 
 
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -20,7 +21,7 @@ import { InformesComponent } from '../../informes/informes.component';
 
   ],
   declarations: [
-    InformesComponent,
+    InformesComponent           
  
   ]
 })

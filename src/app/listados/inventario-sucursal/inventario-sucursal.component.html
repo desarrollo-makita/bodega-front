@@ -1,0 +1,123 @@
+<div class="card-consulta" style="max-width: 900px; margin: 0 auto;">
+  <div style="width: 60%; margin: 0 auto;">
+    <h1 class="titulo-principal">
+      <span style="font-size: 0.6em; font-weight: normal; color: #ec3939; margin-left: 8px;">Versión 1.0.0</span>
+    </h1>
+
+    <h3 class="seccion-titulo">Inventario por Sucursal</h3>
+
+    <table style="width: 100%; margin-bottom: 16px; border: 1px solid #dddddd; border-radius: 8px; padding: 12px; background-color: #f9f9f9; border-collapse: collapse;">
+      <tr>
+        <td style="width: 30%; font-weight: bold;">Año:</td>
+        <td style="width: 70%; text-align: left;">
+          <select id="anioSeleccionado" name="anioSeleccionado" [(ngModel)]="anioSeleccionado"
+                  style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="font-weight: bold;">Mes:</td>
+        <td style="text-align: left;">
+          <select id="mesSeleccionado" name="mesSeleccionado" [(ngModel)]="mesSeleccionado"
+                  style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+            <option *ngFor="let mes of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="mes">{{ mes }}</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="font-weight: bold;">Fecha Inventario:</td>
+        <td style="text-align: left;">
+          <input type="date" id="fechaInventario" name="fechaInventario" [(ngModel)]="fechaInventario"
+                 style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+        </td>
+      </tr>
+
+      <tr>
+        <td style="font-weight: bold;">Sucursal:</td>
+        <td style="text-align: left;">
+          <select id="sucursal" name="sucursal" [(ngModel)]="sucursal" (change)="cargarBodegas(sucursal)"
+                  style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+            <option value="">-- Seleccione una sucursal --</option>
+            <option value="03">03 - Serv. Tecnico Temuco</option>
+            <option value="04">04 - Centro de Servicios Antofagasta</option>
+            <option value="05">05 - Centro de Servicios Copiapo</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="font-weight: bold;">Bodega:</td>
+        <td style="text-align: left;">
+          <select id="bodegaSeleccionado" name="bodegaSeleccionado" [(ngModel)]="bodegaSeleccionado"
+                  style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+            <option value="">-- Todos --</option>
+            <option *ngFor="let bodega of bodegas" [value]="bodega.codigo">
+              {{ bodega.codigo }} - {{ bodega.nombre }}
+            </option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="font-weight: bold;">Tipo Item:</td>
+        <td style="text-align: left;">
+          <select id="tipoItem" name="tipoItem" [(ngModel)]="tipoItem" (change)="categoriasSeleccionado(tipoItem)"
+                  style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+            <option value="">-- Todos --</option>
+            <option value="HERRAMIENTAS">101 - HERRAMIENTAS</option>
+            <option value="ACCESORIOS">102 - ACCESORIOS</option>
+            <option value="REPUESTOS">103 - REPUESTOS</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr *ngIf="tipoItem === 'ACCESORIOS'">
+        <td style="font-weight: bold;">Categoria:</td>
+        <td style="text-align: left;">
+          <select id="categoriaSeleccionado" name="categoriaSeleccionado" [(ngModel)]="categoriaSeleccionado"
+                  style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+            <option value="">-- Todos --</option>
+            <option *ngFor="let categoria of categorias" [value]="categoria.codigo">
+              {{ categoria.codigo }} - {{ categoria.descripcion }}
+            </option>
+          </select>
+        </td>
+      </tr>
+
+      <!-- Botones -->
+      <tr>
+        <td colspan="2" style="padding-top: 12px; text-align: left;">
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button (click)="limpiarFiltros()"
+                    style="background-color: #008686; color: white; padding: 10px 20px; border: none; border-radius: 6px; min-width: 120px; cursor: pointer; ">
+              Limpiar
+            </button>
+
+            <button type="button"
+                    (click)="obtenerSaldosSucursal(anioSeleccionado, mesSeleccionado, fechaInventario, sucursal, bodegaSeleccionado, tipoItem, categoriaSeleccionado)"
+                    [disabled]="botonesDeshabilitados"
+                    [ngStyle]="{
+                      backgroundColor: botonesDeshabilitados ? '#b0b0b0' : '#008686',
+                      color: 'white',
+                      cursor: botonesDeshabilitados ? 'not-allowed' : 'pointer'
+                    }"
+                    style="padding: 10px 20px; border: none; border-radius: 6px; min-width: 220px;">
+              Cargar Saldos SAP
+            </button>
+
+            <button type="button"
+                    (click)="exportarAExcel()"
+                    [disabled]="inventarioFiltradas.length === 0"
+                    style="background-color: #008686; color: white; padding: 10px 20px; border: none; border-radius: 6px; min-width: 150px; cursor: pointer;">
+              Exportar a Excel
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

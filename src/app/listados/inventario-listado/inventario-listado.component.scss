@@ -1,0 +1,103 @@
+.tbl-picking {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  border: 1px solid #ccc;
+
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: #008686;
+    color: white;
+    z-index: 1;
+
+    th {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+      }
+
+      &:nth-child(even) {
+        background-color: #f9f9f9; // filas alternadas tipo Excel
+      }
+
+      &:hover {
+        background-color: #d0f0f0; // efecto al pasar el mouse
+        transition: background-color 0.2s ease;
+      }
+    }
+  }
+}
+
+.boton-secundario {
+  background-color: #f0f0f0; // gris claro
+  color: #333; // texto oscuro
+  border: 1px solid #ccc;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+.boton-peligro {
+  background-color: #d9534f; // rojo suave
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #c9302c;
+  }
+}
+
+
+.tbl-excel {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.tbl-excel th,
+.tbl-excel td {
+  border: 1px solid #bfbfbf; /* Bordes tipo Excel */
+  padding: 8px;
+}
+
+.tbl-excel thead th {
+  background-color: #d9ead3; /* Verde claro tipo Excel */
+  color: #000;
+  font-weight: bold;
+  border: 1px solid #999;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tbl-excel tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Filas alternadas */
+}
+
+.tbl-excel tbody tr:hover {
+  background-color: #d0e0e3; /* Hover tipo Excel */
+}
+

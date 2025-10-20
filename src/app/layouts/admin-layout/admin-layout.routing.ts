@@ -12,6 +12,12 @@ import { InventarioBateriasComponent } from 'app/inventario-baterias/inventario-
 import { AsignacionRerconteosBateriasComponent } from 'app/reconteo-baterias/asignacion-rerconteos-baterias/asignacion-rerconteos-baterias.component';
 import { GarantiasComponent } from 'app/garantias/garantias/garantias.component';
 import { IngresarGarantiasComponent } from 'app/garantias/ingresar-garantias/ingresar-garantias.component';
+import { CargaStockComponent } from 'app/carga-stock/carga-stock.component';
+import { ComparativoStockComponent } from '../../listados/comparativo-stock/comparativo-stock.component';
+import { InventarioListadoComponent } from '../../listados/inventario-listado/inventario-listado.component';
+import { ConsultaStockComponent } from '../../listados/consulta-stock/consulta-stock.component';
+import { InventarioSucursalComponent } from '../../listados/inventario-sucursal/inventario-sucursal.component';
+
 
 
 
@@ -28,6 +34,12 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'asignacion-reconteos-baterias', component: AsignacionRerconteosBateriasComponent },
     { path: 'servicio-tecnico', component: GarantiasComponent},
     { path: 'crear-orden-trabajo', component: IngresarGarantiasComponent},
+    { path: 'carga-stock', component: CargaStockComponent},
+    { path: 'comparativo-stock', component: ComparativoStockComponent },
+    { path: 'inventario-listado', component: InventarioListadoComponent },
+    { path: 'consulta-stock', component: ConsultaStockComponent },
+    { path: 'inventario-sucursal', component: InventarioSucursalComponent }
+
   
 
 ];

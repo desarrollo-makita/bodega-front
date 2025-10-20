@@ -1,0 +1,341 @@
+<div style="width: 60%; margin: 0 auto;">
+
+  <h1 class="titulo-principal">Saldos de Stock por Bodega 
+    <span style="font-size: 0.6em; font-weight: normal; color: #ec3939; margin-left: 8px;">
+    Versión 1.1.4 (SAP)
+   </span>
+  </h1>
+  
+
+  <table
+    style="
+      width: 100%;
+      margin-bottom: 16px;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      padding: 12px;
+      background-color: #f9f9f9;
+    "
+  >
+
+<tr>&nbsp;
+</tr>
+
+
+<tr>
+  <td>
+    <label for="anioSeleccionado" style="font-weight: bold; margin-right: 6px;">Año:</label>
+    <select
+      id="anioSeleccionado"
+      [(ngModel)]="anioSeleccionado"
+      style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+    >
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+    </select>
+  </td>
+
+  <td>
+    <label for="mesSeleccionado" style="font-weight: bold; margin-right: 6px;">Mes:</label>
+    <select
+      id="mesSeleccionado"
+      [(ngModel)]="mesSeleccionado"
+      style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+    >
+      <option *ngFor="let mes of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="mes">
+        {{ mes }}
+      </option>
+    </select>
+  </td>
+
+  <td>
+    <label for="fechaInventario" style="font-weight: bold; margin-right: 6px;">Fecha Inventario:</label>
+    <input
+      type="date"
+      id="fechaInventario"
+      [(ngModel)]="fechaInventario"
+      style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+    />
+  </td>
+</tr>
+
+
+
+  <tr>
+  <td>
+  <label for="grupoSeleccionado" style="font-weight: bold; margin-right: 6px;">Grupo:&nbsp;</label>
+  <select
+    id="grupoSeleccionado"
+    [(ngModel)]="grupoSeleccionado"
+    style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+  >
+    <option value="">-- Todos --</option>
+    <option value="101">101 - HERRAMIENTAS</option>
+    <option value="102">102 - ACCESORIOS</option>
+    <option value="103">103 - REPUESTOS</option>
+  </select>
+</td>
+</tr>
+
+<tr>&nbsp;
+</tr>
+
+
+
+  <tr *ngIf="grupoSeleccionado === '103' || grupoSeleccionado === '102' || grupoSeleccionado === '101'">
+  <td>
+    <label style="font-weight: normal; margin-right: 6px;color: red;">
+      <input type="checkbox" [(ngModel)]="esMuestra" />
+      ¿Es una muestra? (Marque si su respuesta es SI)
+    </label>
+  </td>
+</tr>
+
+<tr>&nbsp;
+</tr>
+
+
+<tr *ngIf="grupoSeleccionado === '102'  && !esMuestra">
+  <td>
+    <label for="categoriaSeleccionada" style="font-weight: bold; margin-right: 6px;">Categoría:</label>
+    <select
+      id="categoriaSeleccionada"
+      [(ngModel)]="categoriaSeleccionada"
+      style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+    >
+      <option value="">-- Todas --</option>
+      <option *ngFor="let cat of categoriasAccesorios" [value]="cat.codigo">
+        {{ cat.nombre }}
+      </option>
+    </select>
+  </td>
+</tr>
+
+
+  <tr>
+  <td>
+  <label for="bodegaSeleccionado" style="font-weight: bold; margin-right: 6px;">Bodega  :&nbsp;</label>
+  <select
+    id="bodegaSeleccionado"
+    [(ngModel)]="bodegaSeleccionado"
+    style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;"
+  >
+    <option value="">-- Todos --</option>
+    <option value="BOD01">BOD01 - Bodega ENEA (Ventas)</option>
+    <option value="BOD04">BOD04 - Bodega Sodimac</option>
+    <option value="ANF01">ANF01 - Bodega ST Antofagasta (Venta)</option>
+    <option value="ANF02">ANF02 - Bodega ST Antofagasta (Showroom)</option>
+    <option value="ANF03">ANF03 - Bodega ST Antofagasta (Taller)</option>
+    
+    <option value="CPO01">CPO01 - Bodega ST Copiapo (Venta)</option>
+    <option value="CPO02">CPO02 - Bodega ST Copiapo (Showroom)</option>
+    <option value="CPO03">CPO03 - Bodega ST Copiapo (Taller)</option>
+
+    <option value="TEM01">TEM01 - Bodega ST Temuco (Venta)</option>
+    <option value="TEM02">TEM02 - Bodega ST Temuco (Showroom)</option>
+    <option value="TEM03">TEM03 - Bodega ST Temuco (Taller)</option>
+   
+  </select>
+  </td>
+
+  <td>
+  <button 
+    (click)="limpiarFiltros()" 
+    style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: bold;">
+    Limpiar
+  </button>
+  </td>
+</tr>
+
+<tr>
+   &nbsp;
+   &nbsp;
+</tr>
+
+     
+    <tr>
+        
+        <td>
+        <button type="button"
+          (click)="obtenerSaldosStock(grupoSeleccionado, bodegaSeleccionado,categoriaSeleccionada,!!esMuestra)"
+          [disabled]="botonesDeshabilitados"
+          [ngStyle]="{
+    backgroundColor: botonesDeshabilitados ? '#b0b0b0' : '#008686',
+    color: 'white',
+    cursor: botonesDeshabilitados ? 'not-allowed' : 'pointer'
+  }"
+          style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: bold;"
+        >
+          Obtener Saldos Stock (Service Layer a SQL Server)
+        </button>
+       </td>
+
+
+             <td>
+        <button type="button"
+          (click)="obtenerSaldosStockUbicacion(anioSeleccionado,mesSeleccionado,fechaInventario,grupoSeleccionado, bodegaSeleccionado,categoriaSeleccionada,!!esMuestra)"
+          [disabled]="botonesDeshabilitados"
+          [ngStyle]="{
+    backgroundColor: botonesDeshabilitados ? '#b0b0b0' : '#008686',
+    color: 'white',
+    cursor: botonesDeshabilitados ? 'not-allowed' : 'pointer'
+  }"
+          style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: bold;"
+        >
+          * Obtener Stock desde HANNA Rotomartillo a SQL Server)
+        </button>
+       </td>
+
+       <td>
+       <button (click)="exportarSaldosStockAExcel()" style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: bold;">📥 Exportar a Excel</button>
+       </td>
+
+       <!--
+       <td>
+        <button (click)="enviarDatosASQL()" style="background-color: #008686; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;font-weight: bold;">Enviar a SQL Server</button>
+
+      </td>
+       -->
+          
+   </tr>
+
+
+  </table>
+
+
+
+<!-- Mensaje de carga ANTES
+<div *ngIf="cargando" class="cargando-contenedor">
+  <img src="icons8-spinner.png" alt="Cargando..." class="logo-carga" />
+  <p class="texto-cargando">⏳ Cargando stock desde SAP, por favor espere...</p>
+</div>
+-->
+
+
+<!-- Modal de carga NUEVO -->
+<div *ngIf="cargando" class="modal-cargando">
+  <div class="modal-contenido">
+    <div class="spinner"></div>
+    <p class="texto-cargando">⏳ Cargando stock desde SAP, por favor espere...</p>
+  </div>
+</div>
+
+
+
+
+
+<!-- Contenido principal -->
+<div *ngIf="!cargando">
+
+  <!-- Filtros 
+  <input
+    type="text"
+    [(ngModel)]="filtro"
+    (input)="filtrarOrdenes()"
+    placeholder="🔍 Filtrar por Número de Orden"
+    style="margin-bottom: 12px; padding: 4px; width: 250px;"
+  />
+  -->
+
+
+    <!-- Resultado vacío -->
+  <div *ngIf="ordenesFiltradas.length === 0" style="margin-top: 16px; color: #cc0000;">
+    ⚠️ No se encontraron órdenes con los filtros aplicados.
+  </div>
+
+<p *ngIf="ordenesFiltradas.length > 0" style="margin-top: 12px; font-weight: bold;">
+  📦 Total Items: {{ ordenesFiltradas.length }}
+</p>
+
+
+ <table
+    style="
+      width: 100%;
+      margin-bottom: 16px;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      padding: 12px;
+      background-color: #f9f9f9;
+    "
+  >
+  
+  </table>
+
+  
+
+
+  <div *ngIf="ordenesFiltradas.length > 0" style="max-height: 600px; overflow-y: auto; border: 1px solid #ccc;">
+    <table class="tbl-picking" style="width: 100%; border-collapse: collapse;">
+      <thead style="position: sticky; top: 0; background-color: #008686; z-index: 1;">
+        <tr>
+          <th>Bodega</th>
+          <th>TipoItem</th>
+          <th>Item</th>
+          <th>Descripcion</th>
+          <th>Obsoleto</th>
+          <th>Vigencia</th>
+          <th>CodigoGrupo</th>
+          <th>TipoProducto</th>
+          <th>CategoriaProducto</th>
+          <th>SaldoStock</th>
+          <th>PrecioCosto</th>
+          <th>PrecioLista</th>
+          <th>CodigoEan</th>
+          <th>Tecnologia</th>
+          <th>Ubicacion</th>
+          <th>Voltaje</th>
+          <th>Moneda</th>
+          
+          
+         
+         
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let orden of ordenesFiltradas">
+  
+          <tr class="master-row">
+        
+     
+  
+            <td>{{ orden.Bodega }}</td>
+            <td>{{ orden.TipoItem }}</td>
+            <td>{{ orden.Item  }}</td>   
+            <td>{{ orden.Descripcion }}</td>
+            <td>{{ orden.Obsoleto  }}</td>
+            <td>{{ orden.Vigencia  }}</td>
+            <td>{{ orden.CodigoTipoProducto  }}</td>
+            <td>{{ orden.TipoProducto  }}</td>
+            <td>{{ orden.CategoriaProducto  }}</td>
+            <td>{{ orden.SaldoStock  }}</td>
+            <td>{{ orden.CostoUnitario  }}</td>
+            <td>{{ orden.PrecioLista  }}</td>
+            <td>{{ orden.CodigoEan  }}</td>
+            <td>{{ orden.Tecnologia  }}</td>
+            <td>{{ orden.Ubicacion  }}</td>
+            <td>{{ orden.Voltaje  }}</td>
+            <td>{{ orden.Moneda  }}</td>
+
+
+
+          </tr>
+        
+          <tr *ngFor="let linea of orden.DocumentLines" class="detail-row">
+            <td colspan="4" style="padding-left: 2rem;">
+              Línea {{ linea.LineNum }} - {{ linea.ItemCode }}: {{ linea.Description }} x{{ linea.Quantity }}
+            </td>
+          </tr>
+          
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+ 
+</div>
+
+
+
+
+
+</div>
+
