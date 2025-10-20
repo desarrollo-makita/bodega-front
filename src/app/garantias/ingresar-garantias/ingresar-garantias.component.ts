@@ -8,6 +8,10 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { MyDataService } from 'app/services/data/my-data.service';
 import { take } from 'rxjs';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
 @Component({
   selector: 'app-ingresar-garantias',
   templateUrl: './ingresar-garantias.component.html',
@@ -39,6 +43,7 @@ export class IngresarGarantiasComponent implements OnInit {
   dataRegiones:any;
   selectedRegion: any = null;
   dataComunas:any;
+  mensajeCarga:any;
 
 
   mock =  {
@@ -59,10 +64,11 @@ export class IngresarGarantiasComponent implements OnInit {
         "serie": "123"
   }
   
-  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService, private dataService : MyDataService
+  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService, private dataService : MyDataService,private router: Router ,  private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
+   // this.mostrarAlerta();
     this.garantiaForm = this.fb.group({
       FechaDigitalizacionOs: [new Date(), Validators.required],
       TipoDocumento: ['', Validators.required],
@@ -82,10 +88,10 @@ export class IngresarGarantiasComponent implements OnInit {
       serieHerramienta: [null, Validators.required],
       herramienta: [null, Validators.required],
       repuesto: [null, Validators.required],
-      boleta: [null, Validators.required]
+      boleta: [null, Validators.required],
+       NombreTecnico: ['', Validators.required],
     });   
-    this.garantiaForm.get('RutServicioTecnico')?.disable();
-    this.garantiaForm.get('NombreServicioAut')?.disable();
+ 
     
     this.garantiaForm.get('Modelo')?.valueChanges.subscribe((valor) => {
       if (!valor) {
@@ -110,12 +116,21 @@ export class IngresarGarantiasComponent implements OnInit {
 
 
   obtenerRutLogueado() {
-    let cardCode = sessionStorage.getItem('cardCode');
-    this.dataService.getCardCode().pipe(take(1)).subscribe({
+     this.dataService.getUserObjectData().pipe(take(1)).subscribe({
       next: (response) => {
         // Si comienza con "C", le quitamos solo esa letra
-        console.log("response" , cardCode);
-        this.buscarClientes(cardCode);
+        let data = response != null ? response.CardCode : sessionStorage.getItem('cardCode') ;
+        
+        if (data !== null && data !== "null" && data !== undefined && data !== "") {
+          let cardCode = data;
+          this.buscarClientes(cardCode);
+          this.garantiaForm.get('RutServicioTecnico')?.disable();
+          this.garantiaForm.get('NombreServicioAut')?.disable();
+        }else{
+           this.garantiaForm.get('RutServicioTecnico')?.enable();
+          this.garantiaForm.get('NombreServicioAut')?.enable();
+        }
+        
       },
       error: (error) => {
         console.error("Error al obtener responseReconteo", error);
@@ -123,20 +138,17 @@ export class IngresarGarantiasComponent implements OnInit {
       complete: () => {},
     });
   }
-
-
   
   onSubmit(): void {
-    this.isLoading = true;
-
+    
     if (!this.garantiaForm.valid) {
       this.garantiaForm.markAllAsTouched();
-      this.isLoading = false;
+      
       return;
     }
 
     // Obtener y mapear datos del formulario
-   
+  
     const formValue = this.garantiaForm.getRawValue();
     const mappedData = this.mapFormularioARequest(formValue);
 
@@ -148,7 +160,7 @@ export class IngresarGarantiasComponent implements OnInit {
       formData.append(key, value ?? ''); // Evitar undefined
     });
 
-    // 4️⃣ Agregar archivos
+    //Agregar archivos
     this.filePreviews.forEach((filePreview, index) => {
       if (!filePreview || !filePreview.file) return;
 
@@ -159,45 +171,49 @@ export class IngresarGarantiasComponent implements OnInit {
       }
     });
 
-    // 5️⃣ Enviar al backend
-    this.garantiasServices.insertarGarantiaIntranet(formData).subscribe({
-      next: (response) => {
-        this.formularioData = response;
-        this.generarComprobante(formValue);
-      },
-      error: (error) => console.error(error),
-      complete: () => {
-        setTimeout(() => {
-          this.successMessage = true;
-          this.mensaje = 'Garantía ingresada correctamente';
-          this.isLoading = false;
-          this.garantiaForm.reset();
-          this.borrarNombresArchivos();
-        }, 1500);
+   const dialogRef = this.dialog.open(DefaultDialogComponent, {
+          data: { 
+            formData: formData, 
+            clave: 'ingresarOrden' 
+          },
+          width: '80',
+          maxHeight: '80vh',
+          panelClass: 'custom-dialog-container',
+          disableClose: true,
+            autoFocus: false   
+        });
+    
+      
+    
+        dialogRef.afterClosed().subscribe((resultado) => {
+        
+        });
 
-        setTimeout(() => this.borrarMensaje(), 4000);
-      }
-    });
+
+
+
+    //Enviar al backend
+    this.garantiaForm.reset();
+  }
+  
+  onTelefonoInput(event?: any) {
+  const input = event.target;
+  let value = input.value;
+
+  // Forzar que empiece con +569
+  if (!value.startsWith('+569')) {
+    value = '+569' + value.replace(/[^0-9]/g, '').substring(0, 8);
+  } else {
+    value = '+569' + value.substring(4).replace(/[^0-9]/g, '').substring(0, 8);
   }
 
-
-  onTelefonoInput(event?: any) {
-    const input = event.target;
-    let value = input.value;
-
-    // Forzar que empiece con +569
-    if (!value.startsWith('+569')) {
-      value = '+569' + value.replace(/[^0-9]/g, '').substring(0, 8);
-    } else {
-      value = '+569' + value.substring(4).replace(/[^0-9]/g, '').substring(0, 8);
-    }
-
-    input.value = value;
-    this.garantiaForm.get('TelCliente')?.setValue(value);
+  input.value = value;
+  this.garantiaForm.get('TelCliente')?.setValue(value);
   }
 
 
   mapFormularioARequest(formValue: any) {
+  
     return {
       rutServicioTecnico: formValue.RutServicioTecnico,
       nombreServicioAut: formValue.NombreServicioAut,
@@ -214,7 +230,8 @@ export class IngresarGarantiasComponent implements OnInit {
       nombreConsumidor: formValue.NombreConsumidor,
       rutConsumidor: formValue.RutConsumidor,
       nombreTecnico: formValue.Revendedor,
-      tipoDocumento : formValue.TipoDocumento
+      tipoDocumento : formValue.TipoDocumento,
+      
     };
   }
 
@@ -230,7 +247,7 @@ export class IngresarGarantiasComponent implements OnInit {
       { file: null, url: '', type: '', name: '' },
       { file: null, url: '', type: '', name: '' }
     ];
-   
+  
   }
 
   clearFile(index: number) {
@@ -325,7 +342,7 @@ export class IngresarGarantiasComponent implements OnInit {
       this.mostrarSugerencias = false;
       this.mostrarSugerenciasClientes = false;
       this.mostrarSugerenciasProveedores = false;
-    }, 200); // espera para permitir click
+    }, 200);
   }
 
   cargarComunas(codigoRegion: number) {
@@ -340,24 +357,36 @@ export class IngresarGarantiasComponent implements OnInit {
     });
   }
 
-  buscarClientes(code: any) {
-    console.log("code", code)
-    let cardCode = code.startsWith('C') ? code.substring(1) : code;
+  buscarClientes(code?: string) {
+    // Si no viene code, tomar el valor actual del FormControl
+    const inputValue = code ?? this.garantiaForm.get('RutServicioTecnico')?.value ?? '';
 
-     this.garantiasServices.getClientes(cardCode).subscribe({
+    // Normalizar: si empieza con 'C', quitarla
+    const cardCode = inputValue.startsWith('C') ? inputValue.substring(1) : inputValue;
+
+    this.garantiasServices.getClientes(cardCode).subscribe({
       next: (response) => {
         console.log("response clientes:", response);
 
-        // ✅ acceder al array correcto
         if (response && response.cliente && response.cliente.length > 0) {
-          const cliente = response.cliente[0]; // tomamos el primer cliente del array
-
-          this.garantiaForm.patchValue({ 
-            RutServicioTecnico: cliente.CardCode,   // lo dejamos tal cual
-            NombreServicioAut: cliente.CardName
-          });
+          // Si viene code -> tomar el primer cliente directamente
+          if (code) {
+            const cliente = response.cliente[0];
+            this.garantiaForm.patchValue({ 
+              RutServicioTecnico: cliente.CardCode,
+              NombreServicioAut: cliente.CardName
+            });
+            this.mostrarSugerenciasClientes = false; // no muestro lista
+          } else {
+            // Si fue búsqueda por typing -> mostrar sugerencias
+            this.clientesFiltrados = response.cliente;
+            this.mostrarSugerenciasClientes = true;
+             
+          }
         } else {
           console.warn("No se encontró cliente con el código:", cardCode);
+          this.clientesFiltrados = [];
+          this.mostrarSugerenciasClientes = false;
         }
       },
       error: (err) => console.error('Error en búsqueda de clientes', err)
@@ -365,11 +394,14 @@ export class IngresarGarantiasComponent implements OnInit {
   }
 
 
+
+
    seleccionarCliente(item: any) {
     this.garantiaForm.patchValue({ 
       RutServicioTecnico: item.CardCode.startsWith('C') ? item.CardCode.substring(1) : item.CardCode,
       NombreServicioAut: item.CardName
     });
+    // sessionStorage.setItem('cardCode', item.CardCode);
     this.clientesFiltrados = [];
     this.mostrarSugerenciasClientes = false;
   }
@@ -436,5 +468,17 @@ export class IngresarGarantiasComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  
+ mostrarAlerta() {
+    Swal.fire({
+      title: '¡Éxito!',
+      html: '<p class="swal2-text-custom">Orden generada correctamente</p>',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#008686',
+      customClass: { title: 'swal2-title-custom' },
+      showCloseButton: false,
+    });
+  }
+
+
 }

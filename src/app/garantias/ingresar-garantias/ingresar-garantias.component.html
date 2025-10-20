@@ -1,288 +1,312 @@
-<div class="card-garantias">
+<div  *ngIf="!isLoading" class="card-garantias">
   <form (ngSubmit)="onSubmit()" [formGroup]="garantiaForm">
-
-
-    <h3 class="seccion-titulo">Detalles del Producto</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="fecha">Fecha Ingreso</label>
-        <input type="date" id="fecha" formControlName="FechaDigitalizacionOs" />
-      </div>
-      <div class="form-group">
-        <label for="tipoDoc">Tipo Documento</label>
-        <select id="tipoDoc" formControlName="TipoDocumento">
-          <option value="" disabled>Selecciona tipo</option>
-          <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
-        </select>
-      </div>
-      <div class="form-group" style="position: relative;">
-        <label for="modelo">Modelo</label>
-        <input
-          type="text"
-          id="modelo"
-          formControlName="Modelo"
-          (input)="buscarModelos()"
-          (blur)="ocultarListaConDelay()"
-          (focus)="buscarModelos()" />
-
-          <!-- Lista de sugerencias -->
-          <ul
-            class="sugerencias"
-            *ngIf="modelosFiltrados.length > 0 && mostrarSugerencias"
-            style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
-            
-            <li
-              *ngFor="let item of modelosFiltrados"
-              (mousedown)="seleccionarModelo(item)"
-              style="padding: 5px; cursor: pointer;">
-              {{ item.ItemCode }} - {{ item.ItemName }}
-            </li>
-          </ul>
-      </div>
-      <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <input type="text" id="descripcion" formControlName="Descripcion" disabled  />
-      </div>
-      <div class="form-group">
-        <label for="serie">Serie</label>
-        <input type="text" id="serie" formControlName="serie" />
-      </div>
-    </div>
-
-   
-    <h3 class="seccion-titulo">Servicio Técnico Autorizado</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="revendedor">Nombre Técnico</label>
-        <input type="text" id="revendedor" formControlName="Revendedor" />
-      </div>
-      <div class="form-group" style="position: relative;">
-        <label for="rutServ">Rut Servicio Técnico</label>
-        <input 
-          type="text" 
-          id="rutServ" 
-          formControlName="RutServicioTecnico"
-          readonly/>
-      </div>
-      <div class="form-group" style="position: relative;">
-        <label for="nomServ">Nombre Servicio Autorizado</label>
-        <input 
-          type="text" 
-          id="nomServ" 
-          formControlName="NombreServicioAut"
-          readonly
-          />
-      </div>
-      
-    </div>
-    
-    <h3 class="seccion-titulo">Datos del Cliente</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="nomConsumidor">Nombre Cliente</label>
-        <input type="text" id="nomConsumidor" formControlName="NombreConsumidor" />
-      </div>
-      <div class="form-group">
-        <label for="telCliente">Teléfono Cliente</label>
-        <input
-          type="text"
-          id="telCliente"
-          formControlName="TelCliente"
-          [value]="garantiaForm.get('TelCliente')?.value"
-          (input)="onTelefonoInput($event)" 
-          maxlength="12"
-        />
         
-        <div class="error" *ngIf="garantiaForm.get('TelCliente')?.hasError('pattern')" style="color: red;">
-          El número debe empezar con +569 y contener 8 dígitos numéricos.
+    <div class="row">
+      <h3 class="seccion-titulo">Detalle del ingreso</h3>
+      <div class="col-md-6">
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="tipoDoc">Tipo documento :</label>
+          <div class="col-sm-7">
+            <select id="tipoDoc" formControlName="TipoDocumento">
+              <option value="" disabled>Selecciona tipo</option>
+              <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="regionConsumidor">Región Cliente</label>
-        <select id="regionConsumidor" formControlName="RegionConsumidor">
-          <option value="">Seleccione una región</option>
-          <option *ngFor="let region of dataRegiones" [value]="region.nombre">{{ region.nombre }}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="comunaConsumidor">Comuna Cliente</label>
-        <select id="comunaConsumidor" formControlName="ComunaConsumidor">
-          <option value="">Seleccione una comuna</option>
-          <option *ngFor="let comuna of dataComunas" [value]="comuna.nombre">{{ comuna.nombre }}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="dirConsumidor">Dirección Cliente</label>
-        <input type="text" id="dirConsumidor" formControlName="DireccionConsumidor" />
-      </div>
-      <div class="form-group">
-        <label for="rutConsumidor">Rut Cliente</label>
-        <input
-          type="text"
-          id="rutConsumidor"
-          formControlName="RutConsumidor"
-          [value]="garantiaForm.get('RutConsumidor')?.value"
-          (input)="onRutInput($event)" 
-          maxlength="12"
-        />
-
-        <!-- Mensaje de error si el formato o dígito verificador está mal -->
-        <div class="error"
-            *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('rutInvalido')"
-            style="color: red;">
-          RUT inválido.
-        </div>
-
-        <!-- Mensaje si está vacío y es requerido -->
-        <div class="error"
-            *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('required')"
-            style="color: red;">
-          El RUT es obligatorio.
-        </div>
-      </div>
-    </div>
-    
-    <h3 class="seccion-titulo">Distribuidor</h3>
-    <div class="form-grid">
-      <div class="form-group" style="position: relative;">
-        <label for="revendedor">Nombre Distribuidor</label>
-        <input 
-          type="text" 
-          id="revendedor" 
-          formControlName="Revendedor" 
-          (input)="buscarProveedor()"
-          (blur)="ocultarListaConDelay()"
-          (focus)="buscarProveedor()" />
-
-          <ul
-            class="sugerencias"
-            *ngIf="proveedorFiltrados.length > 0 && mostrarSugerenciasProveedores"
-            style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="rutServ">Rut STA :</label>
+          <div class="col-sm-7">
             
-            <li
-              *ngFor="let item of proveedorFiltrados"
-              (mousedown)="seleccionarProveedor(item)"
-              style="padding: 5px; cursor: pointer;">
-              {{ item.CardName }}
-            </li>
-          </ul>
+            <input
+              type="text"
+              id="rutServ"
+              formControlName="RutServicioTecnico"
+              (input)="buscarClientes()"
+              (blur)="ocultarListaConDelay()"
+              style="width: 100%;" />
+            
+              <!-- Lista de sugerencias -->
+            <ul
+              class="sugerencias"
+              *ngIf="clientesFiltrados.length > 0 && mostrarSugerenciasClientes"
+              style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+              
+              <li
+                *ngFor="let item of clientesFiltrados"
+                (mousedown)="seleccionarCliente(item)"
+                style="padding: 5px; cursor: pointer;">
+                {{ item.CardCode }} - {{ item.CardName }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label for="nomServ"class="col-sm-5 text-verde-makita">Nombre STA :</label>
+          <div class="col-sm-7">
+            <input type="text" id="nomServ"  formControlName="NombreServicioAut" class="form-control" />
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label for="nombreTecnico" class="col-sm-5 text-verde-makita">Nombre del técnico :</label>
+          <div class="col-sm-7">
+            <input type="text" id="nombreTecnico" formControlName="NombreTecnico" class="form-control" />
+          </div>
+        </div>
+        
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="fecha">Fecha ingreso :</label>
+          <div class="col-sm-7">
+            <input type="date" id="fecha" formControlName="FechaDigitalizacionOs" class="form-control" />
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="modelo">Modelo :</label>
+          <div class="col-sm-7">
+            <input
+              type="text"
+              id="modelo"
+              formControlName="Modelo"
+              (input)="buscarModelos()"
+              (blur)="ocultarListaConDelay()"
+              (focus)="buscarModelos()"
+              style="width: 100%;" />
+            
+              <!-- Lista de sugerencias -->
+            <ul
+              class="sugerencias"
+              *ngIf="modelosFiltrados.length > 0 && mostrarSugerencias"
+              style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+              
+              <li
+                *ngFor="let item of modelosFiltrados"
+                (mousedown)="seleccionarModelo(item)"
+                style="padding: 5px; cursor: pointer;">
+                {{ item.ItemCode }} - {{ item.ItemName }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="descripcion">Descripción :</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="descripcion" formControlName="Descripcion" disabled />
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="serie">Serie :</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="serie" formControlName="serie" />
+          </div>
+        </div>
+
       </div>
-    </div>
+      <div class="col-md-6">
+        
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="nomConsumidor">Nombre Cliente :</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="nomConsumidor" formControlName="NombreConsumidor" />
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="rutConsumidor">Rut Cliente :</label>
+          <div class="col-sm-7">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="rutConsumidor" 
+              formControlName="RutConsumidor" 
+              [value]="garantiaForm.get('RutConsumidor')?.value"
+              (input)="onRutInput($event)" 
+              maxlength="12" />
 
-    <h3 class="seccion-titulo">Adjuntar Archivos</h3>
-      <div class="form-grid">
-        <div class="form-group full-width adjuntos-container">
-
-          <!-- 1: Serie Herramienta -->
-          <div class="adjunto-item">
-            <label>Serie herramienta</label>
+              <div class="error"
+                *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('rutInvalido')"
+                style="color: red;">
+                RUT inválido.
+              </div>
+              <!-- Mensaje si está vacío y es requerido -->
+              <div class="error"
+                  *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('required')"
+                  style="color: red;">
+                El RUT es obligatorio.
+              </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="regionConsumidor">Región cliente :</label>
+          <div class="col-sm-7">
+            <select id="regionConsumidor" formControlName="RegionConsumidor">
+              <option value="">Seleccione una región</option>
+              <option *ngFor="let region of dataRegiones" [value]="region.nombre">{{ region.nombre }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="comunaConsumidor">Comuna cliente :</label>
+          <div class="col-sm-7">
+            <select id="comunaConsumidor" formControlName="ComunaConsumidor">
+              <option value="">Seleccione una comuna</option>
+              <option *ngFor="let comuna of dataComunas" [value]="comuna.nombre">{{ comuna.nombre }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="dirConsumidor">Dirección cliente :</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="dirConsumidor" formControlName="DireccionConsumidor" />
+          </div>
+        </div>
+        
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="revendedor">Nombre distribuidor</label>
+          <div class="col-sm-7">
+            <input 
+              type="text" 
+              id="revendedor" 
+              formControlName="Revendedor" 
+              (input)="buscarProveedor()"
+              (blur)="ocultarListaConDelay()"
+              (focus)="buscarProveedor()" style="width: 100%;" />
+            
+              
+            <ul
+              class="sugerencias"
+              *ngIf="proveedorFiltrados.length > 0 && mostrarSugerenciasProveedores"
+              style="position: absolute; background: white; border: 1px solid #ccc; width: 100%; max-height: 200px; overflow-y: auto; z-index: 10;">
+              
+              <li
+                *ngFor="let item of proveedorFiltrados"
+                (mousedown)="seleccionarProveedor(item)"
+                style="padding: 5px; cursor: pointer;">
+                {{ item.CardName }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="telCliente">Teléfono cliente :</label>
+          <div class="col-sm-7">
             <input
-              formControlName="serieHerramienta" 
-              type="file"
-              id="archivo0"
-              accept=".jpg,.jpeg,.png,.pdf"
-              (change)="onFileSelected($event, 0)"
-              required
+              class="form-control"
+              type="text"
+              id="telCliente"
+              formControlName="TelCliente"
+              [value]="garantiaForm.get('TelCliente')?.value"
+              (input)="onTelefonoInput($event)" 
+              maxlength="12"
             />
-            <div class="file-preview" *ngIf="filePreviews[0]">
-              <ng-container *ngIf="filePreviews[0].type.startsWith('image/')">
-                <img [src]="filePreviews[0].url" alt="Vista previa">
-              </ng-container>
-              <ng-container *ngIf="!filePreviews[0].type.startsWith('image/')">
-                <span>{{ filePreviews[0].name }}</span>
-              </ng-container>
-              <a style="cursor: pointer;" (click)="clearFile(0)">❌</a>
+            <div class="error" *ngIf="garantiaForm.get('TelCliente')?.hasError('pattern')" style="color: red;">
+              El número debe empezar con +569 y contener 8 dígitos numéricos.
             </div>
           </div>
-
-          <!-- 2: Herramienta -->
-          <div class="adjunto-item">
-            <label>herramienta</label>
-            <input
-              formControlName="herramienta" 
-              type="file"
-              id="archivo1"
-              accept=".jpg,.jpeg,.png,.pdf"
-              (change)="onFileSelected($event, 1)"
-              required
-            />
-            <div class="file-preview" *ngIf="filePreviews[1]">
-              <ng-container *ngIf="filePreviews[1].type.startsWith('image/')">
-                <img [src]="filePreviews[1].url" alt="Vista previa">
-              </ng-container>
-              <ng-container *ngIf="!filePreviews[1].type.startsWith('image/')">
-                <span>{{ filePreviews[1].name }}</span>
-              </ng-container>
-                <a style="cursor: pointer;" (click)="clearFile(1)">❌</a>
-            </div>
-          </div>
-
-          <!-- 3: Repuesto -->
-          <div class="adjunto-item">
-            <label>Adjuntar repuesto</label>
-            <input
-              formControlName="repuesto" 
-              type="file"
-              id="archivo2"
-              accept=".jpg,.jpeg,.png,.pdf"
-              (change)="onFileSelected($event, 2)"
-              required
-            />
-            <div class="file-preview" *ngIf="filePreviews[2]">
-              <ng-container *ngIf="filePreviews[2].type.startsWith('image/')">
-                <img [src]="filePreviews[2].url" alt="Vista previa">
-              </ng-container>
-              <ng-container *ngIf="!filePreviews[2].type.startsWith('image/')">
-                <span>{{ filePreviews[2].name }}</span>
-              </ng-container>
-                <a style="cursor: pointer;" (click)="clearFile(2)">❌</a>
-            </div>
-          </div>
-
-          <!-- 4: Boleta -->
-          <div class="adjunto-item">
-            <label>Boleta/Factura</label>
-            <input
-              formControlName="boleta" 
-              type="file"
-              id="archivo3"
-              accept=".jpg,.jpeg,.png,.pdf"
-              (change)="onFileSelected($event, 3)"
-              required
-            />
-            <div class="file-preview" *ngIf="filePreviews[3]">
-              <ng-container *ngIf="filePreviews[3].type.startsWith('image/')">
-                <img [src]="filePreviews[3].url" alt="Vista previa">
-              </ng-container>
-              <ng-container *ngIf="!filePreviews[3].type.startsWith('image/')">
-                <span>{{ filePreviews[3].name }} </span>
-              </ng-container>
-               <a style="cursor: pointer;" (click)="clearFile(3)">❌</a>
-            </div>
-          </div>
-
         </div>
       </div>
-      
-    <h3 class="seccion-titulo">Informe Técnico</h3>
+    </div>
     <div class="form-group full-width">
       <textarea id="informeTec" rows="3" formControlName="InformeTecnico" placeholder="Describe el diagnóstico..."></textarea>
     </div>
-
-    <div *ngIf="isLoading" id="loader">
-      <img src="../../assets/img/loader-preview.svg" alt="loading" />
-    </div>
     
+
+    <h3 class="seccion-titulo">Adjuntar Archivos</h3>
+    <div class="form-grid">
+      <div class="form-group full-width adjuntos-container">
+        <!-- 1: Serie Herramienta -->
+        <div class="adjunto-item">
+          <label>Serie herramienta</label>
+          <input
+            formControlName="serieHerramienta" 
+            type="file"
+            id="archivo0"
+            accept=".jpg,.jpeg,.png,.pdf"
+            (change)="onFileSelected($event, 0)"
+            required
+          />
+          <div class="file-preview" *ngIf="filePreviews[0]">
+            <ng-container *ngIf="filePreviews[0].type.startsWith('image/')">
+              <img [src]="filePreviews[0].url" alt="Vista previa">
+            </ng-container>
+            <ng-container *ngIf="!filePreviews[0].type.startsWith('image/')">
+              <span>{{ filePreviews[0].name }}</span>
+            </ng-container>
+            <a style="cursor: pointer;" (click)="clearFile(0)">❌</a>
+          </div>
+        </div>
+
+        <!-- 2: Herramienta -->
+        <div class="adjunto-item">
+          <label>herramienta</label>
+          <input
+            formControlName="herramienta" 
+            type="file"
+            id="archivo1"
+            accept=".jpg,.jpeg,.png,.pdf"
+            (change)="onFileSelected($event, 1)"
+            required
+          />
+          <div class="file-preview" *ngIf="filePreviews[1]">
+            <ng-container *ngIf="filePreviews[1].type.startsWith('image/')">
+              <img [src]="filePreviews[1].url" alt="Vista previa">
+            </ng-container>
+            <ng-container *ngIf="!filePreviews[1].type.startsWith('image/')">
+              <span>{{ filePreviews[1].name }}</span>
+            </ng-container>
+              <a style="cursor: pointer;" (click)="clearFile(1)">❌</a>
+          </div>
+        </div>
+
+        <!-- 3: Repuesto -->
+        <div class="adjunto-item">
+          <label>Adjuntar repuesto</label>
+          <input
+            formControlName="repuesto" 
+            type="file"
+            id="archivo2"
+            accept=".jpg,.jpeg,.png,.pdf"
+            (change)="onFileSelected($event, 2)"
+            required
+          />
+          <div class="file-preview" *ngIf="filePreviews[2]">
+            <ng-container *ngIf="filePreviews[2].type.startsWith('image/')">
+              <img [src]="filePreviews[2].url" alt="Vista previa">
+            </ng-container>
+            <ng-container *ngIf="!filePreviews[2].type.startsWith('image/')">
+              <span>{{ filePreviews[2].name }}</span>
+            </ng-container>
+              <a style="cursor: pointer;" (click)="clearFile(2)">❌</a>
+          </div>
+        </div>
+
+        <!-- 4: Boleta -->
+        <div class="adjunto-item">
+          <label>Boleta/Factura</label>
+          <input
+            formControlName="boleta" 
+            type="file"
+            id="archivo3"
+            accept=".jpg,.jpeg,.png,.pdf"
+            (change)="onFileSelected($event, 3)"
+            required
+          />
+          <div class="file-preview" *ngIf="filePreviews[3]">
+            <ng-container *ngIf="filePreviews[3].type.startsWith('image/')">
+              <img [src]="filePreviews[3].url" alt="Vista previa">
+            </ng-container>
+            <ng-container *ngIf="!filePreviews[3].type.startsWith('image/')">
+              <span>{{ filePreviews[3].name }} </span>
+            </ng-container>
+              <a style="cursor: pointer;" (click)="clearFile(3)">❌</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <button type="submit" [disabled]="garantiaForm.invalid">Guardar</button>
-    <br>
-    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
-        {{ mensaje }}
-    </div>
-    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-        {{ mensaje }}
-    </div>
 
-   
   </form>
-
 </div>
+
+   <div *ngIf="isLoading" class="loading">
+      <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
+      <p style="text-align: center;">{{mensajeCarga}}</p>
+    </div>

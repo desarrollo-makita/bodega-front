@@ -63,6 +63,10 @@ import { InventarioListadoComponent } from './listados/inventario-listado/invent
 import { ConsultaStockComponent } from './listados/consulta-stock/consulta-stock.component';
 import { InventarioSucursalComponent } from './listados/inventario-sucursal/inventario-sucursal.component';
 
+import { MatTableModule } from '@angular/material/table';
+import { RechazarOfertaVentaDialogComponent } from './shared/rechazar-oferta-venta-dialog/rechazar-oferta-venta-dialog.component';
+import { DefaultDialogComponent } from './shared/default-dialog/default-dialog.component';
+import { AprobarOfertaVentaComponent } from './shared/aprobar-oferta-venta-dialog/aprobar-oferta-venta.component';
 
 @NgModule({
   imports: [
@@ -91,7 +95,8 @@ import { InventarioSucursalComponent } from './listados/inventario-sucursal/inve
     MatProgressBarModule,
     MatRadioModule,
     MatTooltipModule,
-    MatProgressSpinnerModule 
+    MatProgressSpinnerModule,
+    MatTableModule
 
     
   ],
@@ -127,6 +132,9 @@ import { InventarioSucursalComponent } from './listados/inventario-sucursal/inve
     InventarioListadoComponent,
     ConsultaStockComponent,
     InventarioSucursalComponent,
+    RechazarOfertaVentaDialogComponent,
+    DefaultDialogComponent,
+    AprobarOfertaVentaComponent,
 
   ],
   providers: [{

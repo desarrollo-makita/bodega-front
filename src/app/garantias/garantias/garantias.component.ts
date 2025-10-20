@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthGuard } from 'app/auth/auth.guard';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
+import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
 import { EditarRepuestosDialogComponent } from 'app/shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 import { GarantiaDetalleDialogComponent } from 'app/shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 
@@ -22,7 +23,7 @@ interface Garantia {
   styleUrls: ['./garantias.component.scss']
 })
 export class GarantiasComponent implements OnInit {
-  isLoading = true;
+  isLoading :boolean= false;
   garantiaData: Garantia[] = [];
   garantiaDataIntranet: Garantia[] = [];
   garantiaPendiente = 0;
@@ -41,6 +42,9 @@ export class GarantiasComponent implements OnInit {
   cardCode : any;
   role: any;
   mostrarAcciones: boolean = false;
+  mensajeCarga:any;
+  exito:any;
+  decodedToken:any;
 
 
     constructor(
@@ -56,13 +60,27 @@ export class GarantiasComponent implements OnInit {
   ngOnInit(): void {
     // Simular carga
     const token = sessionStorage.getItem("authToken");
-    const decodedToken = this.authService.decodeToken(token);
-    this.cardCode = decodedToken.cardCode;
-    this.role = decodedToken.role;
+    this.decodedToken = this.authService.decodeToken(token);
+    console.log("Token decodificado: ", this.decodedToken);
+    this.cardCode = this.decodedToken.cardCode;
+    this.role = this.decodedToken.role;
     this.role === 'Administrador'  ? this.mostrarAcciones = true : this.mostrarAcciones = false;
-    this.filtrarGarantias();
-    this.isLoading = false;
+    
+    this.validarFiltros();
+    
 
+  }
+
+
+  validarFiltros(){
+    if(this.decodedToken.role === 'ST'){
+      this.filtrarGarantiasRut(this.decodedToken.cardCode);
+    }else{
+      this.filtrarGarantias();
+
+    }
+    
+    console.log()
   }
 
   actualizarConteos() {
@@ -82,41 +100,64 @@ export class GarantiasComponent implements OnInit {
   }
 
   obtenerGarantiasEstado(estado: string){
+    this.isLoading= true;
+    console.log("ingresadas : " , estado);
     
-   
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+    
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado , this.cardCode, this.role).subscribe({
-          next: (response) => {
-           
-            this.garantiaData = response.pedidosValidos.data;
-            
-            this.hasNullIdPedido = this.garantiaData.some(g => g.idPedido === null || g.idPedido === undefined);
-            
-            if(response.pedidosValidos.plataforma === 'intranet'){this.showIntranet = true;}
-          },
-          error: (error) => {
-            console.error('Error en la consulta:', error);
-        },
-          complete: () => {
-            setTimeout(() => {
-              this.isLoading = false;
-              this.bloquearCombo = false; // Bloquea el combo una vez que se cargan los datos
-            }, 500);
-          },
-      });
-    }else{
-      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode , this.role).subscribe({
-        next: (response) => {
-          console.log("Response: " , response);
-          this.garantiaData = response.pedidosValidos;
-          
-          this.showIntranet = false;
-        },
-        error: (error) => {
+    this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+      next: (response) => {
+        this.garantiaData = response.pedidosValidos;
+        this.showIntranet = true;
+      },
+      error: (error) => {
           console.error('Error en la consulta:', error);
         },
-        complete: () => {
+      complete: () => {
+
+        setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+            this.successMessage = false;
+          }, 1000);
+
+      }
+          
+      });
+        
+    }
+    
+    else{
+      this.garantiasServices.getGarantiasPorEstado().subscribe({
+      next: (response) => {
+        if(estado === 'pendientes'){
+          this.garantiaData = response.abiertas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia'
+          }));
+        }else if (estado === 'cerradas'){
+          
+            this.garantiaData = response.cerradas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia'
+          }));
+        }else if (estado === 'pendientesIncompletas'){
+          
+            this.garantiaData = response.pendientes.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia'
+          }));
+        }else{
+          this.garantiaData= [];
+        }
+          
+        this.showIntranet = false;
+        },
+      error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+      complete: () => {
           setTimeout(() => {
             this.isLoading = false;
             this.bloquearCombo = false;
@@ -125,7 +166,80 @@ export class GarantiasComponent implements OnInit {
         },
       });
     }
-   
+    
+    
+    
+  }
+
+  obtenerGarantiasEstadoRut(estado: string , rut : string){
+    this.isLoading= true;
+    console.log("ingresadas : " , estado , rut);
+      
+    this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+      
+    if(estado === 'ingresada'){
+      this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+        next: (response) => {
+          this.garantiaData = response.pedidosValidos;
+          console.log(this.garantiaData);
+          
+          this.showIntranet = true;
+        },
+        error: (error) => {
+            console.error('Error en la consulta:', error);
+          },
+        complete: () => {
+
+          setTimeout(() => {
+              this.isLoading = false;
+              this.bloquearCombo = false;
+              this.successMessage = false;
+            }, 1000);
+
+        }
+            
+        });
+        
+      }
+    
+    else{
+      this.garantiasServices.getGarantiasPorEstadoRut(rut).subscribe({
+      next: (response) => {
+         console.log("entro pendientes" , response);
+        if(estado === 'pendientes'){
+          
+          this.garantiaData = response.abiertas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia',
+              rol: this.role
+          }));
+
+          console.log("entro pendientes2" , this.garantiaData);
+        }else if (estado === 'cerradas'){
+          
+            this.garantiaData = response.cerradas.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia',
+              rol: this.role
+          }));
+        }else{
+          this.garantiaData= [];
+        }
+          
+        this.showIntranet = false;
+        },
+      error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+      complete: () => {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+            this.successMessage = false;
+          }, 1000);
+        },
+      });
+    }
   }
 
   obtenerGarantiasEstadoEditar(estado: string){
@@ -133,7 +247,7 @@ export class GarantiasComponent implements OnInit {
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado, this.cardCode, this.role).subscribe({
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
           next: (response) => {
           
             this.garantiaData = response.pedidosValidos.data;
@@ -153,7 +267,7 @@ export class GarantiasComponent implements OnInit {
           },
       });
     }else{
-      this.garantiasServices.getGarantiasPorEstado(estado, this.cardCode, this.role).subscribe({
+      this.garantiasServices.getGarantiasPorEstado().subscribe({
         next: (response) => {
       
           this.garantiaData = response.pedidosValidos;
@@ -173,47 +287,50 @@ export class GarantiasComponent implements OnInit {
   }
 
   filtrarGarantias() {
-    console.log("Estado seleccionado:", this.estadoSeleccionado);
-    if (this.estadoSeleccionado === 'pendientes') {
-      this.obtenerGarantiasEstado('EnProcesoAprobacion');
-    }else if(this.estadoSeleccionado === 'rechazadas'){
-      this.obtenerGarantiasEstado('Rechazadas');
-    }else{
-      this.obtenerGarantiasEstado(this.estadoSeleccionado);
-    }
+    this.obtenerGarantiasEstado(this.estadoSeleccionado);
+  }
+
+  filtrarGarantiasRut(rut) {
+    this.obtenerGarantiasEstadoRut(this.estadoSeleccionado , rut);
   }
 
   abrirDetalleGarantia(garantia: any): void {
+    
     const dialogRef = this.dialog.open(GarantiaDetalleDialogComponent, {
       data: garantia,
-      width: '900px',
-      maxHeight: '80vh',
+      // width: '900px',  
+      maxHeight: '80vh', // opcional, para que no desborde la pantalla
       panelClass: 'custom-dialog-container'
     });
     
     dialogRef.afterClosed().subscribe((resultado) => {
-       if (resultado.exito) {
+       if (resultado?.exito) {
         setTimeout(() => {
             this.filtrarGarantias();
            
           }, 1000);
           
-      }else if (resultado.mensaje === 'cierre') {
+      }else if (resultado?.mensaje === 'cierre') {
           setTimeout(() => {
             }, 1500);
-          }
+      }else{
+         // usuario canceló o cerró sin confirmar
+      console.log('Diálogo cerrado sin acción');
+      }
       
     });
   }
 
   abrirModalAgregarRepuesto(garantia: any): void {
     
+    console.log("Iniciando Modal DefaultDialogComponent con esta data : ", garantia);
+    
     const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
       data: garantia,
-      width: '1000px',
-      maxHeight: '80vh',
-      panelClass: 'custom-dialog-container',
-      disableClose: true
+      disableClose: true,
+      width: '500px',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container'
     });
 
     dialogRef.afterClosed().subscribe((resultado) => {
@@ -280,36 +397,27 @@ export class GarantiasComponent implements OnInit {
 
 
   enviarASAP(garantia : any){
-    this.isLoading= true;
-    let data = garantia.Id_Pedido;
-    this.garantiasServices.enviarSap(data).subscribe({
-      next: (response) => {
-        if (response?.error?.error || response?.error) {
-          this.errorMessage = true;
-          this.mensaje = response?.error?.error || response?.error;
-        }else {
-          this.successMessage = true;
-          this.mensaje = 'Enviado exitosamente a SAP'
+    
+    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+      data: { 
+        data: garantia,
+        clave: 'enviarASAP'
+    },
+      width: '80',
+      maxHeight: '80vh',
+      panelClass: 'custom-dialog-container',
+      disableClose: true,
+      autoFocus: false 
+    });
 
-        }
-      },
-      error: (error) => {
-        console.error('Error en la consulta:', error);
-      },
-      complete: () => {
-          setTimeout(() => {
-              this.isLoading = false;
-              this.errorMessage = false;
-              this.successMessage = false;
-              this.filtrarGarantias();
-            }, 2500);
-        
-      },
+  
+
+    dialogRef.afterClosed().subscribe((resultado) => {
+
+      
+       this.filtrarGarantias();
+      
     });
   }
-
-
-
-
 
 }

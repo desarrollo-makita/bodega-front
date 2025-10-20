@@ -61,11 +61,12 @@ button.mat-raised-button.confirm-button:hover {
 .confirm-button {
   background-color: #008686; /* color normal */
   color: white;
+  cursor: pointer;
 }
 
-.confirm-button.disabled-button {
-  background-color: #e0e0e0; /* gris apagado */
-  color: #9e9e9e; /* texto gris */
+.confirm-button:disabled {
+  background-color: #e0e0e0 !important; /* gris apagado */
+  color: #9e9e9e !important; /* texto gris */
   cursor: not-allowed;
 }
 
@@ -141,4 +142,13 @@ button.mat-raised-button.confirm-button:hover {
   &.warning {
     color: #ff9800; // naranja tipo aviso
   }
+}
+
+
+
+.comentario-field {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 15px auto;
+  display: block;
 }

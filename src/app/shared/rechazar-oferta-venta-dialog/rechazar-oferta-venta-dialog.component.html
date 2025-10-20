@@ -3,7 +3,7 @@
 
     <!-- FORMULARIO: solo visible si no hay éxito -->
     <ng-container *ngIf="!exito && !errorMsg">
-      <h2>Cerrar LLamada de servicio {{numeroLLamada}}</h2>
+      <h2>Rechazar Oferta de Venta {{numeroLLamada}}</h2>
 
       <mat-form-field appearance="outline" class="email-field">
         <mat-label>Correo electrónico de confirmación</mat-label>
@@ -16,15 +16,27 @@
         <mat-error *ngIf="email && !isValidEmail(email)">Formato de correo inválido</mat-error>
       </mat-form-field>
 
-      <p *ngIf="!errorMsg"  class="notice warning"> <strong>Se notificará al correo electrónico ingresado</strong></p>
-      <p *ngIf="!errorMsg" class="notice info"><strong>Se cerrarán las ofertas de venta que se encuentran asociadas a la llamada de servicio {{numeroLLamada}}</strong></p>
+      
+      <!-- NUEVO TEXTAREA -->
+      <mat-form-field appearance="outline" class="comentario-field">
+        <mat-label>Comentario</mat-label>
+        <textarea matInput 
+          rows="4" 
+          placeholder="Escriba un comentario opcional..."
+          [(ngModel)]="comentario"
+          (ngModelChange)="validarComentario(data)">
+        </textarea>
+      </mat-form-field>
+
+
+      <p *ngIf="!errorMsg" class="notice info"><strong>Se notificará al correo electrónico ingresado</strong></p>
     </ng-container>
 
     <!-- SPINNER: se muestra mientras carga -->
      
     <div *ngIf="isLoading" class="loading">
       <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
-      <p style="margin-top: 10px;">Procesando cierre de la llamada...</p>
+      <p style="margin-top: 10px;">Procesando cierre de la oferta...</p>
     </div>
 
     <!-- MENSAJE ÉXITO -->
@@ -42,5 +54,5 @@
 
 <mat-dialog-actions *ngIf="!isLoading && !exito && !errorMsg">
   <button mat-stroked-button class="cancel-button" (click)="onNoClick()">Cancelar</button>
-  <button mat-raised-button class="confirm-button" [disabled]="!isValidEmail(email)" (click)="confirmar()">Confirmar</button>
+  <button mat-raised-button class="confirm-button"   [disabled]="!isValidEmail(email) || !comentario"  (click)="confirmar()" >Confirmar</button>
 </mat-dialog-actions>

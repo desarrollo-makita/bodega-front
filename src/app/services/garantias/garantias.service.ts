@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 
@@ -8,43 +8,46 @@ import { Observable } from 'rxjs';
 })
 export class GarantiasService {
 
-    private obtenerGarantiasEstadoURL = "http://localhost:3026/api/obtener-garantias-estado";
-    private obtenerGarantiasIntranet = "http://localhost:3026/api/obtener-garantias-estado-intranet";
-    private insertarGarantiasIntranet = "http://localhost:3026/api/insertar-garantias-intranet";
-    private buscarItemURL = "http://localhost:3026/api/buscar-item-formulario";
-    private buscarComunasURL = "http://localhost:3026/api/obtener-comunas";
-    private buscarClientesURL = "http://localhost:3026/api/obtener-clientes";
-    private buscarRepuestosAccesoriosURL = "http://localhost:3026/api/buscar-item-repuesto-accesorio";
-    private insertarPedidosIntranetURL = "http://localhost:3026/api/insertar-pedido-garantia-intranet"
-    private obtenerDetalleGarantiasIntranetURL = "http://localhost:3026/api/obtener-detalle-garantia-intranet";
-    private buscarProveedorURL = "http://localhost:3026/api/obtener-proveedor";
-    private enviarSapURL = "http://localhost:3026/api/exportar-garantia-intranet";
-    private editarPedidosIntranetURL = "http://localhost:3026/api/editar-pedido-detalle-intranet"
-    private obtenerArticulosURL = "http://localhost:3026/api/detalle-articulos-orden";
-    private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
-    private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
-    private abrirDocumento = "http://localhost:3026/api/abrir-documento"
-    private rechazarOfertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
+    private obtenerGarantiasAbiertas = "http://172.16.1.206:3026/api/obtener-llamadas";
+    private obtenerGarantiasEstadoURL = "http://172.16.1.206:3026/api/obtener-garantias-estado";
+    private obtenerGarantiasIntranet = "http://172.16.1.206:3026/api/obtener-garantias-estado-intranet";
+    private insertarGarantiasIntranet = "http://172.16.1.206:3026/api/insertar-garantias-intranet";
+    private buscarItemURL = "http://172.16.1.206:3026/api/buscar-item-formulario";
+    private buscarComunasURL = "http://172.16.1.206:3026/api/obtener-comunas";
+    private buscarClientesURL = "http://172.16.1.206:3026/api/obtener-clientes";
+    private buscarRepuestosAccesoriosURL = "http://172.16.1.206:3026/api/buscar-item-repuesto-accesorio";
+    private insertarPedidosIntranetURL = "http://172.16.1.206:3026/api/insertar-pedido-garantia-intranet"
+    private obtenerDetalleGarantiasIntranetURL = "http://172.16.1.206:3026/api/obtener-detalle-garantia-intranet";
+    private buscarProveedorURL = "http://172.16.1.206:3026/api/obtener-proveedor";
+    private enviarSapURL = "http://172.16.1.206:3026/api/exportar-garantia-intranet";
+    private editarPedidosIntranetURL = "http://172.16.1.206:3026/api/editar-pedido-detalle-intranet"
+    private obtenerArticulosURL = "http://172.16.1.206:3026/api/detalle-articulos-orden";
+    private eliminarArticulosURL = "http://172.16.1.206:3026/api/eliminar-articulo-pedido"
+    private eliminarArticulosLocalURL = "http://172.16.1.206:3026/api/eliminar-articulo-pedido-local"
+    private abrirDocumento = "http://172.16.1.206:3026/api/abrir-documento"
+    private cerrarOfertaVentaURL = "http://172.16.1.206:3026/api/cerrar-oferta-venta"
+    private obtenerOfertaVentaURL = "http://172.16.1.206:3026/api/obtener-ofertas-ventas";
+    private cargarDocumentosURL = "http://172.16.1.206:3026/api/obtener-documentos-llamada";
+    private descargarDocumentosURL = "http://172.16.1.206:3026/api/anexos";
+    private cerrarLLamadaServicioURL = "http://172.16.1.206:3026/api/cerrar-llamada-servicio"
+    private rechazarOfertaVentaURL = "http://172.16.1.206:3026/api/rechazar-oferta-venta"
 
 
 
   constructor(private http: HttpClient) {}
 
-  getGarantiasPorEstado(estado: string , cardCode: string ,role:string): Observable<any> {
-    console.log("estado en servicio: " , estado);
-    console.log( "Role en servicio: " , role);
-    console.log("CardCode en servicio: " , cardCode);
-    const url = `${this.obtenerGarantiasEstadoURL}/${estado}/${cardCode}/${role}`;
+  getGarantiasPorEstado(): Observable<any> {
+    const url = `${this.obtenerGarantiasAbiertas}`;
     return this.http.get<any>(url);
   }  
   
-  getGarantiasPorEstadoIntranet(estado: string , cardCode: string, role:string): Observable<any> {
-    const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}/${role}`;
+  getGarantiasPorEstadoIntranet(estado: string ): Observable<any> {
+    const url = `${this.obtenerGarantiasIntranet}/${estado}`;
     return this.http.get<any>(url);
   }
   
   insertarGarantiaIntranet(data : any): Observable<any> {
-    return this.http.post<any>(this.insertarGarantiasIntranet, { data });
+    return this.http.post<any>(this.insertarGarantiasIntranet,  data );
   }
 
   buscarItems(filtro: string): Observable<any> {
@@ -110,7 +113,28 @@ export class GarantiasService {
     return this.http.get(url, { responseType: 'blob' });
   }
 
-  rechazarOfertaVenta(data : any): Observable<any> {
-    return this.http.post<any>(this.rechazarOfertaVentaURL, { data });
+  cerrarOfertaVenta(data : any): Observable<any> {
+    return this.http.post<any>(this.cerrarOfertaVentaURL, { data });
   }
+
+  obtenerOfertasVentas(docEntry: any): Observable<any> {
+    const url = `${this.obtenerOfertaVentaURL}/${docEntry}`;
+    return this.http.get<any>(url);
+  }
+
+  cargarDocumentos(attachmentEntry: any): Observable<any> {
+    const url = `${this.cargarDocumentosURL}/${attachmentEntry}`;
+    return this.http.get<any>(url);
+  }
+
+   descargarDocumentos(attachmentEntry: any): Observable<any> {
+    const url = `${this.descargarDocumentosURL}/${attachmentEntry}/$value`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+    cerrarLLamadaServicio(data : any): Observable<any> {
+    return this.http.post<any>(this.cerrarLLamadaServicioURL, { data });
+  }
+
+  
 }

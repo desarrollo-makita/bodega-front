@@ -37,6 +37,10 @@
       &.rechazado {
         color: #e53935; /* Rojo */
       }
+      &.pendientesIncompletas {
+        color: #3f51b5; /* Azul Material */
+      
+      }
     }
   }
 }
@@ -96,6 +100,10 @@
         }
         span.rechazado {
           color: #e53935;
+          font-weight: bold;
+        }
+         span.pendientesIncompletas {
+          color: #3f51b5;
           font-weight: bold;
         }
       }

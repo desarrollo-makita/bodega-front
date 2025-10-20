@@ -56,7 +56,7 @@
 
               <mat-form-field appearance="fill">
                 <mat-label>Precio *</mat-label>
-                <input matInput type="number" formControlName="precio" />
+                <input matInput type="number" formControlName="precio" readonly />
               </mat-form-field>
 
               <button mat-icon-button color="warn" (click)="eliminarRepuesto(i)" matTooltip="Eliminar">
@@ -85,42 +85,60 @@
       </div>
     </div>
     <div *ngIf="tabSeleccionada === 'detalle'" class="tab-content">
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Numero Pedido</th>
-            <th>Descripción</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>Tipo Documento</th>
-            <th>Acción</th> 
+      <div *ngIf="detallePedidoList.length > 0; else sinPedidos">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Numero Pedido</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Tipo Documento</th>
+              <th>Acción</th> 
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let repuesto of detallePedidoList">
+              <td>{{ repuesto.Referencia }}</td>
+              <td>{{ repuesto.ID }}</td>
+              <td>{{ repuesto.descripcion }}</td>
+              <td>{{ repuesto.Cantidad }}</td>
+              <td>{{ repuesto.Precio }}</td>
+              <td>{{ repuesto.TipoItem === '04-REPUESTOS' ? 'REPUESTOS' : 'ACCESORIOS'  }}</td>
+              <td>
+                <button mat-icon-button color="warn" (click)="eliminarRepuestoLocal(repuesto)" matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
             
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let repuesto of detallePedidoList">
-            <td>{{ repuesto.Referencia }}</td>
-            <td>{{ repuesto.Pedido_ID }}</td>
-            <td>{{ repuesto.descripcion }}</td>
-            <td>{{ repuesto.Cantidad }}</td>
-            <td>{{ repuesto.Precio }}</td>
-            <td>{{ repuesto.TipoDocumento  }}</td>
-            <td>
-              <button mat-icon-button color="warn" (click)="eliminarRepuestoLocal(repuesto)" matTooltip="Eliminar">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-           
-          
-          </tr>
-        </tbody>
-      </table>
+            
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <ng-template #sinPedidos>
+        <p>No se encontraron pedidos para esta garantia, debe agregar un pedido</p>
+      </ng-template>
     </div>
     <div *ngIf="tabSeleccionada === 'anexos'" class="tab-content">
       <h4 style="margin-bottom: 1rem;">Documentos Adjuntos</h4>
-      
-      
+  
+       <div *ngIf="documentosAdjuntos.length > 0; else sinAnexos">
+        <ul>
+          <li *ngFor="let doc of documentosAdjuntos">
+            <a href="#" (click)="abrirDocumento(doc); $event.preventDefault()">
+              {{ doc.nombreArchivo }}
+            </a>
+            <small *ngIf="descargando[doc.nombreArchivo]"> (descargando...)</small>
+          </li>
+        </ul>
+      </div>
+
+      <ng-template #sinAnexos>
+        <p>No se encontraron documentos adjuntos para esta garantía.</p>
+      </ng-template>
     </div>
     <div *ngIf="isLoading" id="loader">
           <img src="../../assets/img/loader-preview.svg" alt="loading" />

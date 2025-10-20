@@ -1,3 +1,15 @@
+/* variables rápidas */
+$makita-teal: #008686;
+$makita-red: #e53935;
+
+  .campos-repuesto {
+    display: grid;
+    grid-template-columns: 29fr 18fr 14fr auto 29fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
 .modal-backdrop {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.4);
@@ -9,8 +21,7 @@
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 85%;
-  max-width: 850px;
+  width: 65%;
   max-height: 85vh;
   background: #fff;
   border-radius: 10px;
@@ -83,30 +94,12 @@
 }
 
 .modal-body {
+
   .tab-content {
      background: transparent !important; /* para evitar fondo blanco extra */
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid #eee;
-        font-size: 1.8rem;
-
-      .label {
-        font-weight: 500;
-        color: #007a85;
-        max-width: 50%;
-        word-wrap: break-word;
-      }
-      .value {
-        color: #444;
-        max-width: 65%;
-        word-wrap: break-word;
-        font-weight: 100;
-      }
-    }
-
-     ul {
+   
+      
+      ul {
       list-style: none;
       padding-left: 0;
       margin-top: 1rem;
@@ -155,7 +148,23 @@
       }
     }
   }
+
+   
 }
+
+ .botones-acciones-agregar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      font-size: 1.4rem;
+      padding: 0.6rem 1.5rem;
+    }
+    
+  }
+  
 
 .botones-acciones {
   display: flex;
@@ -168,7 +177,7 @@
     font-size: 1.6rem;
     border: none;
     border-radius: 6px;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.2s ease;
 
@@ -183,6 +192,12 @@
 
   &:hover {
     background-color: #006f6f;
+  }&:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
   }
 }
 
@@ -217,8 +232,8 @@ textarea {
   color: #e53935;
 }
 
-.pendiente {
-  color: #ff9800 !important;
+.pendientesIncompletas {
+  color: #3f51b5 !important;
   font-weight: bold !important;
 }
 
@@ -236,6 +251,111 @@ textarea {
   font-weight: bold !important;
 }
 
+.ajuste-derecha
+{
+  margin-left : 87px;
+}
+
+
+.text-negro {
+  color: black;
+}
+
+.text-verde-makita {
+  color: #008686; /* Color verde Makita */
+  font-weight: bold; /* opcional, para que resalte */
+}
+
+.mat-expansion-panel table {
+  margin-bottom: 0;
+}
+.mat-expansion-panel th, 
+.mat-expansion-panel td {
+  padding: 0.5rem;
+  vertical-align: unset;
+}
+
+
+.header-container {
+  display: flex;
+  justify-content: space-between; /* fecha a la izquierda, estado a la derecha */
+  width: 100%;
+  margin-right: 30%;
+}
+
+.estado.cerrada {
+  color: #e53935; /* o el color que quieras para cerrada */
+  font-weight: 500;
+}
+
+.estado.abierta {
+  color: #008686; /* verde Makita */
+  font-weight: 500;
+}
+
+
+.fecha{
+  font-weight: bold;
+}
+
+
+.boton-agregar {
+  margin-top: 2rem;
+  border-color: #008686;
+  color: #008686;
+  font-weight: 500;
+}
+
+.boton-guardar-habilitado {
+  background-color: #008686 !important;
+  color: white !important;
+}
+
+.boton-guardar-deshabilitado {
+  background-color: rgba(0, 134, 134, 0.4) !important; // tono apagado
+  color: white !important;
+  cursor: not-allowed;
+}
+
+.swal2-makita-popup {
+  font-family: 'Roboto', sans-serif; 
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 100% !important;  // más grande que el default
+}
+
+.swal2-makita-title {
+  font-size: 1.5rem !important; 
+  font-weight: bold;
+  color: #008686;
+}
+
+.swal2-makita-text {
+  font-size: 1rem !important;
+  color: #333;
+}
+
+.swal2-makita-confirm {
+  background-color: #008686 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 500;
+}
+
+.swal2-makita-cancel {
+  background-color: #e0e0e0 !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 500;
+}
+
+.swal2-makita-icon {
+  transform: scale(1.3); // icono más grande
+}
 
 
 /* Animación */
@@ -249,3 +369,20 @@ textarea {
     transform: translate(-50%, 0);
   }
 }
+
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.3); /* semitransparente */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999; /* que quede encima de todo */
+}
+
+
