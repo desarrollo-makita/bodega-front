@@ -1,28 +1,27 @@
-
-
 <div class="modal-container mat-elevation-z8">
   <header class="modal-header">
     <h3>Agregar Repuestos</h3>
   </header>
+
+  <!-- Tabs -->
   <nav class="tabs">
-    <button
-      [class.active]="tabSeleccionada === 'agregar'"
-      (click)="tabSeleccionada = 'agregar'">
-      <span class="material-icons">info</span> Agreger Item
+    <button [class.active]="tabSeleccionada === 'agregar'" (click)="tabSeleccionada = 'agregar'">
+      <span class="material-icons">info</span> Agregar Item
     </button>
 
-    <button
-      [class.active]="tabSeleccionada === 'detalle'"
-      (click)="tabSeleccionada = 'detalle'">
+    <button [class.active]="tabSeleccionada === 'detalle'" (click)="tabSeleccionada = 'detalle'">
       <span class="material-icons">inventory_2</span> Consulta Pedidos
     </button>
-    <button
-      [class.active]="tabSeleccionada === 'anexos'"
-      (click)="tabSeleccionada = 'anexos'">
+
+    <button [class.active]="tabSeleccionada === 'anexos'" (click)="tabSeleccionada = 'anexos'">
       <span class="material-icons">attach_file</span> Anexos
     </button>
   </nav>
+
+  <!-- Contenido -->
   <section class="modal-body">
+    
+    <!-- TAB AGREGAR -->
     <div *ngIf="tabSeleccionada === 'agregar'" class="tab-content">
       <form [formGroup]="formularioRepuestos">
         <div formArrayName="repuestos">
@@ -42,7 +41,6 @@
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
-              
 
               <mat-form-field appearance="fill">
                 <mat-label>Descripción *</mat-label>
@@ -71,19 +69,24 @@
           <mat-icon>add</mat-icon> Agregar otro repuesto
         </button>
       </form>
-      
+
       <div class="botones-acciones">
         <button mat-button (click)="cerrar()">Cancelar</button>
         <button
           mat-flat-button
           [disabled]="formularioRepuestos.invalid"
-          [ngClass]="{ 'boton-guardar-habilitado': formularioRepuestos.valid, 'boton-guardar-deshabilitado': formularioRepuestos.invalid }"
+          [ngClass]="{
+            'boton-guardar-habilitado': formularioRepuestos.valid,
+            'boton-guardar-deshabilitado': formularioRepuestos.invalid
+          }"
           (click)="guardar()"
         >
           Guardar
         </button>
       </div>
     </div>
+
+    <!-- TAB DETALLE -->
     <div *ngIf="tabSeleccionada === 'detalle'" class="tab-content">
       <div *ngIf="detallePedidoList.length > 0; else sinPedidos">
         <table>
@@ -95,44 +98,33 @@
               <th>Cantidad</th>
               <th>Precio</th>
               <th>Tipo Documento</th>
-              <th>Acción</th> 
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let repuesto of detallePedidoList">
               <td>{{ repuesto.Referencia }}</td>
-              <td>{{ repuesto.ID }}</td>
+              <td>{{ repuesto.ID || repuesto.Pedido_ID }}</td>
               <td>{{ repuesto.descripcion }}</td>
               <td>{{ repuesto.Cantidad }}</td>
               <td>{{ repuesto.Precio || 1 }}</td>
-              <td>{{ repuesto.TipoItem === '04-REPUESTOS' ? 'REPUESTOS' : 'ACCESORIOS'  }}</td>
+              <td>{{ repuesto.TipoItem === '04-REPUESTOS' ? 'REPUESTOS' : repuesto.TipoDocumento }}</td>
               <td>
                 <button mat-icon-button color="warn" (click)="eliminarRepuestoLocal(repuesto)" matTooltip="Eliminar">
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>
-            
-          </tr>
-  
-        <tbody>
-          <tr *ngFor="let repuesto of detallePedidoList">
-            <td>{{ repuesto.Referencia }}</td>
-            <td>{{ repuesto.Pedido_ID }}</td>
-            <td>{{ repuesto.descripcion }}</td>
-            <td>{{ repuesto.Cantidad }}</td>
-            <td>{{ repuesto.Precio }}</td>
-            <td>{{ repuesto.TipoDocumento  }}</td>
-            <td>
-              <button mat-icon-button color="warn" (click)="eliminarRepuestoLocal(repuesto)" matTooltip="Eliminar">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-           
-          
-          </tr>
-        </tbody>
-      </table>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #sinPedidos>
+        <p>No se encontraron pedidos para mostrar.</p>
+      </ng-template>
     </div>
+
+    <!-- TAB ANEXOS -->
     <div *ngIf="tabSeleccionada === 'anexos'" class="tab-content">
       <h4 style="margin-bottom: 1rem;">Documentos Adjuntos</h4>
 
@@ -149,6 +141,7 @@
 
       <form *ngIf="documentosAdjuntos.length === 0" [formGroup]="formularioAdjuntos">
         <div class="form-group full-width adjuntos-container">
+          
           <!-- 1: Serie Herramienta -->
           <div class="adjunto-item">
             <label>Serie herramienta</label>
@@ -170,11 +163,12 @@
               <a style="cursor: pointer;" (click)="clearFile(0)">❌</a>
             </div>
           </div>
+
           <!-- 2: Herramienta -->
           <div class="adjunto-item">
-            <label>herramienta</label>
+            <label>Herramienta</label>
             <input
-              formControlName="herramienta" 
+              formControlName="herramienta"
               type="file"
               id="archivo1"
               accept=".jpg,.jpeg,.png,.pdf"
@@ -188,7 +182,7 @@
               <ng-container *ngIf="!filePreviews[1].type.startsWith('image/')">
                 <span>{{ filePreviews[1].name }}</span>
               </ng-container>
-                <a style="cursor: pointer;" (click)="clearFile(1)">❌</a>
+              <a style="cursor: pointer;" (click)="clearFile(1)">❌</a>
             </div>
           </div>
 
@@ -196,7 +190,7 @@
           <div class="adjunto-item">
             <label>Adjuntar repuesto</label>
             <input
-              formControlName="repuesto" 
+              formControlName="repuesto"
               type="file"
               id="archivo2"
               accept=".jpg,.jpeg,.png,.pdf"
@@ -210,7 +204,7 @@
               <ng-container *ngIf="!filePreviews[2].type.startsWith('image/')">
                 <span>{{ filePreviews[2].name }}</span>
               </ng-container>
-                <a style="cursor: pointer;" (click)="clearFile(2)">❌</a>
+              <a style="cursor: pointer;" (click)="clearFile(2)">❌</a>
             </div>
           </div>
 
@@ -218,7 +212,7 @@
           <div class="adjunto-item">
             <label>Boleta/Factura</label>
             <input
-              formControlName="boleta" 
+              formControlName="boleta"
               type="file"
               id="archivo3"
               accept=".jpg,.jpeg,.png,.pdf"
@@ -230,12 +224,13 @@
                 <img [src]="filePreviews[3].url" alt="Vista previa">
               </ng-container>
               <ng-container *ngIf="!filePreviews[3].type.startsWith('image/')">
-                <span>{{ filePreviews[3].name }} </span>
+                <span>{{ filePreviews[3].name }}</span>
               </ng-container>
-                <a style="cursor: pointer;" (click)="clearFile(3)">❌</a>
+              <a style="cursor: pointer;" (click)="clearFile(3)">❌</a>
             </div>
           </div>
         </div>
+
         <div class="botones-acciones">
           <button mat-button (click)="cerrar()">Cancelar</button>
           <button
@@ -250,8 +245,7 @@
           >
             <mat-icon>upload</mat-icon> Enviar Archivos
           </button>
-      </div>
-
+        </div>
       </form>
 
       <ng-template #sinAnexos>
