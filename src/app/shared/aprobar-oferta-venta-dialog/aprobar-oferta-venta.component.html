@@ -1,0 +1,58 @@
+<mat-dialog-content>
+  <div class="dialog-content">
+
+    <!-- FORMULARIO: solo visible si no hay éxito -->
+    <ng-container *ngIf="!exito && !errorMsg">
+      <h2>Aprobar Oferta de Venta {{numeroLLamada}}</h2>
+
+      <mat-form-field appearance="outline" class="email-field">
+        <mat-label>Correo electrónico de confirmación</mat-label>
+        <input matInput 
+               placeholder="ejemplo@correo.com" 
+               [(ngModel)]="email"
+               required
+               email>
+        <mat-error *ngIf="!email">El correo es obligatorio</mat-error>
+        <mat-error *ngIf="email && !isValidEmail(email)">Formato de correo inválido</mat-error>
+      </mat-form-field>
+
+      
+      <!-- NUEVO TEXTAREA -->
+      <mat-form-field appearance="outline" class="comentario-field">
+        <mat-label>Comentario</mat-label>
+        <textarea matInput 
+          rows="4" 
+          placeholder="Escriba un comentario opcional..."
+          [(ngModel)]="comentario"
+          (ngModelChange)="validarComentario(data)">
+        </textarea>
+      </mat-form-field>
+
+
+      <p *ngIf="!errorMsg" class="notice info"><strong>Se notificará al correo electrónico ingresado</strong></p>
+    </ng-container>
+
+    <!-- SPINNER: se muestra mientras carga -->
+     
+    <div *ngIf="isLoading" class="loading">
+      <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
+      <p style="margin-top: 10px;">Aprobanndo Oferta y creando la Orden...</p>
+    </div>
+
+    <!-- MENSAJE ÉXITO -->
+    <div *ngIf="exito" class="exito">
+      <mat-icon class="check-icon">check_circle</mat-icon>
+      <p>{{ mensajeExito }}</p>
+    </div>
+    
+    <div *ngIf="errorMsg"  class="error-class">
+      <mat-icon class="error-icon"> highlight_off</mat-icon>
+      <p >{{ errorMensaje }}</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions *ngIf="!isLoading && !exito && !errorMsg">
+  <button mat-stroked-button class="cancel-button" (click)="onNoClick()">Cancelar</button>
+  <button mat-raised-button class="confirm-button"   [disabled]="!isValidEmail(email) || !comentario"  (click)="confirmar()" >Confirmar</button>
+</mat-dialog-actions>

@@ -58,6 +58,9 @@ import { IngresarGarantiasComponent } from './garantias/ingresar-garantias/ingre
 import { AgregarRepuestosDialogComponent } from './shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
 import { EditarRepuestosDialogComponent } from './shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 import { MatTableModule } from '@angular/material/table';
+import { RechazarOfertaVentaDialogComponent } from './shared/rechazar-oferta-venta-dialog/rechazar-oferta-venta-dialog.component';
+import { DefaultDialogComponent } from './shared/default-dialog/default-dialog.component';
+import { AprobarOfertaVentaComponent } from './shared/aprobar-oferta-venta-dialog/aprobar-oferta-venta.component';
 
 @NgModule({
   imports: [
@@ -118,6 +121,9 @@ import { MatTableModule } from '@angular/material/table';
     IngresarGarantiasComponent,
     AgregarRepuestosDialogComponent,
     EditarRepuestosDialogComponent,
+    RechazarOfertaVentaDialogComponent,
+    DefaultDialogComponent,
+    AprobarOfertaVentaComponent,
 
     
     

@@ -1,0 +1,23 @@
+<mat-dialog-content>
+  <div class="dialog-content">
+    
+    <!-- SPINNER: se muestra mientras carga -->
+     
+    <div *ngIf="isLoading" class="loading">
+      <mat-spinner diameter="50" style="margin: auto;"></mat-spinner>
+      <p style="text-align: center;">{{mensajeCarga}}</p>
+    </div>
+
+        
+    <!-- MENSAJE ÉXITO -->
+    <div *ngIf="exito" class="exito">
+      <mat-icon class="check-icon">check_circle</mat-icon>
+      <p>{{ responseMensaje }}</p>
+    </div>
+    
+    <div *ngIf="errorMsg"  class="error-class">
+      <mat-icon class="error-icon"> highlight_off</mat-icon>
+      <p >{{ responseMensaje }}</p>
+    </div>
+  </div>
+</mat-dialog-content>

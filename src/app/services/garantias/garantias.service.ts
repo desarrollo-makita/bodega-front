@@ -50,20 +50,19 @@ export class GarantiasService {
     return this.http.get<any>(url);
   } 
   
-  getGarantiasPorEstadoIntranet(estado: string , cardCode: string, role:string): Observable<any> {
-    const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}/${role}`;
+  getGarantiasPorEstadoIntranet(estado: string ): Observable<any> {
+    const url = `${this.obtenerGarantiasIntranet}/${estado}`;
     return this.http.get<any>(url);
   }
 
-  //Nuevo servicio creado , para buscar las ingresadas por estado ingresadas y rut 
+   //Nuevo servicio creado , para buscar las ingresadas por estado ingresadas y rut 
    getGarantiasPorEstadoRutIntranet(estado: string , rut: string): Observable<any> {
     const url = `${this.obtenerGarantiasEstadoRutURL}/${estado}/${rut}`;
     return this.http.get<any>(url);
   }
   
-  
   insertarGarantiaIntranet(data : any): Observable<any> {
-    return this.http.post<any>(this.insertarGarantiasIntranet, { data });
+    return this.http.post<any>(this.insertarGarantiasIntranet,  data );
   }
   
   adjuntarArchivosSTM(formData: FormData): Observable<any> {
@@ -157,7 +156,6 @@ export class GarantiasService {
     cerrarLLamadaServicio(data : any): Observable<any> {
     return this.http.post<any>(this.cerrarLLamadaServicioURL, { data });
   }
-
     crearOfertaVenta(data : any): Observable<any> {
       return this.http.post<any>(this.crearOfertaVentaURL, { data });
     }
@@ -166,7 +164,7 @@ export class GarantiasService {
       return this.http.post<any>(this.rechazarOFertaVentaURL, { data });
     }
 
-   aprobarOfertaVenta(data : any): Observable<any> {
+    aprobarOfertaVenta(data : any): Observable<any> {
       return this.http.post<any>(this.aprobarOFertaVentaURL, { data });
     }
 

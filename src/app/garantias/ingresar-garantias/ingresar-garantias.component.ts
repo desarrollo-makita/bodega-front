@@ -107,8 +107,7 @@ export class IngresarGarantiasComponent implements OnInit {
       boleta: [null, this.userRole === 'STM' ? [] : [Validators.required]],
        NombreTecnico: ['', Validators.required],
     });   
-    this.garantiaForm.get('RutServicioTecnico')?.disable();
-    this.garantiaForm.get('NombreServicioAut')?.disable();
+ 
     
     this.garantiaForm.get('Modelo')?.valueChanges.subscribe((valor) => {
       if (!valor) {
@@ -133,12 +132,21 @@ export class IngresarGarantiasComponent implements OnInit {
 
 
   obtenerRutLogueado() {
-    let cardCode = sessionStorage.getItem('cardCode');
-    this.dataService.getCardCode().pipe(take(1)).subscribe({
+     this.dataService.getUserObjectData().pipe(take(1)).subscribe({
       next: (response) => {
         // Si comienza con "C", le quitamos solo esa letra
-        console.log("response" , cardCode);
-        this.buscarClientes(cardCode);
+        let data = response != null ? response.CardCode : sessionStorage.getItem('cardCode') ;
+        
+        if (data !== null && data !== "null" && data !== undefined && data !== "") {
+          let cardCode = data;
+          this.buscarClientes(cardCode);
+          this.garantiaForm.get('RutServicioTecnico')?.disable();
+          this.garantiaForm.get('NombreServicioAut')?.disable();
+        }else{
+           this.garantiaForm.get('RutServicioTecnico')?.enable();
+          this.garantiaForm.get('NombreServicioAut')?.enable();
+        }
+        
       },
       error: (error) => {
         console.error("Error al obtener responseReconteo", error);
@@ -146,20 +154,17 @@ export class IngresarGarantiasComponent implements OnInit {
       complete: () => {},
     });
   }
-
-
   
   onSubmit(): void {
-    this.isLoading = true;
-
+    
     if (!this.garantiaForm.valid) {
       this.garantiaForm.markAllAsTouched();
-      this.isLoading = false;
+      
       return;
     }
 
     // Obtener y mapear datos del formulario
-   
+  
     const formValue = this.garantiaForm.getRawValue();
     const mappedData = this.mapFormularioARequest(formValue);
 
@@ -171,7 +176,7 @@ export class IngresarGarantiasComponent implements OnInit {
       formData.append(key, value ?? ''); // Evitar undefined
     });
 
-    // 4️⃣ Agregar archivos
+    //Agregar archivos
     this.filePreviews.forEach((filePreview, index) => {
       if (!filePreview || !filePreview.file) return;
 
@@ -205,24 +210,10 @@ export class IngresarGarantiasComponent implements OnInit {
     this.garantiaForm.reset();
   }
 
-
-  onTelefonoInput(event?: any) {
-    const input = event.target;
-    let value = input.value;
-
-    // Forzar que empiece con +569
-    if (!value.startsWith('+569')) {
-      value = '+569' + value.replace(/[^0-9]/g, '').substring(0, 8);
-    } else {
-      value = '+569' + value.substring(4).replace(/[^0-9]/g, '').substring(0, 8);
-    }
-
-    input.value = value;
-    this.garantiaForm.get('TelCliente')?.setValue(value);
-  }
-
+  
 
   mapFormularioARequest(formValue: any) {
+  
     return {
       rutServicioTecnico: formValue.RutServicioTecnico,
       nombreServicioAut: formValue.NombreServicioAut,
@@ -239,7 +230,8 @@ export class IngresarGarantiasComponent implements OnInit {
       nombreConsumidor: formValue.NombreConsumidor,
       rutConsumidor: formValue.RutConsumidor,
       nombreTecnico: formValue.Revendedor,
-      tipoDocumento : formValue.TipoDocumento
+      tipoDocumento : formValue.TipoDocumento,
+      
     };
   }
 
@@ -255,7 +247,7 @@ export class IngresarGarantiasComponent implements OnInit {
       { file: null, url: '', type: '', name: '' },
       { file: null, url: '', type: '', name: '' }
     ];
-   
+  
   }
 
   clearFile(index: number) {
@@ -350,7 +342,7 @@ export class IngresarGarantiasComponent implements OnInit {
       this.mostrarSugerencias = false;
       this.mostrarSugerenciasClientes = false;
       this.mostrarSugerenciasProveedores = false;
-    }, 200); // espera para permitir click
+    }, 200);
   }
 
   cargarComunas(codigoRegion: number) {
@@ -365,24 +357,36 @@ export class IngresarGarantiasComponent implements OnInit {
     });
   }
 
-  buscarClientes(code: any) {
-    console.log("code", code)
-    let cardCode = code.startsWith('C') ? code.substring(1) : code;
+  buscarClientes(code?: string) {
+    // Si no viene code, tomar el valor actual del FormControl
+    const inputValue = code ?? this.garantiaForm.get('RutServicioTecnico')?.value ?? '';
 
-     this.garantiasServices.getClientes(cardCode).subscribe({
+    // Normalizar: si empieza con 'C', quitarla
+    const cardCode = inputValue.startsWith('C') ? inputValue.substring(1) : inputValue;
+
+    this.garantiasServices.getClientes(cardCode).subscribe({
       next: (response) => {
         console.log("response clientes:", response);
 
-        // ✅ acceder al array correcto
         if (response && response.cliente && response.cliente.length > 0) {
-          const cliente = response.cliente[0]; // tomamos el primer cliente del array
-
-          this.garantiaForm.patchValue({ 
-            RutServicioTecnico: cliente.CardCode,   // lo dejamos tal cual
-            NombreServicioAut: cliente.CardName
-          });
+          // Si viene code -> tomar el primer cliente directamente
+          if (code) {
+            const cliente = response.cliente[0];
+            this.garantiaForm.patchValue({ 
+              RutServicioTecnico: cliente.CardCode,
+              NombreServicioAut: cliente.CardName
+            });
+            this.mostrarSugerenciasClientes = false; // no muestro lista
+          } else {
+            // Si fue búsqueda por typing -> mostrar sugerencias
+            this.clientesFiltrados = response.cliente;
+            this.mostrarSugerenciasClientes = true;
+             
+          }
         } else {
           console.warn("No se encontró cliente con el código:", cardCode);
+          this.clientesFiltrados = [];
+          this.mostrarSugerenciasClientes = false;
         }
       },
       error: (err) => console.error('Error en búsqueda de clientes', err)
@@ -390,11 +394,14 @@ export class IngresarGarantiasComponent implements OnInit {
   }
 
 
+
+
    seleccionarCliente(item: any) {
     this.garantiaForm.patchValue({ 
       RutServicioTecnico: item.CardCode.startsWith('C') ? item.CardCode.substring(1) : item.CardCode,
       NombreServicioAut: item.CardName
     });
+    // sessionStorage.setItem('cardCode', item.CardCode);
     this.clientesFiltrados = [];
     this.mostrarSugerenciasClientes = false;
   }

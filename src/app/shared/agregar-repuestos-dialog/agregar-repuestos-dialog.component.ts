@@ -28,6 +28,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   errorMessage:boolean = false;
 
   detallePedidoList: any[] = [];
+
   pedido: any;
   mensajeCarga:any;
 
@@ -52,6 +53,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
   ) 
   {
     this.garantia = this.data;
+    
     this.formularioRepuestos = this.fb.group({
       repuestos: this.fb.array([this.crearRepuesto()])
     });
@@ -266,7 +268,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
     this.isLoading = true;
     const data = 
     {
-      idPedido : repuesto.Pedido_ID,
+      idPedido : repuesto.ID,
       referencia : repuesto.Referencia,
       idItem: repuesto.ID_Item
 
@@ -307,6 +309,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
         setTimeout(() => {
           this.isLoading= false;     
           this.formularioRepuestos.reset();
+         
         }, 1500);
       },
     });

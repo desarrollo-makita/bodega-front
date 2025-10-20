@@ -13,6 +13,7 @@ export interface User {
     Rol: string;
     UsuarioID: number;
     actividad: Actividad[];
+    CardCode: string;
   }
 
   interface Actividad {

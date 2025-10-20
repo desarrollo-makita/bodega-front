@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthGuard } from 'app/auth/auth.guard';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-dialog/agregar-repuestos-dialog.component';
+import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
 import { EditarRepuestosDialogComponent } from 'app/shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 import { GarantiaDetalleDialogComponent } from 'app/shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
 
@@ -41,6 +42,15 @@ export class GarantiasComponent implements OnInit {
   cardCode : any;
   role: any;
   mostrarAcciones: boolean = false;
+  mensajeCarga:any;
+  exito:any;
+  decodedToken:any;
+
+  fechaDesde: Date | null = null;
+  fechaHasta: Date | null = null;
+
+  garantiaDataOriginal: any[] = []; // Copia original sin filtrar
+
 
 
     constructor(
@@ -55,14 +65,30 @@ export class GarantiasComponent implements OnInit {
 
   ngOnInit(): void {
     // Simular carga
+    console.log("entroooooaca  : ");
     const token = sessionStorage.getItem("authToken");
-    const decodedToken = this.authService.decodeToken(token);
-    this.cardCode = decodedToken.cardCode;
-    this.role = decodedToken.role;
+    this.decodedToken = this.authService.decodeToken(token);
+    console.log("Token decodificado: ", this.decodedToken);
+    this.cardCode = this.decodedToken.cardCode;
+    this.role = this.decodedToken.role;
     this.role === 'Administrador'  ? this.mostrarAcciones = true : this.mostrarAcciones = false;
-    this.filtrarGarantias();
+    
+    this.validarFiltros();
     
 
+  }
+
+
+  validarFiltros(){
+    console.log("dekodetoken" , this.decodedToken.role);
+    if(this.decodedToken.role === 'ST' || this.decodedToken.role === 'STM'){
+      this.filtrarGarantiasRut(this.decodedToken.cardCode);
+    }else{
+      this.filtrarGarantias();
+
+    }
+    
+    console.log()
   }
 
   actualizarConteos() {
@@ -86,18 +112,133 @@ export class GarantiasComponent implements OnInit {
     
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     
-    this.garantiasServices.getGarantiasPorEstado().subscribe({
+  if(estado === 'ingresada'){
+    this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+      next: (response) => {
+          this.garantiaDataOriginal = response.pedidosValidos.map(item => ({
+            ...item,
+            tipoLLamada: 'Garantia'
+          }));
+          this.garantiaData = [...this.garantiaDataOriginal];
+        
+        this.showIntranet = true;
+      },
+      error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+      complete: () => {
+
+        setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+            this.successMessage = false;
+          }, 1000);
+
+      }
+          
+      });
+        
+    }
+    
+    else{
+      this.garantiasServices.getGarantiasPorEstado().subscribe({
+
       next: (response) => {
         if(estado === 'pendientes'){
+           this.garantiaDataOriginal = response.abiertas.map(item => ({
+            ...item,
+            tipoLLamada: 'Garantia'
+        }));
+          console.log("garantiaData" , this.garantiaData);
+        }else if (estado === 'cerradas'){
+          this.garantiaDataOriginal = response.cerradas.map(item => ({
+            ...item,
+            tipoLLamada: 'Garantia'
+          }));
+
+        }else if (estado === 'pendientesIncompletas'){
+          
+          this.garantiaDataOriginal = response.pendientes.map(item => ({
+          ...item,
+          tipoLLamada: 'Garantia'
+          }));
+
+        }else{
+          this.garantiaData= [];
+        }
+          this.garantiaData = [...this.garantiaDataOriginal];
+          this.showIntranet = false;
+      
+        },
+      error: (error) => {
+          console.error('Error en la consulta:', error);
+        },
+      complete: () => {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.bloquearCombo = false;
+            this.successMessage = false;
+          }, 1000);
+        },
+      });
+
+    }
+    
+    
+    
+  }
+
+  obtenerGarantiasEstadoRut(estado: string , rut : string){
+    this.isLoading= true;
+    console.log("ingresadas : " , estado , rut);
+      
+    this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
+      
+    if(estado === 'ingresada'){
+      this.garantiasServices.getGarantiasPorEstadoRutIntranet(estado, rut).subscribe({
+        next: (response) => {
+          console.log("responseeeeeeeee::::",response)
+          this.garantiaData = response.pedidosValidos;
+          console.log(this.garantiaData);
+          
+          this.showIntranet = true;
+        },
+        error: (error) => {
+            console.error('Error en la consulta:', error);
+          },
+        complete: () => {
+
+          setTimeout(() => {
+              this.isLoading = false;
+              this.bloquearCombo = false;
+              this.successMessage = false;
+            }, 1000);
+
+        }
+            
+        });
+        
+      }
+    
+    else{
+      this.garantiasServices.getGarantiasPorEstadoRut(rut).subscribe({
+      next: (response) => {
+         console.log("entro pendientes" , response);
+        if(estado === 'pendientes'){
+          
           this.garantiaData = response.abiertas.map(item => ({
               ...item,
-              tipoLLamada: 'Garantia'
+              tipoLLamada: 'Garantia',
+              rol: this.role
           }));
+
+          console.log("entro pendientes2" , this.garantiaData);
         }else if (estado === 'cerradas'){
           
             this.garantiaData = response.cerradas.map(item => ({
               ...item,
-              tipoLLamada: 'Garantia'
+              tipoLLamada: 'Garantia',
+              rol: this.role
           }));
         }else{
           this.garantiaData= [];
@@ -116,14 +257,16 @@ export class GarantiasComponent implements OnInit {
           }, 1000);
         },
       });
+    }
+
   }
 
-  obtenerGarantiasEstadoEditar(estado: string){
+    obtenerGarantiasEstadoEditar(estado: string){
     
     this.isLoading = true;
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     if(estado === 'ingresada'){
-        this.garantiasServices.getGarantiasPorEstadoIntranet(estado, this.cardCode, this.role).subscribe({
+        this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
           next: (response) => {
           
             this.garantiaData = response.pedidosValidos.data;
@@ -165,8 +308,12 @@ export class GarantiasComponent implements OnInit {
   filtrarGarantias() {
     this.obtenerGarantiasEstado(this.estadoSeleccionado);
   }
-
+  
+  filtrarGarantiasRut(rut) {
+    this.obtenerGarantiasEstadoRut(this.estadoSeleccionado , rut);
+  }
   abrirDetalleGarantia(garantia: any): void {
+    
     const dialogRef = this.dialog.open(GarantiaDetalleDialogComponent, {
       data: garantia,
       // width: '900px',  
@@ -175,51 +322,42 @@ export class GarantiasComponent implements OnInit {
     });
     
     dialogRef.afterClosed().subscribe((resultado) => {
-       if (resultado.exito) {
+       if (resultado?.exito) {
         setTimeout(() => {
             this.filtrarGarantias();
            
           }, 1000);
           
-      }else if (resultado.mensaje === 'cierre') {
+      }else if (resultado?.mensaje === 'cierre') {
           setTimeout(() => {
             }, 1500);
-          }
+      }else{
+         // usuario canceló o cerró sin confirmar
+      console.log('Diálogo cerrado sin acción');
+      }
       
     });
   }
 
   abrirModalAgregarRepuesto(garantia: any): void {
     
+
+    console.log("Iniciando Modal abrirModalAgregarRepuesto con esta data : ", garantia);
+
     const dialogRef = this.dialog.open(AgregarRepuestosDialogComponent, {
       data: garantia,
-      width: '1000px',
-      maxHeight: '80vh',
+      width: '500px',
+      maxHeight: '90vh',
       panelClass: 'custom-dialog-container',
       disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((resultado) => {
-      if (resultado) {
-        // Mostrar mensaje en el componente padre
-        if (resultado.exito) {
-          this.obtenerGarantiasEstado(this.estadoSeleccionado);
-          this.successMessage= true
-          this.mensaje = resultado.mensaje;
-         
-        } else {
-          this.errorMessage = true
-          this.mensaje = resultado.mensaje;
-         
-        }
-
-        // Mostrar el mensaje por unos segundos (opcional)
-        setTimeout(() => {
-          this.mensaje = '';
-          this.successMessage = false;
-          this.errorMessage = false;
-        }, 1500);
-      }
+    
+      console.log("resultado :_ " , resultado);
+      this.obtenerGarantiasEstado(this.estadoSeleccionado);
+        
+       
     });
   }
 
@@ -262,37 +400,88 @@ export class GarantiasComponent implements OnInit {
 
 
 
-  enviarASAP(garantia : any){
-    this.isLoading= true;
-    let data = garantia.Id_Pedido;
-    this.garantiasServices.enviarSap(data).subscribe({
-      next: (response) => {
-        if (response?.error?.error || response?.error) {
-          this.errorMessage = true;
-          this.mensaje = response?.error?.error || response?.error;
-        }else {
-          this.successMessage = true;
-          this.mensaje = 'Enviado exitosamente a SAP'
+   enviarASAP(garantia : any){
+    
+    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+      data: { 
+        data: garantia,
+        clave: 'enviarASAP'
+    },
+      width: '80',
+      maxHeight: '80vh',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      autoFocus: false 
+    });
 
-        }
-      },
-      error: (error) => {
-        console.error('Error en la consulta:', error);
-      },
-      complete: () => {
-          setTimeout(() => {
-              this.isLoading = false;
-              this.errorMessage = false;
-              this.successMessage = false;
-              this.filtrarGarantias();
-            }, 2500);
-        
-      },
+  
+
+    dialogRef.afterClosed().subscribe((resultado) => {
+
+      
+       this.filtrarGarantias();
+      
     });
   }
 
 
+  filtrarPorFecha() {
+    
+    if (!this.fechaDesde && !this.fechaHasta) {
+      alert('Por favor selecciona al menos una fecha');
+      return;
+    }
 
+
+    if (this.estadoSeleccionado === 'ingresada') {
+      let dataFiltrada = [...this.garantiaDataOriginal];
+
+      console.log("dataFiltradaaaa", dataFiltrada);
+
+      dataFiltrada = dataFiltrada.filter(x => {
+        const fechaItem = new Date(x.FechaAbertura);
+        const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+        const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+
+        // 🧩 Normalizar todas las fechas al inicio del día
+        fechaItem.setHours(0, 0, 0, 0);
+        if (desde) desde.setHours(0, 0, 0, 0);
+        if (hasta) hasta.setHours(0, 0, 0, 0);
+
+        return (!desde || fechaItem >= desde) && (!hasta || fechaItem <= hasta);
+      });
+
+      this.garantiaData = dataFiltrada;
+      console.log("Filtrado ingresadas:", this.garantiaData);
+    }else{
+      
+      let dataFiltrada = [...this.garantiaDataOriginal];
+
+      console.log("dataFiltrada" , dataFiltrada);
+
+      dataFiltrada = dataFiltrada.filter(x => {
+        const fechaItem = new Date(x.CreationDate);
+        const desde = this.fechaDesde ? new Date(this.fechaDesde) : null;
+        const hasta = this.fechaHasta ? new Date(this.fechaHasta) : null;
+
+        return (!desde || fechaItem >= desde) && (!hasta || fechaItem <= hasta);
+      });
+
+      this.garantiaData = dataFiltrada;
+    }
+
+    
+}
+
+
+  
+
+// 🔹 Función para limpiar los campos de fecha
+  limpiarFiltroFecha() {
+    this.fechaDesde = null;
+    this.fechaHasta = null;
+    this.garantiaData = [...this.garantiaDataOriginal];
+  }
 
 
 }
