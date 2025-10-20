@@ -229,3 +229,94 @@ button[mat-icon-button] {
     color: #008686; /* Azul Material */
   }
 
+
+ .filtro-fecha {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; /* menos espacio entre elementos */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.6s ease-in-out;
+  flex-wrap: wrap; /* para que no se rompa en pantallas pequeñas */
+}
+
+/* 🔹 Campos de fecha (Angular Material) */
+.filtro-fecha-campo {
+  min-width: 150px; /* más compacto */
+  max-width: 180px;
+  flex: 0 0 auto; /* no se estiren demasiado */
+  font-size: 13px;
+}
+
+/* 🔹 Ajusta el padding interno y altura del input */
+::ng-deep .filtro-fecha-campo .mat-form-field-wrapper {
+  padding: 0 6px !important;
+}
+
+::ng-deep .filtro-fecha-campo .mat-input-element {
+  height: 32px; /* más pequeño */
+  font-size: 13px;
+}
+
+/* 🔹 Personaliza los colores institucionales */
+::ng-deep .filtro-fecha-campo.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #00909E !important;
+  border-color: #00909E !important;
+}
+
+::ng-deep .filtro-fecha-campo.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  border-color: #008686 !important;
+}
+
+::ng-deep .filtro-fecha-campo .mat-form-field-label {
+  color: #00909E !important;
+}
+
+::ng-deep .filtro-fecha-campo .mat-input-element {
+  color: #00909E !important;
+}
+
+::ng-deep .mat-datepicker-toggle-default-icon {
+  color: #00909E !important;
+}
+
+/* 🔹 Botones */
+.filtro-fecha button[mat-raised-button] {
+  background-color: #00909E;
+  color: white;
+  border-radius: 8px;
+  padding: 0.5rem 1rem; /* más compacto */
+  font-weight: 500;
+  font-size: 13px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.filtro-fecha button[mat-raised-button]:hover {
+  background-color: #008686;
+  transform: scale(1.05);
+}
+
+.filtro-fecha button[mat-button][color="warn"] {
+  color: #e53935;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.filtro-fecha button[mat-button][color="warn"]:hover {
+  text-decoration: underline;
+}
+
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.3); /* semitransparente */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999; /* que quede encima de todo */
+}

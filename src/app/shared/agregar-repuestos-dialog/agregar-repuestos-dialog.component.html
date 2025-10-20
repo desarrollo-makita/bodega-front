@@ -1,4 +1,4 @@
-<div class="modal-backdrop" (click)="cerrar()"></div>
+
 
 <div class="modal-container mat-elevation-z8">
   <header class="modal-header">
@@ -85,19 +85,35 @@
       </div>
     </div>
     <div *ngIf="tabSeleccionada === 'detalle'" class="tab-content">
-      <table>
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Numero Pedido</th>
-            <th>Descripción</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>Tipo Documento</th>
-            <th>Acción</th> 
+      <div *ngIf="detallePedidoList.length > 0; else sinPedidos">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Numero Pedido</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Tipo Documento</th>
+              <th>Acción</th> 
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let repuesto of detallePedidoList">
+              <td>{{ repuesto.Referencia }}</td>
+              <td>{{ repuesto.ID }}</td>
+              <td>{{ repuesto.descripcion }}</td>
+              <td>{{ repuesto.Cantidad }}</td>
+              <td>{{ repuesto.Precio || 1 }}</td>
+              <td>{{ repuesto.TipoItem === '04-REPUESTOS' ? 'REPUESTOS' : 'ACCESORIOS'  }}</td>
+              <td>
+                <button mat-icon-button color="warn" (click)="eliminarRepuestoLocal(repuesto)" matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
             
           </tr>
-        </thead>
+  
         <tbody>
           <tr *ngFor="let repuesto of detallePedidoList">
             <td>{{ repuesto.Referencia }}</td>
@@ -119,17 +135,129 @@
     </div>
     <div *ngIf="tabSeleccionada === 'anexos'" class="tab-content">
       <h4 style="margin-bottom: 1rem;">Documentos Adjuntos</h4>
-      
-      
+
+      <div *ngIf="documentosAdjuntos.length > 0; else sinAnexos">
+        <ul>
+          <li *ngFor="let doc of documentosAdjuntos">
+            <a href="#" (click)="abrirDocumento(doc); $event.preventDefault()">
+              {{ doc.nombreArchivo }}
+            </a>
+            <small *ngIf="descargando[doc.nombreArchivo]"> (descargando...)</small>
+          </li>
+        </ul>
+      </div>
+
+      <form *ngIf="documentosAdjuntos.length === 0" [formGroup]="formularioAdjuntos">
+        <div class="form-group full-width adjuntos-container">
+          <!-- 1: Serie Herramienta -->
+          <div class="adjunto-item">
+            <label>Serie herramienta</label>
+            <input
+              formControlName="serieHerramienta"
+              type="file"
+              id="archivo0"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 0)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[0]">
+              <ng-container *ngIf="filePreviews[0].type.startsWith('image/')">
+                <img [src]="filePreviews[0].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[0].type.startsWith('image/')">
+                <span>{{ filePreviews[0].name }}</span>
+              </ng-container>
+              <a style="cursor: pointer;" (click)="clearFile(0)">❌</a>
+            </div>
+          </div>
+          <!-- 2: Herramienta -->
+          <div class="adjunto-item">
+            <label>herramienta</label>
+            <input
+              formControlName="herramienta" 
+              type="file"
+              id="archivo1"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 1)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[1]">
+              <ng-container *ngIf="filePreviews[1].type.startsWith('image/')">
+                <img [src]="filePreviews[1].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[1].type.startsWith('image/')">
+                <span>{{ filePreviews[1].name }}</span>
+              </ng-container>
+                <a style="cursor: pointer;" (click)="clearFile(1)">❌</a>
+            </div>
+          </div>
+
+          <!-- 3: Repuesto -->
+          <div class="adjunto-item">
+            <label>Adjuntar repuesto</label>
+            <input
+              formControlName="repuesto" 
+              type="file"
+              id="archivo2"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 2)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[2]">
+              <ng-container *ngIf="filePreviews[2].type.startsWith('image/')">
+                <img [src]="filePreviews[2].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[2].type.startsWith('image/')">
+                <span>{{ filePreviews[2].name }}</span>
+              </ng-container>
+                <a style="cursor: pointer;" (click)="clearFile(2)">❌</a>
+            </div>
+          </div>
+
+          <!-- 4: Boleta -->
+          <div class="adjunto-item">
+            <label>Boleta/Factura</label>
+            <input
+              formControlName="boleta" 
+              type="file"
+              id="archivo3"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 3)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[3]">
+              <ng-container *ngIf="filePreviews[3].type.startsWith('image/')">
+                <img [src]="filePreviews[3].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[3].type.startsWith('image/')">
+                <span>{{ filePreviews[3].name }} </span>
+              </ng-container>
+                <a style="cursor: pointer;" (click)="clearFile(3)">❌</a>
+            </div>
+          </div>
+        </div>
+        <div class="botones-acciones">
+          <button mat-button (click)="cerrar()">Cancelar</button>
+          <button
+            mat-flat-button
+            color="primary"
+            [disabled]="!tieneArchivosSeleccionados()"
+            [ngClass]="{
+              'boton-guardar-habilitado': tieneArchivosSeleccionados(),
+              'boton-guardar-deshabilitado': !tieneArchivosSeleccionados()
+            }"
+            (click)="enviarArchivos()"
+          >
+            <mat-icon>upload</mat-icon> Enviar Archivos
+          </button>
+      </div>
+
+      </form>
+
+      <ng-template #sinAnexos>
+        <p>No se encontraron documentos adjuntos para esta garantía.</p>
+      </ng-template>
     </div>
-    <div *ngIf="isLoading" id="loader">
-          <img src="../../assets/img/loader-preview.svg" alt="loading" />
-    </div>
-    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
-            {{ mensaje }}
-    </div>
-    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-          {{ mensaje }}
-    </div>
+
   </section>
 </div>

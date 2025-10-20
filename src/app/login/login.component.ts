@@ -56,29 +56,32 @@ export class LoginComponent implements OnInit {
           
           this.dataService.setArrayData(response.data.menu);
           
-          console.log('Login successful');
+          console.log('Login successful' , response);
 
           this.dataService.setUserObjectData(response.data);
           this.dataService.setCardCode(response.data.CardCode);
           sessionStorage.setItem('cardCode', response.data.CardCode);
-          
+            console.log('llego aca1');
           if(response.data.recuperarClave ===  1){
             console.log("responseeeeeeee : " , response.data);
             response.data.claveTemporal = this.claveProvisoria;
               this.openDialogReplaceKey('1300ms', '1300ms' , response.data);
             
           }else{
+             console.log('llego aca2' , response.data);
             // Guarda el token en el localStorage
             sessionStorage.setItem('authToken', response.data.token);
-          
+          console.log('llego aca3');
             if(response.data.Rol === 'Consulta'){
               this.router.navigate(['/inventario']);
             }else if(response.data.Rol === 'Administrador'){
               this.router.navigate(['/user']);
-            }else if(response.data.Rol === 'ST'){
+            }else if(response.data.Rol === 'ST' || response.data.Rol === 'STM'){
                this.router.navigate(['/servicio-tecnico']);
             }else if(response.data.Rol === 'Operario'){
               this.errorMessage = 'Usuario sin permiso para ingresar al mantenedor';
+            }else{
+              this.errorMessage = 'Usuario Nuevo';
             }
 
           }

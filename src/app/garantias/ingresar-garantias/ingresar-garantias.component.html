@@ -273,6 +273,103 @@
       <img src="../../assets/img/loader-preview.svg" alt="loading" />
     </div>
     
+
+    <div *ngIf="userRole !== 'STM'">  
+      <h3 class="seccion-titulo">Adjuntar Archivos</h3>
+      <div class="form-grid">
+        <div class="form-group full-width adjuntos-container">
+          <!-- 1: Serie Herramienta -->
+          <div class="adjunto-item">
+            <label>Serie herramienta</label>
+            <input
+              formControlName="serieHerramienta" 
+              type="file"
+              id="archivo0"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 0)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[0]">
+              <ng-container *ngIf="filePreviews[0].type.startsWith('image/')">
+                <img [src]="filePreviews[0].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[0].type.startsWith('image/')">
+                <span>{{ filePreviews[0].name }}</span>
+              </ng-container>
+              <a style="cursor: pointer;" (click)="clearFile(0)">❌</a>
+            </div>
+          </div>
+
+          <!-- 2: Herramienta -->
+          <div class="adjunto-item">
+            <label>herramienta</label>
+            <input
+              formControlName="herramienta" 
+              type="file"
+              id="archivo1"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 1)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[1]">
+              <ng-container *ngIf="filePreviews[1].type.startsWith('image/')">
+                <img [src]="filePreviews[1].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[1].type.startsWith('image/')">
+                <span>{{ filePreviews[1].name }}</span>
+              </ng-container>
+                <a style="cursor: pointer;" (click)="clearFile(1)">❌</a>
+            </div>
+          </div>
+
+          <!-- 3: Repuesto -->
+          <div class="adjunto-item">
+            <label>Adjuntar repuesto</label>
+            <input
+              formControlName="repuesto" 
+              type="file"
+              id="archivo2"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 2)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[2]">
+              <ng-container *ngIf="filePreviews[2].type.startsWith('image/')">
+                <img [src]="filePreviews[2].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[2].type.startsWith('image/')">
+                <span>{{ filePreviews[2].name }}</span>
+              </ng-container>
+                <a style="cursor: pointer;" (click)="clearFile(2)">❌</a>
+            </div>
+          </div>
+
+          <!-- 4: Boleta -->
+          <div class="adjunto-item">
+            <label>Boleta/Factura</label>
+            <input
+              formControlName="boleta" 
+              type="file"
+              id="archivo3"
+              accept=".jpg,.jpeg,.png,.pdf"
+              (change)="onFileSelected($event, 3)"
+              required
+            />
+            <div class="file-preview" *ngIf="filePreviews[3]">
+              <ng-container *ngIf="filePreviews[3].type.startsWith('image/')">
+                <img [src]="filePreviews[3].url" alt="Vista previa">
+              </ng-container>
+              <ng-container *ngIf="!filePreviews[3].type.startsWith('image/')">
+                <span>{{ filePreviews[3].name }} </span>
+              </ng-container>
+                <a style="cursor: pointer;" (click)="clearFile(3)">❌</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
     <button type="submit" [disabled]="garantiaForm.invalid">Guardar</button>
     <br>
     <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">

@@ -23,6 +23,29 @@
               </mat-select>
             </mat-form-field>
           </div>
+          <!-- Filtro por Fecha -->
+        <div class="filtro-fecha mb-3 d-flex align-items-center">
+          <mat-form-field appearance="outline" class="filtro-fecha-campo">
+            <mat-label>Fecha desde</mat-label>
+            <input matInput [matDatepicker]="pickerDesde" [(ngModel)]="fechaDesde">
+            <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+            <mat-datepicker #pickerDesde></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtro-fecha-campo ml-3">
+            <mat-label>Fecha hasta</mat-label>
+            <input matInput [matDatepicker]="pickerHasta" [(ngModel)]="fechaHasta">
+            <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+            <mat-datepicker #pickerHasta></mat-datepicker>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="ml-3" (click)="filtrarPorFecha()">
+            Filtrar por fecha
+          </button>
+
+          
+        </div>
+
         </div>
         <div *ngIf="isLoading" id="loader" class="overlay" style="margin-top: 10em;">
           <img src="../../../assets/img/loader-preview.svg" alt="loading" />
@@ -79,6 +102,7 @@
                 <tr>
                   <th>Folio</th>
                   <th>Pedido</th>
+                  <th>Nombre Servicio Técnico</th>
                   <th>Nombre Cliente</th>
                   <th>Descripción Item</th>
                   <th>Item Modelo</th>
@@ -95,6 +119,9 @@
                   </td>
                   <td >
                     {{ garantia.Id_Pedido }}
+                  </td>
+                  <td >
+                    {{ garantia.NombreServicioAut }}
                   </td>
                   <td >
                     {{ garantia.NombreConsumidor }}
@@ -120,7 +147,7 @@
                       <mat-icon>add_circle</mat-icon>
                     </button>
 
-                    <button *ngIf="garantia.Id_Pedido != null"
+                    <button *ngIf="garantia?.Id_Pedido != null && garantia?.documentos?.length > 0"
                       mat-icon-button
                       class="boton-enviar-sap"
                       (click)="enviarASAP(garantia)"

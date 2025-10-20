@@ -8,6 +8,11 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { MyDataService } from 'app/services/data/my-data.service';
 import { take } from 'rxjs';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
+import { AuthGuard } from 'app/auth/auth.guard';
 @Component({
   selector: 'app-ingresar-garantias',
   templateUrl: './ingresar-garantias.component.html',
@@ -39,6 +44,9 @@ export class IngresarGarantiasComponent implements OnInit {
   dataRegiones:any;
   selectedRegion: any = null;
   dataComunas:any;
+  mensajeCarga:any;
+  userRole: string = '';
+  decodedToken:any;
 
 
   mock =  {
@@ -59,10 +67,23 @@ export class IngresarGarantiasComponent implements OnInit {
         "serie": "123"
   }
   
-  constructor(private fb: FormBuilder, private garantiasServices: GarantiasService, private dataService : MyDataService
+  constructor(private fb: FormBuilder, 
+    private garantiasServices: GarantiasService, 
+    private dataService : MyDataService,
+    private router: Router ,  
+    private dialog: MatDialog,
+    private authService: AuthGuard
   ) {}
 
   ngOnInit(): void {
+   // this.mostrarAlerta();
+
+    const token = sessionStorage.getItem("authToken");
+    this.decodedToken = this.authService.decodeToken(token);
+    console.log("Token decodificado: ", this.decodedToken);
+   
+    this.userRole = this.decodedToken.role;
+
     this.garantiaForm = this.fb.group({
       FechaDigitalizacionOs: [new Date(), Validators.required],
       TipoDocumento: ['', Validators.required],
@@ -79,10 +100,12 @@ export class IngresarGarantiasComponent implements OnInit {
       RutConsumidor: ['', [Validators.required, rutChilenoValidator]],
       TelCliente: ['+569', [Validators.required, Validators.pattern(/^\+569[0-9]{8}$/)]],
       Descripcion: ['', Validators.required], 
-      serieHerramienta: [null, Validators.required],
-      herramienta: [null, Validators.required],
-      repuesto: [null, Validators.required],
-      boleta: [null, Validators.required]
+  
+      serieHerramienta: [null, this.userRole === 'STM' ? [] : [Validators.required]],
+      herramienta: [null, this.userRole === 'STM' ? [] : [Validators.required]],
+      repuesto: [null, this.userRole === 'STM' ? [] : [Validators.required]],
+      boleta: [null, this.userRole === 'STM' ? [] : [Validators.required]],
+       NombreTecnico: ['', Validators.required],
     });   
     this.garantiaForm.get('RutServicioTecnico')?.disable();
     this.garantiaForm.get('NombreServicioAut')?.disable();
@@ -159,25 +182,27 @@ export class IngresarGarantiasComponent implements OnInit {
       }
     });
 
-    // 5️⃣ Enviar al backend
-    this.garantiasServices.insertarGarantiaIntranet(formData).subscribe({
-      next: (response) => {
-        this.formularioData = response;
-        this.generarComprobante(formValue);
-      },
-      error: (error) => console.error(error),
-      complete: () => {
-        setTimeout(() => {
-          this.successMessage = true;
-          this.mensaje = 'Garantía ingresada correctamente';
-          this.isLoading = false;
-          this.garantiaForm.reset();
-          this.borrarNombresArchivos();
-        }, 1500);
+    formData.append('userRole', this.userRole);
 
-        setTimeout(() => this.borrarMensaje(), 4000);
-      }
+    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+      data: { 
+        formData: formData, 
+        clave: 'ingresarOrden' 
+      },
+        width: '80',
+        maxHeight: '80vh',
+        panelClass: 'custom-dialog-container',
+        disableClose: true,
+        autoFocus: false   
     });
+    
+      
+    
+      dialogRef.afterClosed().subscribe((resultado) => {
+      
+      });
+    //Enviar al backend
+    this.garantiaForm.reset();
   }
 
 
@@ -436,5 +461,19 @@ export class IngresarGarantiasComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  
+ mostrarAlerta() {
+    Swal.fire({
+      title: '¡Éxito!',
+      html: '<p class="swal2-text-custom">Orden generada correctamente</p>',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#008686',
+      customClass: { title: 'swal2-title-custom' },
+      showCloseButton: false,
+    });
+  }
+
+
+
+
 }

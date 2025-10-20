@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 
@@ -8,27 +8,33 @@ import { Observable } from 'rxjs';
 })
 export class GarantiasService {
 
-    private obtenerGarantiasAbiertas = "http://172.16.1.206:3026/api/obtener-llamadas";
-    private obtenerGarantiasIntranet = "http://172.16.1.206:3026/api/obtener-garantias-estado-intranet";
-    private insertarGarantiasIntranet = "http://172.16.1.206:3026/api/insertar-garantias-intranet";
-    private buscarItemURL = "http://172.16.1.206:3026/api/buscar-item-formulario";
-    private buscarComunasURL = "http://172.16.1.206:3026/api/obtener-comunas";
-    private buscarClientesURL = "http://172.16.1.206:3026/api/obtener-clientes";
-    private buscarRepuestosAccesoriosURL = "http://172.16.1.206:3026/api/buscar-item-repuesto-accesorio";
-    private insertarPedidosIntranetURL = "http://172.16.1.206:3026/api/insertar-pedido-garantia-intranet"
-    private obtenerDetalleGarantiasIntranetURL = "http://172.16.1.206:3026/api/obtener-detalle-garantia-intranet";
-    private buscarProveedorURL = "http://172.16.1.206:3026/api/obtener-proveedor";
-    private enviarSapURL = "http://172.16.1.206:3026/api/exportar-garantia-intranet";
-    private editarPedidosIntranetURL = "http://172.16.1.206:3026/api/editar-pedido-detalle-intranet"
-    private obtenerArticulosURL = "http://172.16.1.206:3026/api/detalle-articulos-orden";
-    private eliminarArticulosURL = "http://172.16.1.206:3026/api/eliminar-articulo-pedido"
-    private eliminarArticulosLocalURL = "http://172.16.1.206:3026/api/eliminar-articulo-pedido-local"
-    private abrirDocumento = "http://172.16.1.206:3026/api/abrir-documento"
-    private cerrarOfertaVentaURL = "http://172.16.1.206:3026/api/cerrar-oferta-venta"
-    private obtenerOfertaVentaURL = "http://172.16.1.206:3026/api/obtener-ofertas-ventas";
-    private cargarDocumentosURL = "http://172.16.1.206:3026/api/obtener-documentos-llamada";
-    private descargarDocumentosURL = "http://172.16.1.206:3026/api/anexos";
-    private cerrarLLamadaServicioURL = "http://172.16.1.206:3026/api/cerrar-llamada-servicio"
+    private obtenerGarantiasAbiertas = "http://localhost:3026/api/obtener-llamadas";
+    private obtenerGarantiasAbiertasRut = "http://localhost:3026/api/obtener-llamadas-rut";
+    private obtenerGarantiasIntranet = "http://localhost:3026/api/obtener-garantias-estado-intranet";
+    private insertarGarantiasIntranet = "http://localhost:3026/api/insertar-garantias-intranet";
+    private adjuntarArchivosSTMurl = "http://localhost:3026/api/insertar-archivos-stm-intranet";
+    private buscarItemURL = "http://localhost:3026/api/buscar-item-formulario";
+    private buscarComunasURL = "http://localhost:3026/api/obtener-comunas";
+    private buscarClientesURL = "http://localhost:3026/api/obtener-clientes";
+    private buscarRepuestosAccesoriosURL = "http://localhost:3026/api/buscar-item-repuesto-accesorio";
+    private insertarPedidosIntranetURL = "http://localhost:3026/api/insertar-pedido-garantia-intranet"
+    private obtenerDetalleGarantiasIntranetURL = "http://localhost:3026/api/obtener-detalle-garantia-intranet";
+    private buscarProveedorURL = "http://localhost:3026/api/obtener-proveedor";
+    private enviarSapURL = "http://localhost:3026/api/actualiza-idPedido-documentos"; // actualiza docuemnto y envia a sap llamada de servicio
+    private editarPedidosIntranetURL = "http://localhost:3026/api/editar-pedido-detalle-intranet"
+    private obtenerArticulosURL = "http://localhost:3026/api/detalle-articulos-orden";
+    private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
+    private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
+    private abrirDocumento = "http://localhost:3026/api/abrir-documento"
+    private cerrarOfertaVentaURL = "http://localhost:3026/api/cerrar-oferta-venta"
+    private obtenerOfertaVentaURL = "http://localhost:3026/api/obtener-ofertas-ventas";
+    private cargarDocumentosURL = "http://localhost:3026/api/obtener-documentos-llamada";
+    private descargarDocumentosURL = "http://localhost:3026/api/anexos";
+    private cerrarLLamadaServicioURL = "http://localhost:3026/api/cerrar-llamada-servicio"
+    private crearOfertaVentaURL = "http://localhost:3026/api/crear-oferta-venta"
+    private rechazarOFertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
+    private aprobarOFertaVentaURL = "http://localhost:3026/api/crear-orden-desde-oferta"
+    private obtenerGarantiasEstadoRutURL = "http://localhost:3026/api/obtener-garantias-estado-rut-intranet";
 
 
 
@@ -37,16 +43,33 @@ export class GarantiasService {
   getGarantiasPorEstado(): Observable<any> {
     const url = `${this.obtenerGarantiasAbiertas}`;
     return this.http.get<any>(url);
-  }  
+  }
+  
+   getGarantiasPorEstadoRut(rut): Observable<any> {
+    const url = `${this.obtenerGarantiasAbiertasRut}/${rut}`;
+    return this.http.get<any>(url);
+  } 
   
   getGarantiasPorEstadoIntranet(estado: string , cardCode: string, role:string): Observable<any> {
     const url = `${this.obtenerGarantiasIntranet}/${estado}/${cardCode}/${role}`;
     return this.http.get<any>(url);
   }
+
+  //Nuevo servicio creado , para buscar las ingresadas por estado ingresadas y rut 
+   getGarantiasPorEstadoRutIntranet(estado: string , rut: string): Observable<any> {
+    const url = `${this.obtenerGarantiasEstadoRutURL}/${estado}/${rut}`;
+    return this.http.get<any>(url);
+  }
+  
   
   insertarGarantiaIntranet(data : any): Observable<any> {
     return this.http.post<any>(this.insertarGarantiasIntranet, { data });
   }
+  
+  adjuntarArchivosSTM(formData: FormData): Observable<any> {
+    return this.http.post<any>(this.adjuntarArchivosSTMurl, formData);
+}
+
 
   buscarItems(filtro: string): Observable<any> {
     const url = `${this.buscarItemURL}`;
@@ -125,14 +148,27 @@ export class GarantiasService {
     return this.http.get<any>(url);
   }
 
-   descargarDocumentos(attachmentEntry: any): Observable<any> {
-    const url = `${this.descargarDocumentosURL}/${attachmentEntry}/$value`;
+  descargarDocumentos(doc: any): Observable<Blob> {
+    // Construye URL con lineNum + timestamp para evitar cache
+    const url = `${this.descargarDocumentosURL}/${doc.absoluteEntry}/${doc.lineNum}`;
     return this.http.get(url, { responseType: 'blob' });
   }
 
     cerrarLLamadaServicio(data : any): Observable<any> {
     return this.http.post<any>(this.cerrarLLamadaServicioURL, { data });
   }
+
+    crearOfertaVenta(data : any): Observable<any> {
+      return this.http.post<any>(this.crearOfertaVentaURL, { data });
+    }
+
+    rechazarOfertaVenta(data : any): Observable<any> {
+      return this.http.post<any>(this.rechazarOFertaVentaURL, { data });
+    }
+
+   aprobarOfertaVenta(data : any): Observable<any> {
+      return this.http.post<any>(this.aprobarOFertaVentaURL, { data });
+    }
 
   
 }

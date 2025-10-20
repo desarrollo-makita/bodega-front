@@ -184,3 +184,48 @@ input[formcontrolname="codigo"] {
     text-align: center; /* Centrar el texto */
     padding: 10px; /* Espaciado interno */
   }
+
+
+    .adjuntos-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+
+    .adjunto-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 700;
+        color:#008686;
+      }
+
+      input[type="file"] {
+        background: #f9f9f9;
+        border: none;
+        padding: 6px;
+        font-size: 14px;
+        border-radius: 4px;
+      }
+
+      .file-preview {
+        margin-top: 0.5rem;
+        img {
+          max-width: 10%;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0, 134, 134, 0.25);
+        }
+        span {
+          background: #eef6f6;
+          padding: 6px 10px;
+          border-radius: 6px;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+
+  
+
