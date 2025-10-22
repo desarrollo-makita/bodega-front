@@ -283,7 +283,7 @@
             <label>Boleta/Factura</label>
             <input
               formControlName="boleta" 
-              type="file"
+              type="file"   
               id="archivo3"
               accept=".jpg,.jpeg,.png,.pdf"
               (change)="onFileSelected($event, 3)"
@@ -303,8 +303,8 @@
       </div>
     </div>
     
-
     <button type="submit" [disabled]="garantiaForm.invalid">Guardar</button>
+    
 
   </form>
 </div>

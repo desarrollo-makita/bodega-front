@@ -328,3 +328,16 @@ button[mat-icon-button] {
   width: 100%;
   z-index: 9999; /* que quede encima de todo */
 }
+
+.icono-rojo {
+  color: #e53935; /* rojo PDF */
+  transition: 0.2s;
+}
+
+.icono-rojo:hover {
+  color: #b71c1c; /* rojo más oscuro al pasar el mouse */
+}
+
+.boton-pdf {
+  margin-left: 4px;
+}

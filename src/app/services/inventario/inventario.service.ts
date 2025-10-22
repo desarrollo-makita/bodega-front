@@ -7,34 +7,35 @@ import { Observable } from 'rxjs';
 })
 export class InventarioService {
   
-  private apiUrl = 'http://localhost:3024/api/consultar-inventario';
-  private asignarUrl = 'http://localhost:3024/api/asignar-capturador'; 
-  private getAssignmentUrl = 'http://localhost:3024/api/consultar-asignacion';
-  private deleteAsignacionUrl = 'http://localhost:3024/api/delete-asignacion';
-  private validarIncioInventarioUrl  = 'http://localhost:3024/api/validar-inicio-inventario';
-  private obtenerBodegaUrl  = 'http://localhost:3024/api/consultar-grupo-bodega';
-  private inicioInventarioUrl  = 'http://localhost:3024/api/iniciar-inventario';
-  private actualizarSinCierreUrl = 'http://localhost:3024/api/actualizar-conteo-sin-cierre';
-  private actualizarConCierreUrl = 'http://localhost:3024/api/actualizar-conteo-cierre';
-  private validaCierreInvUrl = 'http://localhost:3024/api/validar-cierre-inventario';
-  private validaTerminoInvUrl = 'http://localhost:3024/api/validar-termino-inventario';
-  private consultarReconteoUrl = 'http://localhost:3024/api/consultar-reconteos';
-  private iniciarReconteosUrl = 'http://localhost:3024/api/iniciar-reconteos';
-  private asignarReconteosUrl = 'http://localhost:3024/api/asignar-reconteos';
-  private validaCantidadReconteosUrl = 'http://localhost:3024/api/validar-cantidad-reconteos';
-  private siguienteReconteoURL = 'http://localhost:3024/api/siguiente-reconteo';
-  private almacenammientoUrl = 'http://localhost:3024/api/obtener-almacenamiento';
-  private consultarResumenReconteoUrl = 'http://localhost:3024/api/obtener-resumen-reconteo';
-  private terminarInventarioUrl  = 'http://localhost:3024/api/finalizar-inventario';
+  private apiUrl = 'http://172.16.1.206:3024/api/consultar-inventario';
+  private asignarUrl = 'http://172.16.1.206:3024/api/asignar-capturador'; 
+  private getAssignmentUrl = 'http://172.16.1.206:3024/api/consultar-asignacion';
+  private deleteAsignacionUrl = 'http://172.16.1.206:3024/api/delete-asignacion';
+  private validarIncioInventarioUrl  = 'http://172.16.1.206:3024/api/validar-inicio-inventario';
+  private obtenerBodegaUrl  = 'http://172.16.1.206:3024/api/consultar-grupo-bodega';
+  private inicioInventarioUrl  = 'http://172.16.1.206:3024/api/iniciar-inventario';
+  private actualizarSinCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-sin-cierre';
+  private actualizarConCierreUrl = 'http://172.16.1.206:3024/api/actualizar-conteo-cierre';
+  private validaCierreInvUrl = 'http://172.16.1.206:3024/api/validar-cierre-inventario';
+  private validaTerminoInvUrl = 'http://172.16.1.206:3024/api/validar-termino-inventario';
+  private consultarReconteoUrl = 'http://172.16.1.206:3024/api/consultar-reconteos';
+  private iniciarReconteosUrl = 'http://172.16.1.206:3024/api/iniciar-reconteos';
+  private asignarReconteosUrl = 'http://172.16.1.206:3024/api/asignar-reconteos';
+  private validaCantidadReconteosUrl = 'http://172.16.1.206:3024/api/validar-cantidad-reconteos';
+  private siguienteReconteoURL = 'http://172.16.1.206:3024/api/siguiente-reconteo';
+  private almacenammientoUrl = 'http://172.16.1.206:3024/api/obtener-almacenamiento';
+  private consultarResumenReconteoUrl = 'http://172.16.1.206:3024/api/obtener-resumen-reconteo';
+  private terminarInventarioUrl  = 'http://172.16.1.206:3024/api/finalizar-inventario';
 
 
   constructor(private http: HttpClient) {}
 
-  consultaInventario(tipoItem: string, local: string , fechaInventario: string): Observable<any> {
+  consultaInventario(tipoItem: string, local: string , fechaInventario: string, grupo:string): Observable<any> {
     const params = new HttpParams()
       .set('tipoItem', tipoItem)
       .set('local', local)
-      .set('fechaInventario', fechaInventario);
+      .set('fechaInventario', fechaInventario)
+      .set('grupo', grupo);
 
     return this.http.get<any>(this.apiUrl, { params });
   }

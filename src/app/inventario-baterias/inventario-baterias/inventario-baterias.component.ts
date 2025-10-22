@@ -37,6 +37,7 @@ export class InventarioBateriasComponent implements OnInit {
     selectedLocal: string;
     selectedGrupo: string;
     mensajeCargado: string = '';
+    grupoBodega: any;
   
     codigoBloqueo: boolean= false;
   
@@ -392,10 +393,10 @@ export class InventarioBateriasComponent implements OnInit {
       });
     }
   
-    actualizaTabla(data: any) {
+  actualizaTabla(data: any) {
       this.mostrarGrafico= false;
      // const fecha = new Date('2025-02-31');
-      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario, data.grupoBodega).subscribe({
         next: (response) => {
           
           this.isLoading = true;
@@ -449,7 +450,8 @@ export class InventarioBateriasComponent implements OnInit {
       const data = {
             tipoItem: this.selectedTipoItem,
             local: this.selectedLocal,
-            fechaInventario: this.selectedFechaInicio
+            fechaInventario: this.selectedFechaInicio,
+            grupoBodega  :  this.grupoBodega
           };
       
       // Guarda el objeto convertido en string
@@ -459,7 +461,7 @@ export class InventarioBateriasComponent implements OnInit {
       this.isLoading = true;
       this.showTable = false;
       
-      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario, data.grupoBodega).subscribe({
         next: (response) => {
           
           this.totalItems = response.data.recordset.length;
@@ -652,11 +654,12 @@ export class InventarioBateriasComponent implements OnInit {
       const data = {
         tipoItem: dataConsultaTabla.categorias[0],
         local: dataConsultaTabla.numeroLocal,
-        fechaInventario: dataConsultaTabla.fechaInventario
+        fechaInventario: dataConsultaTabla.fechaInventario, 
+        grupoBodega : dataConsultaTabla.grupoBodega
         ,
       }
       
-      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario,data.grupoBodega).subscribe({
           next: (response) => {
             console.log("responseee : " , response);
             this.totalItems = response.data.recordset.length;
@@ -725,7 +728,7 @@ export class InventarioBateriasComponent implements OnInit {
       }
       this.isLoading = true;
       this.showTable = false;
-      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+      this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario, data.grupoBodega).subscribe({
         next: (response) => {
           
   
@@ -853,7 +856,6 @@ export class InventarioBateriasComponent implements OnInit {
         },
       });*/
     }
-  
     terminarInventario(){
       this.isLoading = true;
       const localGuardado = sessionStorage.getItem('local') || ''; 

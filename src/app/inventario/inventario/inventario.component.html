@@ -95,43 +95,43 @@
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
                                                         </span>
                                                       </th>
-                                                    <th *ngIf="cantidadReconteos > 1">Reconteo 1</th>
-                                                    <th *ngIf="cantidadReconteos > 1" (click)="ordenarPor('Diferencia01')" style="cursor: pointer;">
+                                                    <th *ngIf="cantidadReconteos >= 1">Reconteo 1</th>
+                                                    <th *ngIf="cantidadReconteos >= 1" (click)="ordenarPor('Diferencia01')" style="cursor: pointer;">
                                                         Diferencia 1
                                                         <span *ngIf="columnaOrden === 'Diferencia01'">
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
                                                         </span>
                                                     </th>
-                                                    <th *ngIf="cantidadReconteos > 2">Reconteo 2</th>
-                                                    <th *ngIf="cantidadReconteos > 2" (click)="ordenarPor('Diferencia02')" style="cursor: pointer;">
+                                                    <th *ngIf="cantidadReconteos >= 2">Reconteo 2</th>
+                                                    <th *ngIf="cantidadReconteos >= 2" (click)="ordenarPor('Diferencia02')" style="cursor: pointer;">
                                                         Diferencia 2
                                                         <span *ngIf="columnaOrden === 'Diferencia02'">
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
                                                         </span>
                                                       </th>
-                                                    <th *ngIf="cantidadReconteos > 3">Reconteo 3</th>
-                                                    <th *ngIf="cantidadReconteos > 3" (click)="ordenarPor('Diferencia03')" style="cursor: pointer;">
+                                                    <th *ngIf="cantidadReconteos >= 3">Reconteo 3</th>
+                                                    <th *ngIf="cantidadReconteos >= 3" (click)="ordenarPor('Diferencia03')" style="cursor: pointer;">
                                                         Diferencia 3
                                                         <span *ngIf="columnaOrden === 'Diferencia03'">
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
                                                         </span>
                                                       </th>
-                                                    <th *ngIf="cantidadReconteos > 4">Reconteo 4</th>
-                                                    <th *ngIf="cantidadReconteos > 4" (click)="ordenarPor('Diferencia04')" style="cursor: pointer;">
+                                                    <th *ngIf="cantidadReconteos >= 4">Reconteo 4</th>
+                                                    <th *ngIf="cantidadReconteos >= 4" (click)="ordenarPor('Diferencia04')" style="cursor: pointer;">
                                                         Diferencia 4
                                                         <span *ngIf="columnaOrden === 'Diferencia04'">
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
                                                         </span>
                                                       </th>
-                                                    <th *ngIf="cantidadReconteos > 5">Reconteo 5</th>
-                                                    <th *ngIf="cantidadReconteos > 5" (click)="ordenarPor('Diferencia05')" style="cursor: pointer;">
+                                                    <th *ngIf="cantidadReconteos >= 5">Reconteo 5</th>
+                                                    <th *ngIf="cantidadReconteos >= 5" (click)="ordenarPor('Diferencia05')" style="cursor: pointer;">
                                                         Diferencia 5
                                                         <span *ngIf="columnaOrden === 'Diferencia05'">
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
                                                         </span>
                                                       </th>
-                                                    <th *ngIf="cantidadReconteos > 6">Reconteo 6</th>
-                                                    <th *ngIf="cantidadReconteos > 6" (click)="ordenarPor('Diferencia06')" style="cursor: pointer;">
+                                                    <th *ngIf="cantidadReconteos >= 6">Reconteo 6</th>
+                                                    <th *ngIf="cantidadReconteos >= 6" (click)="ordenarPor('Diferencia06')" style="cursor: pointer;">
                                                         Diferencia 6
                                                         <span *ngIf="columnaOrden === 'Diferencia06'">
                                                           {{ direccionOrden === 'asc' ? '▲' : '▼' }}
@@ -146,18 +146,18 @@
                                                     <td>{{ row.SaldoStock }}</td>
                                                     <td>{{ row.Conteo }}</td>
                                                     <td>{{ row.Diferencia }}</td>
-                                                     <td *ngIf="cantidadReconteos > 1">{{ row.Reconteo01 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 1">{{ row.Diferencia01 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 2">{{ row.Reconteo02 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 2">{{ row.Diferencia02 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 3">{{ row.Reconteo03 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 3">{{ row.Diferencia03 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 4">{{ row.Reconteo04 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 4">{{ row.Diferencia04 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 5">{{ row.Reconteo05 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 5">{{ row.Diferencia05 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 6">{{ row.Reconteo06 }}</td>
-                                                    <td *ngIf="cantidadReconteos > 6">{{ row.Diferencia06 }}</td>
+                                                     <td *ngIf="cantidadReconteos >= 1">{{ row.Reconteo01 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 1">{{ row.Diferencia01 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 2">{{ row.Reconteo02 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 2">{{ row.Diferencia02 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 3">{{ row.Reconteo03 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 3">{{ row.Diferencia03 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 4">{{ row.Reconteo04 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 4">{{ row.Diferencia04 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 5">{{ row.Reconteo05 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 5">{{ row.Diferencia05 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 6">{{ row.Reconteo06 }}</td>
+                                                    <td *ngIf="cantidadReconteos >= 6">{{ row.Diferencia06 }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

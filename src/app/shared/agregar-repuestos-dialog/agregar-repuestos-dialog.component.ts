@@ -174,6 +174,7 @@ export class AgregarRepuestosDialogComponent implements OnInit {
         if (resultado) {
           // Se cerró enviando un valor
             console.log("Resultado recibido:", resultado);
+            console.log("data para armar el coucher con pedido", payload);
           if (resultado.exito) {
             
             this.successMessage = true;
@@ -429,7 +430,8 @@ for (let pair of (formData as any).entries()) {
   });
 
   dialogRef.afterClosed().subscribe((resultado) => {
-    console.log('resultado :', resultado);
+     this.filePreviews = [];
+    this.cerrar();
   });
 }
 

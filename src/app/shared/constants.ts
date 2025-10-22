@@ -25,7 +25,7 @@ export const MESES = [
   
   export const LOCALES = [
     { descripcion: 'Casa Matriz ENEA', codigo: '01' },
-    { descripcion: 'Casa Matriz ENEA BATERIAS', codigo: '02' },
+    { descripcion: 'Casa Matriz ENEA BATERIAS', codigo: '01' },
     { descripcion: 'Serv. Tecnico Temuco', codigo: '03' },
     { descripcion: 'Centro de Servicios Antofagasta', codigo: '04' },
     { descripcion: 'Centro de Servicios Copiapo', codigo: '05' }

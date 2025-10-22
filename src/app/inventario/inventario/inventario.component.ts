@@ -147,11 +147,13 @@ export class InventarioComponent implements OnInit {
     
     dialogRef.afterClosed().subscribe(result => {
       if (result?.success) {
+
+        console.log("rtesultadop inventario : " , result);
         this.successMessage = true;
         
         this.titulo = result.data.categorias[0];
         this.mensaje = 'Inventario iniciado correctamente';
-        this.validarInventarioFun()
+       // this.validarInventarioFun()
         this.consultaTablaRegistroInicial(result.data)
         setTimeout(() => {
           this.successMessage = false;
@@ -256,20 +258,24 @@ export class InventarioComponent implements OnInit {
   }
 
   onChange() {
+    console.log("entrooooooooooooo")
     if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '01' ) {
-      this.grupo = 1;
-    } else if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '02') {
+      this.grupo = 2;
+    } 
+    else if (this.selectedTipoItem === '01-HERRAMIENTAS' && this.selectedLocal === '01') {
+      this.grupo = 1; // valor por defecto si no cumple
+    }
+     /*else if (this.selectedTipoItem === '03-ACCESORIOS' && this.selectedLocal === '02') {
       this.grupo = 2;
       this.selectedLocal ='01';
       
-    } else if (this.selectedTipoItem === '01-HERRAMIENTAS' && this.selectedLocal === '01') {
-      this.grupo = 1; // valor por defecto si no cumple
-    }
+    } */
 
     sessionStorage.setItem('tipoItem', this.selectedTipoItem || '');
     sessionStorage.setItem('local', this.selectedLocal || '');
     sessionStorage.setItem('fechaInventario', this.selectedFechaInicio || '');
     sessionStorage.setItem('grupo', this.grupo || '');
+
   }
 
   getMesTooltip(codigo: string): string {
@@ -359,11 +365,18 @@ export class InventarioComponent implements OnInit {
     this.mensajeCargado = 'Se están actualizando los conteos ingresados...'
     this.isLoading = true;
     this.mostrarGrafico = false;
-    const localGuardado = sessionStorage.getItem('local') || ''; 
+    const localGuardado = sessionStorage.getItem('local') || '';
+    const grupo = sessionStorage.getItem('grupo') || ''; 
     const grupoListRecuperado = JSON.parse(sessionStorage.getItem('respuestaGrupo') || '[]');
    
-    const grupoEncontrado =grupoListRecuperado.find(grupo => grupo.NumeroLocal === localGuardado);
-    
+    console.log("locaGuardado" , localGuardado, grupo);
+    console.log(typeof localGuardado, localGuardado);
+    console.log(typeof grupo, grupo);
+    const grupoEncontrado = grupoListRecuperado.find(
+      (g) => g.NumeroLocal === String(localGuardado) && g.GrupoBodega === Number(grupo)
+    );
+
+    console.log("Grupos encontrados:", grupoEncontrado);
     if(localGuardado === '02'){
       this.dataActualiza = {
           periodo: parseInt(this.selectedPeriodo, 10) || null,  // Convierte a número, si falla asigna null
@@ -423,6 +436,8 @@ export class InventarioComponent implements OnInit {
             fechaInventario: this.selectedFechaInicio,
           };
        }
+
+       console.log("aca vamos" , this.dataActualiza);
         
         this.actualizaTabla(this.dataActualizaTabla);
         setTimeout(() => {
@@ -438,7 +453,7 @@ export class InventarioComponent implements OnInit {
   actualizaTabla(data: any) {
     this.mostrarGrafico= false;
    // const fecha = new Date('2025-02-31');
-    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario, data.grupo).subscribe({
       next: (response) => {
         
         this.isLoading = true;
@@ -490,12 +505,12 @@ export class InventarioComponent implements OnInit {
   consultaTablaRegistro(){
     
     const data = {
-          tipoItem: this.selectedTipoItem,
-          local: this.selectedLocal,
-          fechaInventario: this.selectedFechaInicio,
-          grupoBodega: this.grupo
+      tipoItem: this.selectedTipoItem,
+      local: this.selectedLocal,
+      fechaInventario: this.selectedFechaInicio,
+      grupoBodega: this.grupo
 
-        };
+    };
 
         
     
@@ -611,10 +626,13 @@ export class InventarioComponent implements OnInit {
         mes: parseInt(this.selectedMes, 10) || null, 
         tipoItem: this.selectedTipoItem,
         local: this.selectedLocal,
-        grupo: this.grupo
+        grupo: this.grupo,
+        fechaInventario: this.selectedFechaInicio
+
         
       };
    
+      console.log(this.dataActualizaTablaCierre);
       this.actualizaTabla(this.dataActualizaTablaCierre);
       setTimeout(() => {
         this.isLoading = false;
@@ -626,6 +644,7 @@ export class InventarioComponent implements OnInit {
   }
 
   validarCierreInventario(data: any){
+    console.log("data01:" , data);
     data.local = this.selectedLocal;
     data.grupo = this.grupo;
     this.isLoading = true;
@@ -773,6 +792,7 @@ export class InventarioComponent implements OnInit {
 
 
   validarCantidadReconteos(data: any) {
+    console.log("data02:" , data);
     data.local = this.selectedLocal;
     this.grupo = this.grupo;
     
@@ -832,17 +852,19 @@ export class InventarioComponent implements OnInit {
   }
   
 
+  //baterias ---
   consultaTablaRegistroInicial(dataConsultaTabla: any){
     console.log("con esta data consultamos la tabla invenytario : " , dataConsultaTabla);
     const data = {
       tipoItem: dataConsultaTabla.categorias[0],
-      local: dataConsultaTabla.grupoBodega === 2  ?  "02" : dataConsultaTabla.numeroLocal,
-      fechaInventario: dataConsultaTabla.fechaInventario
+      local: dataConsultaTabla.numeroLocal,
+      fechaInventario: dataConsultaTabla.fechaInventario,
+      grupo  : dataConsultaTabla.grupoBodega
       ,
     }
     
     console.log("dataaaaaaaaaaaaaaaaaaaa : " , data);
-    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario, data.grupo).subscribe({
         next: (response) => {
           console.log("responseee : " , response);
           
@@ -911,7 +933,7 @@ export class InventarioComponent implements OnInit {
     }
     this.isLoading = true;
     this.showTable = false;
-    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario , data.grupoBodega).subscribe({
       next: (response) => {
         
 

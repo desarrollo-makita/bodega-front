@@ -8,33 +8,33 @@ import { Observable } from 'rxjs';
 })
 export class GarantiasService {
 
-    private obtenerGarantiasAbiertas = "http://localhost:3026/api/obtener-llamadas";
-    private obtenerGarantiasAbiertasRut = "http://localhost:3026/api/obtener-llamadas-rut";
-    private obtenerGarantiasIntranet = "http://localhost:3026/api/obtener-garantias-estado-intranet";
-    private insertarGarantiasIntranet = "http://localhost:3026/api/insertar-garantias-intranet";
-    private adjuntarArchivosSTMurl = "http://localhost:3026/api/insertar-archivos-stm-intranet";
-    private buscarItemURL = "http://localhost:3026/api/buscar-item-formulario";
-    private buscarComunasURL = "http://localhost:3026/api/obtener-comunas";
-    private buscarClientesURL = "http://localhost:3026/api/obtener-clientes";
-    private buscarRepuestosAccesoriosURL = "http://localhost:3026/api/buscar-item-repuesto-accesorio";
-    private insertarPedidosIntranetURL = "http://localhost:3026/api/insertar-pedido-garantia-intranet"
-    private obtenerDetalleGarantiasIntranetURL = "http://localhost:3026/api/obtener-detalle-garantia-intranet";
-    private buscarProveedorURL = "http://localhost:3026/api/obtener-proveedor";
-    private enviarSapURL = "http://localhost:3026/api/actualiza-idPedido-documentos"; // actualiza docuemnto y envia a sap llamada de servicio
-    private editarPedidosIntranetURL = "http://localhost:3026/api/editar-pedido-detalle-intranet"
-    private obtenerArticulosURL = "http://localhost:3026/api/detalle-articulos-orden";
-    private eliminarArticulosURL = "http://localhost:3026/api/eliminar-articulo-pedido"
-    private eliminarArticulosLocalURL = "http://localhost:3026/api/eliminar-articulo-pedido-local"
-    private abrirDocumento = "http://localhost:3026/api/abrir-documento"
-    private cerrarOfertaVentaURL = "http://localhost:3026/api/cerrar-oferta-venta"
-    private obtenerOfertaVentaURL = "http://localhost:3026/api/obtener-ofertas-ventas";
-    private cargarDocumentosURL = "http://localhost:3026/api/obtener-documentos-llamada";
-    private descargarDocumentosURL = "http://localhost:3026/api/anexos";
-    private cerrarLLamadaServicioURL = "http://localhost:3026/api/cerrar-llamada-servicio"
-    private crearOfertaVentaURL = "http://localhost:3026/api/crear-oferta-venta"
-    private rechazarOFertaVentaURL = "http://localhost:3026/api/rechazar-oferta-venta"
-    private aprobarOFertaVentaURL = "http://localhost:3026/api/crear-orden-desde-oferta"
-    private obtenerGarantiasEstadoRutURL = "http://localhost:3026/api/obtener-garantias-estado-rut-intranet";
+    private obtenerGarantiasAbiertas = "http://172.16.1.206:3026/api/obtener-llamadas";
+    private obtenerGarantiasAbiertasRut = "http://172.16.1.206:3026/api/obtener-llamadas-rut";
+    private obtenerGarantiasIntranet = "http://172.16.1.206:3026/api/obtener-garantias-estado-intranet";
+    private insertarGarantiasIntranet = "http://172.16.1.206:3026/api/insertar-garantias-intranet";
+    private adjuntarArchivosSTMurl = "http://172.16.1.206:3026/api/insertar-archivos-stm-intranet";
+    private buscarItemURL = "http://172.16.1.206:3026/api/buscar-item-formulario";
+    private buscarComunasURL = "http://172.16.1.206:3026/api/obtener-comunas";
+    private buscarClientesURL = "http://172.16.1.206:3026/api/obtener-clientes";
+    private buscarRepuestosAccesoriosURL = "http://172.16.1.206:3026/api/buscar-item-repuesto-accesorio";
+    private insertarPedidosIntranetURL = "http://172.16.1.206:3026/api/insertar-pedido-garantia-intranet"
+    private obtenerDetalleGarantiasIntranetURL = "http://172.16.1.206:3026/api/obtener-detalle-garantia-intranet";
+    private buscarProveedorURL = "http://172.16.1.206:3026/api/obtener-proveedor";
+    private enviarSapURL = "http://172.16.1.206:3026/api/actualiza-idPedido-documentos"; // actualiza docuemnto y envia a sap llamada de servicio
+    private editarPedidosIntranetURL = "http://172.16.1.206:3026/api/editar-pedido-detalle-intranet"
+    private obtenerArticulosURL = "http://172.16.1.206:3026/api/detalle-articulos-orden";
+    private eliminarArticulosURL = "http://172.16.1.206:3026/api/eliminar-articulo-pedido"
+    private eliminarArticulosLocalURL = "http://172.16.1.206:3026/api/eliminar-articulo-pedido-local"
+    private abrirDocumento = "http://172.16.1.206:3026/api/abrir-documento"
+    private cerrarOfertaVentaURL = "http://172.16.1.206:3026/api/cerrar-oferta-venta"
+    private obtenerOfertaVentaURL = "http://172.16.1.206:3026/api/obtener-ofertas-ventas";
+    private cargarDocumentosURL = "http://172.16.1.206:3026/api/obtener-documentos-llamada";
+    private descargarDocumentosURL = "http://172.16.1.206:3026/api/anexos";
+    private cerrarLLamadaServicioURL = "http://172.16.1.206:3026/api/cerrar-llamada-servicio"
+    private crearOfertaVentaURL = "http://172.16.1.206:3026/api/crear-oferta-venta"
+    private rechazarOFertaVentaURL = "http://172.16.1.206:3026/api/rechazar-oferta-venta"
+    private aprobarOFertaVentaURL = "http://172.16.1.206:3026/api/crear-orden-desde-oferta"
+    private obtenerGarantiasEstadoRutURL = "http://172.16.1.206:3026/api/obtener-garantias-estado-rut-intranet";
 
 
 

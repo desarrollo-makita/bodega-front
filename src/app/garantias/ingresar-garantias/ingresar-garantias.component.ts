@@ -4,8 +4,7 @@ import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { regiones } from '../../util/regiones-comunas/regiones-comunas';
 import { rutChilenoValidator } from '../../util/validador-rut';
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+
 import { MyDataService } from 'app/services/data/my-data.service';
 import { take } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -204,7 +203,9 @@ export class IngresarGarantiasComponent implements OnInit {
       
     
       dialogRef.afterClosed().subscribe((resultado) => {
-      
+        if(resultado.exito){
+          //this.generateVoucherPDF(mappedData);
+        }
       });
     //Enviar al backend
     this.garantiaForm.reset();
@@ -214,6 +215,7 @@ export class IngresarGarantiasComponent implements OnInit {
 
   mapFormularioARequest(formValue: any) {
   
+    console.log("*****************" , formValue);
     return {
       rutServicioTecnico: formValue.RutServicioTecnico,
       nombreServicioAut: formValue.NombreServicioAut,
@@ -264,52 +266,7 @@ export class IngresarGarantiasComponent implements OnInit {
     return controlNames[index];
   }
 
-  generarComprobante(formData: any) {
-   if (!formData || Object.keys(formData).length === 0) {
-      console.warn('Datos de comprobante vacíos');
-      return;
-    }
-
-    // Mapeo de campos internos a nombres visibles
-    const fieldLabels: { [key: string]: string } = {
-      FechaDigitalizacionOs: 'Fecha Ingreso',
-      TipoDocumento: 'Tipo Documento',
-      InformeTecnico: 'Informe Técnico',
-      Modelo: 'Modelo',
-      serie: 'Serie',
-      Revendedor: 'Revendedor',
-      RutServicioTecnico: 'RUT Servicio Técnico',
-      NombreServicioAut: 'Nombre Servicio Autorizado',
-      NombreConsumidor: 'Nombre del Consumidor',
-      DireccionConsumidor: 'Dirección',
-      CiudadConsumidor: 'Ciudad',
-      RegionConsumidor: 'Región',
-      RutConsumidor: 'RUT del Consumidor',
-      TelCliente: 'Teléfono del Cliente',
-    };
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text('Voucher de Garantía', 20, 20);
-
-    doc.setFontSize(12);
-    doc.text('Herramienta en servicio técnico para evaluación.', 20, 30);
-
-    // Cuerpo de la tabla con etiquetas visibles
-    const bodyData = Object.entries(formData).map(([key, value]) => {
-      const label = fieldLabels[key] || key; // usa el label traducido o el key si no está definido
-      return [label, String(value)];
-    });
-
-    autoTable(doc, {
-      startY: 40,
-      head: [['Campo', 'Valor']],
-      body: bodyData,
-    });
-
-    doc.save(`voucher_${formData.NombreConsumidor || 'cliente'}_${Date.now()}.pdf`);
-  }
+ 
 
   buscarModelos() {
     let valor = this.garantiaForm.get('Modelo')?.value;

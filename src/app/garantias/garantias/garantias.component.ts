@@ -6,6 +6,8 @@ import { AgregarRepuestosDialogComponent } from 'app/shared/agregar-repuestos-di
 import { DefaultDialogComponent } from 'app/shared/default-dialog/default-dialog.component';
 import { EditarRepuestosDialogComponent } from 'app/shared/editar-repuestos-dialog/editar-repuestos-dialog.component';
 import { GarantiaDetalleDialogComponent } from 'app/shared/garantia-detalle-dialog/garantia-detalle-dialog.component';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface Garantia {
   idPedido: number;
@@ -29,7 +31,7 @@ export class GarantiasComponent implements OnInit {
   garantiaPendiente = 0;
   garantiaAprobada = 0;
   garantiaRechazada = 0;
-  estadoSeleccionado: string = 'pendientes'; // Valor por defecto
+  estadoSeleccionado: string = 'ingresada'; // Valor por defecto
   showIntranet: boolean = false; // Controla la visibilidad de la tabla de intranet
   bloquearCombo: boolean = false;  
   mensajeGuardar: string;
@@ -112,34 +114,34 @@ export class GarantiasComponent implements OnInit {
     
     this.bloquearCombo = true; // Bloquea el combo mientras se cargan los datos
     
-  if(estado === 'ingresada'){
-    this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
-      next: (response) => {
-          this.garantiaDataOriginal = response.pedidosValidos.map(item => ({
-            ...item,
-            tipoLLamada: 'Garantia'
-          }));
-          this.garantiaData = [...this.garantiaDataOriginal];
-        
-        this.showIntranet = true;
-      },
-      error: (error) => {
-          console.error('Error en la consulta:', error);
-        },
-      complete: () => {
-
-        setTimeout(() => {
-            this.isLoading = false;
-            this.bloquearCombo = false;
-            this.successMessage = false;
-          }, 1000);
-
-      }
+    if(estado === 'ingresada'){
+      this.garantiasServices.getGarantiasPorEstadoIntranet(estado).subscribe({
+        next: (response) => {
+          console.log("responseEEE:" , response);
+            this.garantiaDataOriginal = response.pedidosValidos.map(item => ({
+              ...item,
+              tipoLLamada: 'Garantia'
+            }));
+            this.garantiaData = [...this.garantiaDataOriginal];
           
-      });
-        
+          this.showIntranet = true;
+        },
+        error: (error) => {
+            console.error('Error en la consulta:', error);
+          },
+        complete: () => {
+
+          setTimeout(() => {
+              this.isLoading = false;
+              this.bloquearCombo = false;
+              this.successMessage = false;
+            }, 1000);
+
+        }
+            
+        });
+          
     }
-    
     else{
       this.garantiasServices.getGarantiasPorEstado().subscribe({
 
@@ -416,10 +418,20 @@ export class GarantiasComponent implements OnInit {
 
   
 
+   
     dialogRef.afterClosed().subscribe((resultado) => {
-
+     
       
-       this.filtrarGarantias();
+      if (resultado === undefined) {
+        console.log("El usuario cerró el modal sin enviar a SAP.");
+        this.filtrarGarantias();
+      }else if (resultado?.succes) {
+        console.log("Envío a SAP exitoso");
+         this.filtrarGarantias();
+      }else {
+        console.log("Fallo en el envío");
+        this.filtrarGarantias();
+      }
       
     });
   }
@@ -472,6 +484,189 @@ export class GarantiasComponent implements OnInit {
 
     
 }
+
+//Voucher sin pedido con totales dentro de la tabla
+descargarVoucher(mappedData: any) {
+  console.log(mappedData);
+
+  const doc = new jsPDF();
+
+  // Datos desde mappedData
+  const cliente = mappedData.NombreConsumidor;
+  const direccion = mappedData.DireccionConsumidor;
+  const rut = mappedData.CpfConsumidor;
+  const telefono = mappedData.FonoConsumidor;
+  const contacto = mappedData.NombreConsumidor;
+  const email = mappedData.EmailConsumidor || "sin correo informado";
+  const tipoDocto = mappedData.TipoDocumento || "GARANTÍA";
+  const modelo = mappedData.Referencia || "";
+  const fechaDocto = mappedData.FechaDigitalizacion
+    ? new Date(mappedData.FechaDigitalizacion).toLocaleDateString("es-CL")
+    : "";
+  const clienteSolicita = mappedData.NombreServicioAut || "";
+  const observaciones = mappedData.DefectoReclamado || "";
+  const idPedido = mappedData.Id_Pedido || null;
+
+  // ✨ CABECERA
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("VOUCHER DE GARANTÍA", 105, 15, { align: "center" });
+
+  // ID Pedido arriba a la derecha
+  if (idPedido) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text(`N° Pedido: ${idPedido}`, 200, 17, { align: "right" });
+  }
+
+  // Línea de separación (abajo de ID Pedido)
+  doc.setLineWidth(0.3);
+  doc.line(10, 20, 200, 20);
+
+  const startY = 25;
+  const lineHeight = 7;
+
+  // Cliente / Tipo Documento
+  doc.setFont("helvetica", "bold");
+  doc.text("Cliente:", 10, startY);
+  doc.text("Tipo Docto.:", 120, startY);
+  doc.setFont("helvetica", "normal");
+  doc.text(`${cliente}`, 35, startY);
+  doc.text(`${tipoDocto}`, 150, startY);
+
+  // Dirección / Modelo
+  doc.setFont("helvetica", "bold");
+  doc.text("Dirección:", 10, startY + lineHeight);
+  doc.text("Modelo:", 120, startY + lineHeight);
+  doc.setFont("helvetica", "normal");
+  doc.text(`${direccion}`, 35, startY + lineHeight);
+  doc.text(`${modelo}`, 150, startY + lineHeight);
+
+  // RUT / Fecha
+  doc.setFont("helvetica", "bold");
+  doc.text("RUT:", 10, startY + lineHeight * 2);
+  doc.text("Fecha Docto:", 120, startY + lineHeight * 2);
+  doc.setFont("helvetica", "normal");
+  doc.text(`${rut}`, 35, startY + lineHeight * 2);
+  doc.text(`${fechaDocto}`, 150, startY + lineHeight * 2);
+
+  // Teléfono / Cliente Solicita
+  doc.setFont("helvetica", "bold");
+  doc.text("Teléfono:", 10, startY + lineHeight * 3);
+  doc.text("Cliente Solicita:", 120, startY + lineHeight * 3);
+  doc.setFont("helvetica", "normal");
+  doc.text(`${telefono}`, 35, startY + lineHeight * 3);
+  doc.text(`${clienteSolicita}`, 150, startY + lineHeight * 3);
+
+  // Contacto / Email
+  doc.setFont("helvetica", "bold");
+  doc.text("Contacto:", 10, startY + lineHeight * 4);
+  doc.text("Email:", 120, startY + lineHeight * 4);
+  doc.setFont("helvetica", "normal");
+  doc.text(`${contacto}`, 35, startY + lineHeight * 4);
+  doc.text(`${email}`, 150, startY + lineHeight * 4);
+
+  // 🧾 TABLA de detalle
+  const columns = ["Modelo", "Descripción", "Cantidad", "Precio"];
+  const detalle = mappedData.detalle || [];
+
+  // Calcular totales
+  let neto = 0;
+  detalle.forEach((d) => {
+    const precio = Number(d.Precio) || 0;
+    const cantidad = Number(d.Cantidad) || 1;
+    neto += precio * cantidad;
+  });
+  const iva = Math.round(neto * 0.19);
+  const total = neto + iva;
+
+  // Generar filas de detalle
+  const data =
+    detalle.length > 0
+      ? detalle.map((d: any) => [
+          d.Referencia || "",
+          d.descripcion || "",
+          d.Cantidad?.toString() || "",
+          `$${(Number(d.Precio) || 0).toLocaleString("es-CL")}`,
+        ])
+      : [["Sin registro de pedido", "", "", ""]];
+
+  // Agregar totales al final de la tabla
+  if (detalle.length > 0) {
+    data.push([
+      "",
+      "",
+      { content: "Neto", styles: { fontStyle: "bold" } },
+      { content: `$${neto.toLocaleString("es-CL")}`, styles: { fontStyle: "bold" } },
+    ]);
+    data.push([
+      "",
+      "",
+      { content: "IVA 19%", styles: { fontStyle: "bold" } },
+      { content: `$${iva.toLocaleString("es-CL")}`, styles: { fontStyle: "bold" } },
+    ]);
+    data.push([
+      "",
+      "",
+      { content: "Total", styles: { fontStyle: "bold" } },
+      { content: `$${total.toLocaleString("es-CL")}`, styles: { fontStyle: "bold" } },
+    ]);
+  }
+
+  // Generar la tabla
+  autoTable(doc, {
+    startY: startY + lineHeight * 5 + 5,
+    head: [columns],
+    body: data,
+    theme: "grid",
+    styles: { fontSize: 9, cellPadding: 2 },
+    headStyles: { fillColor: [200, 200, 200] },
+    columnStyles: {
+      3: { halign: "right" }, // precios alineados a la derecha
+    },
+  });
+
+  // 📋 Observaciones
+  let finalY = (doc as any).lastAutoTable.finalY + 10;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Observaciones:", 10, finalY);
+  doc.setFont("helvetica", "normal");
+  doc.text(observaciones, 40, finalY);
+
+  // ⚠️ Glosa Importante
+  finalY += 10;
+  doc.setFont("helvetica", "bold");
+  doc.text("Importante:", 10, finalY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+
+  const glosa = [
+    "1.- El cliente encomienda la reparación de la máquina arriba individualizada. El presupuesto tendrá validez de 15 días. El cliente deberá confirmar o no el presupuesto dentro de un plazo de 30 días desde la solicitud de reparación.",
+    "2.- Las máquinas que se encuentren dentro de su periodo de garantía quedan sujetas a la revisión por el servicio técnico según las cláusulas y condiciones estipuladas en la respectiva póliza de garantía del producto en cuestión.",
+    "3.- El servicio técnico no se responsabiliza por las pérdidas o daños que puedan sufrir las máquinas, causadas por fuerza mayor o casos fortuitos.",
+    "4.- Las máquinas en servicio técnico quedan sujetas al artículo 42 de la ley 19.496; se entenderán abandonadas en favor del proveedor las especies que le sean entregadas en reparación, cuando no sean retiradas en el plazo de un año contado desde la fecha en que haya otorgado y suscrito el correspondiente documento de recepción del trabajo.\n\n",
+    "NOTA: NO SE ENTREGARÁN TRABAJOS SIN LA PRESENTACIÓN DE LA PRESENTE ORDEN.",
+    "RETIRAR SIN REPARAR CANCELA $2.129",
+  ];
+
+  let y = finalY + 5;
+  glosa.forEach((linea) => {
+    const splitText = doc.splitTextToSize(linea, 185);
+    doc.text(splitText, 12, y);
+    y += splitText.length * 5 + 3;
+  });
+
+  // Guardar PDF
+  doc.save(`Voucher-${cliente}.pdf`);
+}
+
+
+
+
+
+
+
 
 
   

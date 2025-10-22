@@ -161,12 +161,20 @@
                       <mat-icon>add_circle</mat-icon>
                     </button>
 
-                    <button *ngIf="garantia?.Id_Pedido != null && garantia?.documentos?.length > 0"
+                    <button *ngIf="garantia?.Id_Pedido != null && garantia?.documentos?.length > 0 && garantia?.detalle?.length > 0"
                       mat-icon-button
                       class="boton-enviar-sap"
                       (click)="enviarASAP(garantia)"
                       matTooltip="Enviar a SAP">
                       <mat-icon class="icono-azul">cloud_upload</mat-icon>
+                    </button>
+
+                     <button
+                      mat-icon-button
+                      class="boton-pdf"
+                      (click)="descargarVoucher(garantia)"
+                      matTooltip="Descargar Voucher PDF">
+                      <mat-icon class="icono-rojo">picture_as_pdf</mat-icon>
                     </button>
                     
                   </td>

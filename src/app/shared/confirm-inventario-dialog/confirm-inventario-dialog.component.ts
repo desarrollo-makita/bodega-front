@@ -107,7 +107,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
      
           next: (response) => {
             
-          console.log("Respuesta de iniciarInventario:", response);
+          console.log("Respuesta de iniciarInventario 01:", response);
            
           },
           error: (error) => {
@@ -137,7 +137,7 @@ export class ConfirmInventarioDialogComponent implements OnInit {
      
         next: (response) => {
           
-          console.log("Respuesta de iniciarInventario:", response);
+          console.log("Respuesta de iniciarInventario 02:", response);
          this.grupoList = response.data;
         },
         error: (error) => {

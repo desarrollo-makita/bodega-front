@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 import { Router } from '@angular/router';
@@ -115,9 +115,7 @@ export class DefaultDialogComponent implements OnInit {
         this.errorMsg = true;
         this.responseMensaje = "erro en el servidor, contacte al administrador"
         
-        setTimeout(() => {
-            this.dialogRef.close({ exito: true });
-          }, 2000);
+        
       },
       complete: () => {
         setTimeout(() => {
@@ -179,7 +177,7 @@ export class DefaultDialogComponent implements OnInit {
     this.isLoading = true;
     this.mensajeCarga = 'Cargando pedidos...'
     
-        
+    console.log("aca se debe generar el otro vouchedr con este dato" , garantia);
     this.garantiasServices.insertarPedidosIntranet(garantia).subscribe({
         next: (res) => {
           console.log("reeeeeeeeeees : " , res);
@@ -217,7 +215,6 @@ export class DefaultDialogComponent implements OnInit {
               this.isLoading= false;
               this.exito =  true;
               this.responseMensaje =  this.mensajeDetalle;
-
           }
           // Si this.codigo no fue asignado en ningún momento (caso raro)
           else {
@@ -231,7 +228,5 @@ export class DefaultDialogComponent implements OnInit {
       });
     
     }
-    
-    
-
-}
+  
+  }

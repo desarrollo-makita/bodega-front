@@ -510,13 +510,14 @@ export class AsignacionReconteosComponent implements OnInit {
     const data = {
           tipoItem: requestStorage.tipoItem,
           local: requestStorage.local,
-          fechaInventario: requestStorage.fechaInventario
+          fechaInventario: requestStorage.fechaInventario,
+          grupoBodega: requestStorage.grupoBodega
         };
     
     // Guarda el objeto convertido en string
     sessionStorage.setItem('data', JSON.stringify(data));
     
-    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario).subscribe({
+    this.invetarioServices.consultaInventario(data.tipoItem, data.local, data.fechaInventario, data.grupoBodega).subscribe({
       next: (response) => {
   
         this.listaRegistros = response.data.recordset;

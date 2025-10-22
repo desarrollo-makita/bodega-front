@@ -209,36 +209,64 @@ export class GarantiaDetalleDialogComponent implements OnInit {
     }
   }
 
-  obtenerOfertaVenta(idLlamada: any) {
-    this.isLoading = true;
-    this.mostrarBotonesAccion = this.dataLLamadaServicio.rol === 'ST' ? false : true;
-    this.garantiasServices.obtenerOfertasVentas(idLlamada).subscribe({
-      next: (response) => {
-        console.log("Nueva data desde SAP:", response);
-        console.log(" this.dataLLamadaServicio" ,  this.dataLLamadaServicio.Status)
-        this.dataOferta = response;
+obtenerOfertaVenta(idLlamada: any) {
+  this.isLoading = true;
+  this.mostrarBotonesAccion = this.dataLLamadaServicio.rol === 'ST' ? false : true;
 
-        // Verificar si hay algún Status abierto
-        const hayAbierto = response.llamada.some((oferta: any) => 
-          oferta.Status === 'bost_Open' && 
-          oferta.Status !== (this.dataLLamadaServicio.Status - 1)
-        );
+  this.garantiasServices.obtenerOfertasVentas(idLlamada).subscribe({
+    next: (response) => {
+      console.log("📦 [obtenerOfertaVenta] Nueva data desde SAP:", response);
 
-        // Asignar mostrarAgregarOferta según corresponda
-        this.mostrarAgregarOferta = !hayAbierto; // si hay abierto -> false, si no -> true
-      },
-      error: (err) => {
-        console.log("Error:", err);
-      },
-      complete: () => {
-        setTimeout(() => {
-          this.isLoading= false;
-        }, 200);
-       
-        this.deshabilitarBotonera = false;
+      // Asignamos data al componente
+      this.dataOferta = response;
+
+      if (!response || !response.llamada) {
+        console.warn("⚠️ [obtenerOfertaVenta] Respuesta sin propiedad 'llamada' o vacía");
+        this.mostrarAgregarOferta = true;
+        return;
       }
-    });
-  }
+
+      // Log de todas las ofertas
+      console.table(
+        response.llamada.map((oferta: any, i: number) => ({
+          Index: i,
+          ID: oferta.ID || oferta.DocEntry || "N/A",
+          Status: oferta.Status,
+        }))
+      );
+
+      console.log("[obtenerOfertaVenta] Status actual de la llamada principal:", this.dataLLamadaServicio.Status);
+
+      // Verificar si hay algún Status abierto
+      const hayAbierto = response.llamada.some((oferta: any) => {
+        const condicion = 
+          oferta.Status === 'bost_Open' &&
+          this.dataLLamadaServicio.Status !== - 1;
+
+        console.log(`[oferta Status check] ID:${oferta.ID || "N/A"} | Status:${oferta.Status} | Condición cumple?:`, condicion);
+        return condicion;
+      });
+
+      console.log("[obtenerOfertaVenta] Resultado hayAbierto:", hayAbierto);
+
+      // Asignar mostrarAgregarOferta según corresponda
+      this.mostrarAgregarOferta = hayAbierto;
+      console.log("[obtenerOfertaVenta] mostrarAgregarOferta:", this.mostrarAgregarOferta);
+    },
+    error: (err) => {
+      console.error("[obtenerOfertaVenta] Error al obtener ofertas:", err);
+    },
+    complete: () => {
+      console.log("[obtenerOfertaVenta] Llamada completada, ocultando loader...");
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 200);
+
+      this.deshabilitarBotonera = false;
+    }
+  });
+}
+
 
 
   cargarDocumentos(attachmentEntry: any) {
