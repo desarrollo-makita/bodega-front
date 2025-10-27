@@ -238,20 +238,28 @@ obtenerOfertaVenta(idLlamada: any) {
       console.log("[obtenerOfertaVenta] Status actual de la llamada principal:", this.dataLLamadaServicio.Status);
 
       // Verificar si hay algún Status abierto
-      const hayAbierto = response.llamada.some((oferta: any) => {
-        const condicion = 
-          oferta.Status === 'bost_Open' &&
-          this.dataLLamadaServicio.Status !== - 1;
+      // Evaluar condiciones para mostrarAgregarOferta
+      if (this.dataLLamadaServicio.Status === -1) {
+        // Caso 1: Si la llamada está cerrada (-1) → nunca mostrar
+        this.mostrarAgregarOferta = false;
 
-        console.log(`[oferta Status check] ID:${oferta.ID || "N/A"} | Status:${oferta.Status} | Condición cumple?:`, condicion);
-        return condicion;
-      });
+      } else if (this.dataLLamadaServicio.Status === -3) {
+        // Caso 2: Si la llamada está en -3 → depende del estado de las ofertas
+        const hayOfertaAbierta = response.llamada.some(
+          (oferta: any) => oferta.Status === 'bost_Open'
+        );
 
-      console.log("[obtenerOfertaVenta] Resultado hayAbierto:", hayAbierto);
+        // Si hay una oferta abierta → false
+        // Si todas están cerradas → true
+        this.mostrarAgregarOferta = !hayOfertaAbierta;
 
-      // Asignar mostrarAgregarOferta según corresponda
-      this.mostrarAgregarOferta = hayAbierto;
+      } else {
+        // No se debería dar otro caso
+        this.mostrarAgregarOferta = false;
+      }
+
       console.log("[obtenerOfertaVenta] mostrarAgregarOferta:", this.mostrarAgregarOferta);
+
     },
     error: (err) => {
       console.error("[obtenerOfertaVenta] Error al obtener ofertas:", err);

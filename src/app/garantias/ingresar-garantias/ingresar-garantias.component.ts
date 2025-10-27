@@ -20,9 +20,15 @@ import { AuthGuard } from 'app/auth/auth.guard';
 export class IngresarGarantiasComponent implements OnInit {
   garantiaForm!: FormGroup;
   tiposDocumento: string[] = [
-    'GARANTIA',
+    'GARANTIAS',
     'PRESUPUESTO',
     'PUESTA EN MARCHA',
+  ];
+
+
+  tiposDocumentosST: string[] = [
+    'GARANTIAS',
+    'PEDIDOS',
   ];
 
   mensaje: string = '';
@@ -80,12 +86,14 @@ export class IngresarGarantiasComponent implements OnInit {
     const token = sessionStorage.getItem("authToken");
     this.decodedToken = this.authService.decodeToken(token);
     console.log("Token decodificado: ", this.decodedToken);
-   
+
+    
     this.userRole = this.decodedToken.role;
 
     this.garantiaForm = this.fb.group({
       FechaDigitalizacionOs: [new Date(), Validators.required],
-      TipoDocumento: ['', Validators.required],
+      TipoDocumento: [null, this.userRole === 'ST' ? [] : [Validators.required]],
+      TipoDocumentoST:  [null, this.userRole === 'STM' ? [] : [Validators.required]],
       InformeTecnico: ['' , Validators.required],
       Modelo: ['', Validators.required],
       serie: ['', Validators.required],
@@ -94,6 +102,7 @@ export class IngresarGarantiasComponent implements OnInit {
       NombreServicioAut: ['', Validators.required],
       NombreConsumidor: ['', Validators.required],
       DireccionConsumidor: ['', Validators.required],
+       emailConsumidor: ['', [Validators.required, Validators.email]],
       RegionConsumidor: ['', Validators.required],
       ComunaConsumidor: ['', Validators.required],
       RutConsumidor: ['', [Validators.required, rutChilenoValidator]],
@@ -125,6 +134,12 @@ export class IngresarGarantiasComponent implements OnInit {
         this.dataComunas = []; // Limpia si no hay región válida
       }
     });
+
+     this.garantiaForm.statusChanges.subscribe(status => {
+    console.log("Estado del formulario:", status); // VALID / INVALID
+    console.log("Campos inválidos:", this.getCamposInvalidos()); 
+  });
+   
 
     this.obtenerRutLogueado();
   }
@@ -158,6 +173,9 @@ export class IngresarGarantiasComponent implements OnInit {
     
     if (!this.garantiaForm.valid) {
       this.garantiaForm.markAllAsTouched();
+
+      const camposFaltantes = this.getCamposInvalidos();
+      console.warn("Campos faltantes o inválidos:", camposFaltantes);
       
       return;
     }
@@ -200,9 +218,7 @@ export class IngresarGarantiasComponent implements OnInit {
         autoFocus: false   
     });
     
-      
-    
-      dialogRef.afterClosed().subscribe((resultado) => {
+    dialogRef.afterClosed().subscribe((resultado) => {
         if(resultado.exito){
           //this.generateVoucherPDF(mappedData);
         }
@@ -222,7 +238,7 @@ export class IngresarGarantiasComponent implements OnInit {
       fechaDigitalizacionOs: formValue.FechaDigitalizacionOs,
       informeTecnico: formValue.InformeTecnico,
       fonoConsumidor: formValue.TelCliente,
-      emailConsumidor: formValue.EmailConsumidor || '',
+      emailConsumidor: formValue.emailConsumidor || '',
       direccionConsumidor: formValue.DireccionConsumidor,
       comunaConsumidor: formValue.ComunaConsumidor,
       regionConsumidor: formValue.RegionConsumidor,
@@ -233,6 +249,7 @@ export class IngresarGarantiasComponent implements OnInit {
       rutConsumidor: formValue.RutConsumidor,
       nombreTecnico: formValue.Revendedor,
       tipoDocumento : formValue.TipoDocumento,
+      tipoDocumentoST : formValue.TipoDocumentoST,
       
     };
   }
@@ -349,11 +366,8 @@ export class IngresarGarantiasComponent implements OnInit {
       error: (err) => console.error('Error en búsqueda de clientes', err)
     });
   }
-
-
-
-
-   seleccionarCliente(item: any) {
+  
+  seleccionarCliente(item: any) {
     this.garantiaForm.patchValue({ 
       RutServicioTecnico: item.CardCode.startsWith('C') ? item.CardCode.substring(1) : item.CardCode,
       NombreServicioAut: item.CardName
@@ -425,7 +439,7 @@ export class IngresarGarantiasComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
- mostrarAlerta() {
+  mostrarAlerta() {
     Swal.fire({
       title: '¡Éxito!',
       html: '<p class="swal2-text-custom">Orden generada correctamente</p>',
@@ -435,6 +449,19 @@ export class IngresarGarantiasComponent implements OnInit {
       customClass: { title: 'swal2-title-custom' },
       showCloseButton: false,
     });
+  }
+
+  getCamposInvalidos(): string[] {
+    const invalids: string[] = [];
+    
+    Object.keys(this.garantiaForm.controls).forEach(key => {
+      const control = this.garantiaForm.get(key);
+      if (control && control.invalid) {
+        invalids.push(key);
+      }
+    });
+
+    return invalids;
   }
 
 

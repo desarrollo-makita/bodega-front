@@ -61,6 +61,7 @@ import { MatTableModule } from '@angular/material/table';
 import { RechazarOfertaVentaDialogComponent } from './shared/rechazar-oferta-venta-dialog/rechazar-oferta-venta-dialog.component';
 import { DefaultDialogComponent } from './shared/default-dialog/default-dialog.component';
 import { AprobarOfertaVentaComponent } from './shared/aprobar-oferta-venta-dialog/aprobar-oferta-venta.component';
+import { ConsultarStockStComponent } from './garantias/consultar-stock-st/consultar-stock-st.component';
 
 @NgModule({
   imports: [
@@ -124,6 +125,7 @@ import { AprobarOfertaVentaComponent } from './shared/aprobar-oferta-venta-dialo
     RechazarOfertaVentaDialogComponent,
     DefaultDialogComponent,
     AprobarOfertaVentaComponent,
+    ConsultarStockStComponent,
 
     
     

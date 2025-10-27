@@ -4,12 +4,21 @@
     <div class="row">
       <h3 class="seccion-titulo">Detalle del ingreso</h3>
       <div class="col-md-6">
-        <div class="row mb-2">
+        <div *ngIf="userRole === 'STM'" class="row mb-2">
           <label class="col-sm-5 text-verde-makita" for="tipoDoc">Tipo documento :</label>
           <div class="col-sm-7">
             <select id="tipoDoc" formControlName="TipoDocumento">
               <option value="" disabled>Selecciona tipo</option>
               <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
+        </div>
+        <div *ngIf="userRole === 'ST'" class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="tipoDocST">Tipo documento :</label>
+          <div class="col-sm-7">
+            <select id="tipoDocST" formControlName="TipoDocumentoST">
+              <option value="" disabled>Selecciona tipo</option>
+              <option *ngFor="let tipo of tiposDocumentosST" [value]="tipo">{{ tipo }}</option>
             </select>
           </div>
         </div>
@@ -43,20 +52,20 @@
         <div class="row mb-2">
           <label for="nomServ"class="col-sm-5 text-verde-makita">Nombre STA :</label>
           <div class="col-sm-7">
-            <input type="text" id="nomServ"  formControlName="NombreServicioAut" class="form-control" />
+            <input type="text" id="nomServ"  formControlName="NombreServicioAut" class="form-control " autocomplete="off" />
           </div>
         </div>
         <div class="row mb-2">
           <label for="nombreTecnico" class="col-sm-5 text-verde-makita">Nombre del técnico :</label>
           <div class="col-sm-7">
-            <input type="text" id="nombreTecnico" formControlName="NombreTecnico" class="form-control" />
+            <input type="text" id="nombreTecnico" formControlName="NombreTecnico" class="form-control" autocomplete="off"/>
           </div>
         </div>
         
         <div class="row mb-2">
           <label class="col-sm-5 text-verde-makita" for="fecha">Fecha ingreso :</label>
           <div class="col-sm-7">
-            <input type="date" id="fecha" formControlName="FechaDigitalizacionOs" class="form-control" />
+            <input type="date" id="fecha" formControlName="FechaDigitalizacionOs" class="form-control" autocomplete="off"/>
           </div>
         </div>
         <div class="row mb-2">
@@ -69,7 +78,8 @@
               (input)="buscarModelos()"
               (blur)="ocultarListaConDelay()"
               (focus)="buscarModelos()"
-              style="width: 100%;" />
+              style="width: 100%;" 
+              autocomplete="off"/>
             
               <!-- Lista de sugerencias -->
             <ul
@@ -89,13 +99,13 @@
         <div class="row mb-2">
           <label class="col-sm-5 text-verde-makita" for="descripcion">Descripción :</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="descripcion" formControlName="Descripcion" disabled />
+            <input type="text" class="form-control" id="descripcion" formControlName="Descripcion" disabled autocomplete="off" />
           </div>
         </div>
         <div class="row mb-2">
           <label class="col-sm-5 text-verde-makita" for="serie">Serie :</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="serie" formControlName="serie" />
+            <input type="text" class="form-control" id="serie" formControlName="serie" autocomplete="off" />
           </div>
         </div>
 
@@ -103,13 +113,13 @@
       <div class="col-md-6">
         
         <div class="row mb-2">
-          <label class="col-sm-5 text-verde-makita" for="nomConsumidor">Nombre Cliente :</label>
+          <label class="col-sm-5 text-verde-makita" for="nomConsumidor">Nombre cliente :</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="nomConsumidor" formControlName="NombreConsumidor" />
+            <input type="text" class="form-control" id="nomConsumidor" formControlName="NombreConsumidor" autocomplete="off" />
           </div>
         </div>
         <div class="row mb-2">
-          <label class="col-sm-5 text-verde-makita" for="rutConsumidor">Rut Cliente :</label>
+          <label class="col-sm-5 text-verde-makita" for="rutConsumidor">Rut cliente :</label>
           <div class="col-sm-7">
             <input 
               type="text" 
@@ -118,20 +128,60 @@
               formControlName="RutConsumidor" 
               [value]="garantiaForm.get('RutConsumidor')?.value"
               (input)="onRutInput($event)" 
-              maxlength="12" />
+              maxlength="12"
+              autocomplete="off" />
 
-              <div class="error"
+              <div  class="error mt-1"
                 *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('rutInvalido')"
-                style="color: red;">
+                style="color: #ff0000; font-weight: bold;">
                 RUT inválido.
               </div>
               <!-- Mensaje si está vacío y es requerido -->
-              <div class="error"
+              <div  class="error mt-1"
                   *ngIf="garantiaForm.get('RutConsumidor')?.touched && garantiaForm.get('RutConsumidor')?.hasError('required')"
-                  style="color: red;">
+                  style="color: #ff0000; font-weight: bold;">
                 El RUT es obligatorio.
               </div>
           </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-sm-5 text-verde-makita" for="emailConsumidor">Email cliente :</label>
+            <div class="col-sm-7">
+              <input
+                type="text"
+                class="form-control"
+                id="emailConsumidor"
+                formControlName="emailConsumidor"
+                autocomplete="off"
+                [ngClass]="{
+                  'is-invalid': garantiaForm.get('emailConsumidor')?.invalid && garantiaForm.get('emailConsumidor')?.touched,
+                  'is-valid': garantiaForm.get('emailConsumidor')?.valid && garantiaForm.get('emailConsumidor')?.touched
+                }"
+              />
+
+              <!-- Mensaje de error -->
+              <div
+                class="error mt-1"
+                *ngIf="
+                  garantiaForm.get('emailConsumidor')?.hasError('email') &&
+                  garantiaForm.get('emailConsumidor')?.touched
+                "
+                style="color: #ff0000; font-weight: bold;"
+              >
+                Ingresa un correo electrónico válido (por ejemplo: usuario@correo.com)
+              </div>
+
+              <div
+                class="error mt-1"
+                *ngIf="
+                  garantiaForm.get('emailConsumidor')?.hasError('required') &&
+                  garantiaForm.get('emailConsumidor')?.touched
+                "
+                style="color: #ff0000; font-weight: bold;"
+              >
+                El correo electrónico es obligatorio.
+              </div>
+            </div>
         </div>
         <div class="row mb-2">
           <label class="col-sm-5 text-verde-makita" for="regionConsumidor">Región cliente :</label>
@@ -154,7 +204,7 @@
         <div class="row mb-2">
           <label class="col-sm-5 text-verde-makita" for="dirConsumidor">Dirección cliente :</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="dirConsumidor" formControlName="DireccionConsumidor" />
+            <input type="text" class="form-control"  autocomplete="off" id="dirConsumidor" formControlName="DireccionConsumidor" />
           </div>
         </div>
         
@@ -167,7 +217,8 @@
               formControlName="Revendedor" 
               (input)="buscarProveedor()"
               (blur)="ocultarListaConDelay()"
-              (focus)="buscarProveedor()" style="width: 100%;" />
+              (focus)="buscarProveedor()" style="width: 100%;" 
+              autocomplete="off"/>
             
               
             <ul
@@ -193,10 +244,10 @@
               id="telCliente"
               formControlName="TelCliente"
               [value]="garantiaForm.get('TelCliente')?.value"
-              (input)="onTelefonoInput($event)" 
+            autocomplete="off"
               maxlength="12"
             />
-            <div class="error" *ngIf="garantiaForm.get('TelCliente')?.hasError('pattern')" style="color: red;">
+            <div  class="error mt-1"  *ngIf="garantiaForm.get('TelCliente')?.hasError('pattern')"  style="color: #ff0000; font-weight: bold;">
               El número debe empezar con +569 y contener 8 dígitos numéricos.
             </div>
           </div>
@@ -221,6 +272,7 @@
               id="archivo0"
               accept=".jpg,.jpeg,.png,.pdf"
               (change)="onFileSelected($event, 0)"
+             
               required
             />
             <div class="file-preview" *ngIf="filePreviews[0]">

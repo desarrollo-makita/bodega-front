@@ -20,7 +20,8 @@ export class NavbarComponent implements OnInit{
     menuItems : any;
     title: string;
     currentRoute: string = '';
-
+decodedToken:any;
+role:any;
     constructor(
         location: Location,  
         private element: ElementRef, 
@@ -37,6 +38,10 @@ export class NavbarComponent implements OnInit{
         }
 
     ngOnInit(){
+         const token = sessionStorage.getItem("authToken");
+    this.decodedToken = this.authService.decodeToken(token);
+    console.log("Token decodificado nanvar: ", this.decodedToken);
+    this.role = this.decodedToken.role;
       
         this.dataSharingService.getStringData().subscribe(menu => 
             {
@@ -57,37 +62,40 @@ export class NavbarComponent implements OnInit{
             this.title = 'Informes';
             this.showIcons = false;
         } else if (title === '/rol-mantenedor') {
-            this.title = 'Mantenedor de Area';
+            this.title = 'Mantenedor de Área';
             this.showIcons = false;
         } else if (title === '/inventario') {
             this.title = 'Inventario';
             this.showIcons = false;
         } else if (title === '/bitacora-ubicaciones') {
-            this.title = 'Bitacora Ubicaciones';
+            this.title = 'Bitácora de Ubicaciones';
             this.showIcons = false;
         } else if (title === '/asignar-capturador') {
             this.title = 'Asignar Capturador';
             this.showIcons = false;
         } else if (title === '/inventario-baterias') {
-            this.title = 'Inventario Baterias';
+            this.title = 'Inventario de Baterías';
             this.showIcons = false;
         } else if (title === '/asignacion-reconteos') {
-            this.title = 'Asignacion de Reconteos';
+            this.title = 'Asignación de Reconteos';
+            this.showIcons = false;
+        } else if (title === '/asignacion-reconteos-baterias') {
+            this.title = 'Asignación de Reconteos - Baterías';
+            this.showIcons = false;
+        } else if (title === '/servicio-tecnico' ) {
+            this.title = `Servicio Técnico - ${this.decodedToken.username}`;
+            this.showIcons = false;
+        } else if (title === '/crear-orden-trabajo') {
+            this.title =  `Ingresar Orden de Trabajo - ${this.decodedToken.username} `;
             this.showIcons = false;
         }
-        else if (title === '/asignacion-reconteos-baterias') {
-            this.title = 'Asignacion de Reconteos-Baterias';
+         else if (title === '/consultar-stock-st') {
+            this.title =  `Consultar stock - ${this.decodedToken.username} `;
             this.showIcons = false;
         }
-        else if (title === '/servicio-tecnico') {
-            this.title = 'Servicio Tecnico';
-            this.showIcons = false;
-        }
-        else if (title === '/crear-orden-trabajo') {
-            this.title = 'Ingresar Orde de Trabajo';
-            this.showIcons = false;
-        }
-      }
+        
+    }
+
 
     
     sidebarOpen() {
