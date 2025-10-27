@@ -40,7 +40,7 @@ export class IngresarGarantiasComponent implements OnInit {
   clientesFiltrados: any[] = [];
   proveedorFiltrados: any[] = [];
   adjuntos = [null, null, null, null];
- filePreviews: { file: File, url: string, type: string, name: string }[] = [];
+  filePreviews: { file: File, url: string, type: string, name: string }[] = [];
   
   
   mostrarSugerencias = false;

@@ -4,11 +4,11 @@
       <div class="col-md-12">
         <div class="card">
           <div class="header">
-            <h4 class="title">Consulta de Stock ST</h4>
+            <h4 class="title">Consulta de Stock</h4>
           </div>
           <div class="content">
             <form (ngSubmit)="onSubmit()" [formGroup]="itemForm">
-              <div class="row">
+                <div class="row">
                 <div class="form-group col-md-4 position-relative">
                   <label for="item" class="text-verde-makita">Ingrese un Item:</label>
                   <input 
@@ -39,50 +39,63 @@
                     <!-- El botón está deshabilitado si el campo fecha es inválido -->
                     <button class="btn btn-primary custom-btn ml-auto" type="submit">Buscar</button>
                 </div>
-              </div>
+                </div>
 
-              <div *ngIf="isLoading" id="loader" class="mt-3 text-center">
-                <img src="../../assets/img/loader-preview.svg" alt="loading" />
-              </div>
+                <div *ngIf="isLoading" id="loader" class="mt-3 text-center">
+                    <img src="../../assets/img/loader-preview.svg" alt="loading" />
+                </div>
 
-              <div *ngIf="showTable" class="row mt-3">
-                <div class="col-md-12">
-                  <div class="table-responsive table-full-width">
-                    <table class="table table-hover table-striped">
-                        <thead>
+                <div *ngIf="showTable" class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="table-responsive table-full-width">
+                        <table class="table table-hover table-striped">
+                            <thead>
                             <tr>
                                 <th>Tipo Producto</th>
                                 <th>Item</th>
                                 <th>Descripción</th>
                                 <th>Bodega</th>
                                 <th>Stock</th>
-                                <th>Precio</th>
+                                <th *ngIf="role !== 'ST'">Reservado</th>
+                                <th *ngIf="role !== 'ST'">Precio</th>
                                 <th>Reemplazo</th>
                                 <th>Alternativo1</th>
                                 <th>Alternativo2</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <tr *ngFor="let row of resultadosFiltrados">
-                            <td>{{row.TipoItem}}</td>
-                            <td>{{row.itemCode}}</td>
-                            <td>{{row.Descripcion}}</td>
-                            <td>{{row.Bodega}}</td>
-                            <td>{{row.StockFinal}}</td>
-                            <td>{{row.Precio | currency:'$':'symbol':'1.0-0'}}</td>
-                            <td>{{row.Reemplazo || 'Sin información' }}</td>
-                            <td>{{row.Alternativo1 || 'Sin información'}}</td>
-                            <td>{{row.Alternativo2 || 'Sin información' }}</td>
+                                <td>{{ row.TipoItem }}</td>
+                                <td>{{ row.itemCode }}</td>
+                                <td>{{ row.Descripcion }}</td>
+                                <td *ngIf="role !== 'ST'">{{ row.Bodega }}</td>
+                                <td *ngIf="role === 'ST'">{{ getNombreBodega(row.Bodega) }}</td>
+                                <td 
+                                [ngStyle]="role === 'ST' ? 
+                                    {'color': (row.StockFinal - (row.Reservado || 0)) > 0 ? '#00909E' : '#FF0000', 'font-weight': 'bold'} 
+                                    : {}">
+                                <ng-container *ngIf="role === 'ST'">
+                                    {{ (row.StockFinal - (row.Reservado || 0)) > 0 ? 'S' : 'N' }}
+                                </ng-container>
+                                <ng-container *ngIf="role !== 'ST'">
+                                    {{ row.StockFinal - (row.Reservado || 0) }}
+                                </ng-container>
+                                </td>
+                                <td *ngIf="role !== 'ST'">{{ row.Reservado || 0 }}</td>
+                                <td *ngIf="role !== 'ST'">{{ row.Precio | currency:'$':'symbol':'1.0-0' }}</td>
+                                <td>{{ row.Reemplazo }}</td>
+                                <td>{{ row.Alternativo1 }}</td>
+                                <td>{{ row.Alternativo2 }}</td>
                             </tr>
-                        </tbody>
-                    </table>
-                  </div>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-              <div *ngIf="resultadosFiltrados.length === 0 && showTable" class="text-danger mt-3">
+                
+                <div *ngIf="resultadosFiltrados.length === 0 && showTable" class="text-danger mt-3">
                 No se encontraron resultados para "{{itemBusqueda}}".
-              </div>
+                </div>
 
             </form>
           </div>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthGuard } from 'app/auth/auth.guard';
 import { GarantiasService } from 'app/services/garantias/garantias.service';
 
 @Component({
@@ -15,6 +16,9 @@ export class ConsultarStockStComponent implements OnInit {
   showTable: boolean = false;
   modelosFiltrados: any[] = [];
   mostrarSugerencias: boolean = false;
+  decodedToken:any;
+
+  role:any;
 
   // Datos simulados
   datosStock = [
@@ -31,67 +35,73 @@ export class ConsultarStockStComponent implements OnInit {
 
   resultadosFiltrados: any[] = [];
 
-  constructor(private fb: FormBuilder,
-     private garantiasServices: GarantiasService,
+  constructor(
+    private fb: FormBuilder,
+    private garantiasServices: GarantiasService,
+    private authService: AuthGuard
+    
   ) { }
 
   ngOnInit(): void {
+    const token = sessionStorage.getItem("authToken");
+    this.decodedToken = this.authService.decodeToken(token);
+    console.log("Token decodificado: ", this.decodedToken);
+    this.role = this.decodedToken.role;
+    this.itemForm = this.fb.group({
+      itemBusqueda: ['', Validators.required],
+    });  
+  }
 
-        this.itemForm = this.fb.group({
-          itemBusqueda: ['', Validators.required],
-        });  
-   }
+  onSubmit(): void {
+    const item = this.itemForm.get('itemBusqueda')?.value?.toUpperCase(); // 🔹 Siempre en mayúsculas
 
-onSubmit(): void {
-  const item = this.itemForm.get('itemBusqueda')?.value?.toUpperCase(); // 🔹 Siempre en mayúsculas
+    console.log("🔍 Item a buscar:", item);
 
-  console.log("🔍 Item a buscar:", item);
+    if (!item) return;
 
-  if (!item) return;
+    this.isLoading = true;
+    this.showTable = false;
 
-  this.isLoading = true;
-  this.showTable = false;
-
-  this.garantiasServices.obtenerStockServicioTecnico(item).subscribe({
-    next: (data) => {
-      console.log("📦 Datos recibidos:", data);
-      this.isLoading = false;
-      this.showTable = true;
-      this.resultadosFiltrados = data; // si estás mostrando en tabla
-    },
-    error: (err) => {
-      console.error('❌ Error en búsqueda de modelos', err);
-      this.isLoading = false;
-    }
-  });
-}
-
-    buscarModelos() {
-      let valor = this.itemForm.get('itemBusqueda')?.value;
-      console.log('Valor de búsqueda:', valor);
-      if (valor && valor.length >= 2) {
-        valor = valor.toUpperCase();
-        this.garantiasServices.buscarItems(valor).subscribe({
-          next: (data) => {
-            this.modelosFiltrados = data.items;
-            this.mostrarSugerencias = true;
-          },
-          error: (err) => console.error('Error en búsqueda de modelos', err)
-        });
-      } else {
-        this.modelosFiltrados = [];
-        this.mostrarSugerencias = false;
+    this.garantiasServices.obtenerStockServicioTecnico(item).subscribe({
+      next: (data) => {
+        console.log("📦 Datos recibidos:", data);
+        this.isLoading = false;
+        this.showTable = true;
+        this.resultadosFiltrados = data; // si estás mostrando en tabla
+      },
+      error: (err) => {
+        console.error('❌ Error en búsqueda de modelos', err);
+        this.isLoading = false;
       }
-    }
+    });
+  }
 
-   ocultarListaConDelay() {
+  buscarModelos() {
+    let valor = this.itemForm.get('itemBusqueda')?.value;
+    console.log('Valor de búsqueda:', valor);
+    if (valor && valor.length >= 2) {
+      valor = valor.toUpperCase();
+      this.garantiasServices.buscarItems(valor).subscribe({
+        next: (data) => {
+          this.modelosFiltrados = data.items;
+          this.mostrarSugerencias = true;
+        },
+        error: (err) => console.error('Error en búsqueda de modelos', err)
+      });
+    } else {
+      this.modelosFiltrados = [];
+      this.mostrarSugerencias = false;
+    }
+  }
+
+  ocultarListaConDelay() {
     setTimeout(() => {
       this.mostrarSugerencias = false;
      
     }, 200);
   }
 
-    seleccionarModelo(item: any) {
+  seleccionarModelo(item: any) {
     this.itemForm.patchValue({ 
       itemBusqueda: item.ItemCode ,
       
@@ -99,5 +109,24 @@ onSubmit(): void {
     this.modelosFiltrados = [];
     this.mostrarSugerencias = false;
   }
+
+  getNombreBodega(bodega: string): string {
+    if (this.role !== 'ST') return bodega; // Solo mapear si es ST
+
+    const mapping: { [key: string]: string } = {
+      'BOD01': 'ENEA',
+      'ANF01': 'ANTOFAGASTA',
+      'CPO01': 'COPIAPO',
+      'ST01': 'SERVICIO TECNICO 01',
+      'ST02': 'SERVICIO TECNICO 02',
+      'ST03': 'SERVICIO TECNICO 03',
+      'ST04': 'SERVICIO TECNICO 04',
+      'ST05': 'SERVICIO TECNICO 05',
+      'TEM01': 'TEMUCO'
+    };
+
+    return mapping[bodega] || bodega; // Si no encuentra, deja el original
+  }
+
 
 }
